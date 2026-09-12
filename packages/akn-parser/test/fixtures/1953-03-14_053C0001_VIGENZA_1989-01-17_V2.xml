@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8"?><akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:eli="http://data.europa.eu/eli/ontology#" xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" xmlns:gu="http://www.gazzettaufficiale.it/eli/" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:na="http://www.normattiva.it/eli/" xmlns:nakn="http://normattiva.it/akn/vocabulary" xmlns:nrdfa="http://www.normattiva.it/rdfa/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfa="http://www.w3.org/1999/xhtml#">
+    <act name="monovigente">
+        <meta>
+            <identification source="">
+                <FRBRWork>
+                    <FRBRthis value="/akn/it/act/legge_costituzionale/stato/1953-03-11/1/!main"/>
+                    <FRBRuri value="/akn/it/act/legge_costituzionale/stato/1953-03-11/1"/>
+                    <FRBRalias name="urn:nir" value="urn:nir:stato:legge.costituzionale:1953-03-11;1"/>
+                    <FRBRalias name="eli" value="eli/id/1953/03/14/053C0001/CONSOLIDATED/19890117"/>
+                    <FRBRdate date="1953-03-11" name=""/>
+                    <FRBRauthor as="#author" href=""/>
+                    <preservation>
+                        <nrdfa:eli about="na:id/1953/03/14/053C0001/CONSOLIDATED/19890117" aknrelname="eli/id/1953/03/14/053C0001/CONSOLIDATED/19890117">
+                            <nrdfa:span property="rdf:type" resource="eli:LegalResource"/>
+                            <nrdfa:span content="Norme integrative della Costituzione concernenti la Corte costituzionale. " lang="it" property="eli:title" xml:lang="it"/>
+                            <nrdfa:span content="http://www.normattiva.it/eli/id/{yyyy}/{mm}/{dd}/{codiceRedazionale}/{tipoVersione}" property="eli:uri_schema"/>
+                            <nrdfa:span content="053C0001" property="eli:id_local"/>
+                            <nrdfa:span property="eli:type_document" resource="gu:tables/resource-type#LEGGE COSTITUZIONALE"/>
+                            <nrdfa:span content="1953-03-11" datatype="xsd:date" property="eli:date_document"/>
+                            <nrdfa:span property="eli:version" resource="gu:tables/versions#ORIGINAL"/>
+                        </nrdfa:eli>
+                    </preservation>
+                    <FRBRcountry value="it"/>
+                </FRBRWork>
+                <FRBRExpression>
+                    <FRBRthis value="/akn/it/act/legge_costituzionale/stato/1953-03-11/1/ita@1967-12-10/!main"/>
+                    <FRBRuri value="/akn/it/act/legge_costituzionale/stato/1953-03-11/1/ita@1967-12-10"/>
+                    <FRBRdate date="1967-12-10" name=""/>
+                    <FRBRauthor as="#author" href=""/>
+                    <preservation>
+                        <nrdfa:eli about="na:id/1953/03/14/053C0001/CONSOLIDATED/19890117/ita">
+                            <nrdfa:span property="rdf:type" resource="eli:LegalExpression"/>
+                            <nrdfa:span property="eli:realizes" resource="na:id/1953/03/14/053C0001/CONSOLIDATED/19890117"/>
+                            <nrdfa:span property="eli:is_embodied_by" resource="na:id/1953/03/14/053C0001/CONSOLIDATED/19890117/ita/akn"/>
+                            <nrdfa:span property="eli:language" resource="http://publications.europa.eu/resource/authority/language/ITA"/>
+                            <nrdfa:span property="eli:publisher_agent" resource="http://www.ipzs.it"/>
+                        </nrdfa:eli>
+                    </preservation>
+                    <FRBRlanguage language="ita"/>
+                </FRBRExpression>
+                <FRBRManifestation>
+                    <FRBRthis value="/akn/it/act/legge_costituzionale/stato/1953-03-11/1/ita@1967-12-10/!main.xml"/>
+                    <FRBRuri value="/akn/it/act/legge_costituzionale/stato/1953-03-11/1/ita@1967-12-10.xml"/>
+                    <FRBRdate date="1953-03-11" name=""/>
+                    <FRBRauthor as="#author" href=""/>
+                    <preservation>
+                        <nrdfa:eli about="na:id/1953/03/14/053C0001/CONSOLIDATED/19890117/ita/akn">
+                            <nrdfa:span property="rdf:type" resource="eli:Format"/>
+                            <nrdfa:span property="eli:format" resource="http://www.iana.org/assignments/media-types/xml"/>
+                        </nrdfa:eli>
+                    </preservation>
+                </FRBRManifestation>
+            </identification>
+            <publication date="1953-03-14" name="" number="62" showAs=""/>
+            <lifecycle source="">
+                <eventRef date="1953-03-14" eId="eventRef_0" source="ro1"/>
+                <eventRef date="1967-11-25" eId="eventRef_1" source="rp1"/>
+                <eventRef date="1989-01-17" eId="eventRef_2" source="rp2"/>
+            </lifecycle>
+            <workflow source="">
+                <step by="#camera" date="1953-03-11" refersTo="#C.1292"/>
+                <step by="#camera" date="1953-03-11" refersTo="#C.1292-B"/>
+                <step by="#senato" date="1953-03-11" refersTo="#S.2472"/>
+                <step by="#senato" date="1953-03-11" refersTo="#S.2472-BIS"/>
+            </workflow>
+            <analysis source="">
+                <activeModifications>
+                    <textualMod eId="amod_0" type="insertion">
+                        <source href="urn:nir:stato:legge.costituzionale:1953-03-11;1#1"/>
+                        <destination href="urn:nir:stato:costituzione"/>
+                        <new>
+                            <nakn:text>contiene norme integrative della Costituzione per la parte relativa la Corte costituzionale.</nakn:text>
+                        </new>
+                    </textualMod>
+                </activeModifications>
+                <passiveModifications>
+                    <textualMod eId="pmod_0" type="insertion">
+                        <source href="#"/>
+                        <destination href="#ins_1"/>
+                        <new>
+                            <nakn:text>((ARTICOLO ABROGATO DALLA L. COSTITUZIONALE 22 NOVEMBRE 1967, N. 2 ))</nakn:text>
+                        </new>
+                    </textualMod>
+                    <textualMod eId="pmod_1" type="insertion">
+                        <source href="#"/>
+                        <destination href="#ins_2"/>
+                        <new>
+                            <nakn:text>((ARTICOLO ABROGATO DALLA L. COSTITUZIONALE 22 NOVEMBRE 1967, N. 2 ))</nakn:text>
+                        </new>
+                    </textualMod>
+                </passiveModifications>
+            </analysis>
+            <references source="">
+                <original eId="ro1" href="/akn/it/act/LEGGE_COSTITUZIONALE/stato/1953-03-11/1/!main" showAs=""/>
+                <passiveRef eId="rp1" href="/akn/it/act/LEGGE_COSTITUZIONALE/stato/1967-11-22/2/!main" showAs=""/>
+                <passiveRef eId="rp2" href="/akn/it/act/LEGGE_COSTITUZIONALE/stato/1989-01-16/1/!main" showAs=""/>
+                <passiveRef eId="C.1292" href="/akn/it/camera-it:parlamento:scheda.progetto.legge:camera;1.legislatura;1292" showAs=""/>
+                <passiveRef eId="C.1292-B" href="/akn/it/camera-it:parlamento:scheda.progetto.legge:camera;1.legislatura;1292-B" showAs=""/>
+                <passiveRef eId="S.2472" href="/akn/it/l" showAs=""/>
+                <passiveRef eId="S.2472-BIS" href="/akn/it/l" showAs=""/>
+            </references>
+            <proprietary source="">
+                <rdf:RDF>
+                    <rdf:Description rdf:about="na:id/1953/03/14/053C0001/CONSOLIDATED/19890117">
+                        <rdf:type rdf:resource="eli:LegalResource"/>
+                        <eli:title xml:lang="it">Norme integrative della Costituzione concernenti la Corte costituzionale. </eli:title>
+                        <eli:uri_schema>http://www.normattiva.it/eli/id/{yyyy}/{mm}/{dd}/{codiceRedazionale}/{tipoVersione}</eli:uri_schema>
+                        <eli:id_local>053C0001</eli:id_local>
+                        <eli:type_document rdf:resource="gu:tables/resource-type#LEGGE COSTITUZIONALE"/>
+                        <eli:date_document rdf:datatype="xsd:date">1953-03-11</eli:date_document>
+                        <eli:version rdf:resource="gu:tables/versions#ORIGINAL"/>
+                    </rdf:Description>
+                    <rdf:Description rdf:about="na:id/1953/03/14/053C0001/CONSOLIDATED/19890117/ita">
+                        <rdf:type rdf:resource="eli:LegalExpression"/>
+                        <eli:realizes rdf:resource="na:id/1953/03/14/053C0001/CONSOLIDATED/19890117"/>
+                        <eli:is_embodied_by rdf:resource="na:id/1953/03/14/053C0001/CONSOLIDATED/19890117/ita/akn"/>
+                        <eli:language rdf:resource="http://publications.europa.eu/resource/authority/language/ITA"/>
+                        <eli:publisher_agent rdf:resource="http://www.ipzs.it"/>
+                    </rdf:Description>
+                    <rdf:Description rdf:about="na:id/1953/03/14/053C0001/CONSOLIDATED/19890117/ita/akn">
+                        <rdf:type rdf:resource="eli:format"/>
+                        <eli:format rdf:resource="http://www.iana.org/assignments/media-types/xml"/>
+                    </rdf:Description>
+                </rdf:RDF>
+            </proprietary>
+        </meta>
+        <preface>
+            <p>
+                <docType>LEGGE COSTITUZIONALE</docType>
+                <docDate date="1953-03-11">11 marzo 1953</docDate>
+                <docNumber>1</docNumber>
+                <docTitle>Norme integrative della Costituzione concernenti la Corte costituzionale.
+</docTitle>
+            </p>
+        </preface>
+        <preamble>
+            <formula name="primaDiFormulaInizialePreambolo">
+                <p>La Camera dei deputati ed il Senato della Repubblica, in seconda votazione e con la maggioranza dei due terzi dei componenti di ciascuna Assemblea, hanno approvato;</p>
+            </formula>
+            <formula name="formulaInizialePreambolo">
+                <p>IL PRESIDENTE DELLA REPUBBLICA</p>
+            </formula>
+            <formula name="formulaFinalePreambolo">
+                <p>PROMULGA la seguente legge costituzionale:</p>
+            </formula>
+        </preamble>
+        <body>
+            <article eId="art_1">
+                <num>Art. 1.</num>
+                <heading/>
+                <paragraph>
+                    <content>
+                        <p>
+ 
+ La Corte costituzionale esercita le sue funzioni nelle forme, nei limiti ed alle condizioni di cui alla Carta costituzionale, alla <ref eId="content__ref_1" href="/akn/it/act/legge.costituzionale/stato/1948-02-09/1/!main">legge costituzionale 9 febbraio 1948, n. 1</ref>, ed alla legge ordinaria emanata per la prima attuazione delle predette norme costituzionali. </p>
+                    </content>
+                </paragraph>
+            </article>
+            <article eId="art_2">
+                <num>Art. 2.</num>
+                <heading/>
+                <paragraph>
+                    <content>
+                        <p>
+ 
+ Spetta alla Corte costituzionale giudicare se le richieste di referendum abrogativo presentate a norma dell'<ref eId="content__ref_2" href="/akn/it/act/costituzione/stato/1947-12-27/const/!main#art_75">art. 75 della Costituzione</ref> siano ammissibili ai sensi del secondo comma dell'articolo stesso. 
+ Le modalita' di tale giudizio saranno stabilite dalla legge che disciplinera' lo svolgimento del referendum popolare. 
+</p>
+                    </content>
+                </paragraph>
+            </article>
+            <article eId="art_3">
+                <num>Art. 3.</num>
+                <heading/>
+                <paragraph>
+                    <content>
+                        <p>
+                            <ins eId="ins_1">((ARTICOLO ABROGATO DALLA L. COSTITUZIONALE 22 NOVEMBRE 1967, N. 2 ))</ins>
+                        </p>
+                    </content>
+                </paragraph>
+            </article>
+            <article eId="art_4">
+                <num>Art. 4.</num>
+                <heading/>
+                <paragraph>
+                    <content>
+                        <p>
+                            <ins eId="ins_2">((ARTICOLO ABROGATO DALLA L. COSTITUZIONALE 22 NOVEMBRE 1967, N. 2 ))</ins>
+                        </p>
+                    </content>
+                </paragraph>
+            </article>
+            <article eId="art_5">
+                <num>Art. 5.</num>
+                <heading/>
+                <paragraph>
+                    <content>
+                        <p>
+ 
+ I giudici della Corte costituzionale non sono sindacabili, ne' possono essere perseguiti per le opinioni espresse e i voti dati nell'esercizio delle loro funzioni. 
+</p>
+                    </content>
+                </paragraph>
+            </article>
+            <article eId="art_6">
+                <num>Art. 6.</num>
+                <heading/>
+                <paragraph>
+                    <content>
+                        <p>
+ 
+ I giudici della Corte costituzionale hanno una retribuzione mensile che non puo' essere inferiore a quella del piu' alto magistrato della giurisdizione ordinaria ed e' determinata con legge. 
+</p>
+                    </content>
+                </paragraph>
+            </article>
+            <article eId="art_7">
+                <num>Art. 7.</num>
+                <heading/>
+                <paragraph>
+                    <content>
+                        <p>
+ I giudici della Corte costituzionale possono essere rimossi o sospesi dal loro ufficio a norma dell'<ref eId="content__ref_3" href="/akn/it/act/legge.costituzionale/stato/1948-02-09/1/!main#art_2">art. 2 della legge costituzionale 9 febbraio 1948, n. 1</ref>, solo in seguito a deliberazione della Corte presa a maggioranza di due terzi dei componenti che partecipano all'adunanza.
+</p>
+                    </content>
+                </paragraph>
+            </article>
+            <article eId="art_8">
+                <num>Art. 8.</num>
+                <heading/>
+                <paragraph>
+                    <content>
+                        <p>
+ Il giudice della Corte costituzionale che per sei mesi non eserciti le sue funzioni decade dalla carica.
+</p>
+                    </content>
+                </paragraph>
+            </article>
+            <article eId="art_9">
+                <num>Art. 9.</num>
+                <heading/>
+                <paragraph>
+                    <content>
+                        <p>
+ Il Presidente della Corte, quando lo ritenga necessario, puo' con provvedimento motivato ridurre fino alla meta' i termini dei procedimenti.
+</p>
+                    </content>
+                </paragraph>
+            </article>
+            <article eId="art_10">
+                <num>Art. 10.</num>
+                <heading/>
+                <paragraph>
+                    <content>
+                        <p>((ARTICOLO ABROGATO DALLA L. COSTITUZIONALE 22 NOVEMBRE 1967, N. 2 ))</p>
+                    </content>
+                </paragraph>
+            </article>
+            <article eId="art_11">
+                <num>Art. 11.</num>
+                <heading/>
+                <paragraph>
+                    <content>
+                        <p>
+ Le disposizioni degli articoli 5 e 6 si applicano anche ai cittadini eletti dal Parlamento ai sensi dell'ultimo comma dell'<ref eId="content__ref_4" href="/akn/it/act/costituzione/stato/1947-12-27/const/!main#art_135">art. 135 della Costituzione</ref>, limitatamente al periodo in cui esercitano le loro funzioni presso la Corte.
+</p>
+                    </content>
+                </paragraph>
+            </article>
+            <article eId="art_12">
+                <num>Art. 12.</num>
+                <heading/>
+                <paragraph>
+                    <content>
+                        <p>
+ 
+ La messa in stato di accusa del Presidente della Repubblica, del Presidente del Consiglio dei Ministri e dei Ministri e' deliberata dal Parlamento in seduta comune su relazione di una Commissione, costituita di dieci deputati e di dieci senatori, eletti da ciascuna delle due Camere, ogni volta che si rinnova, con deliberazione adottata a maggioranza, in conformita' del proprio regolamento. 
+ In caso di parita' prevale il voto del Presidente. 
+ Il Presidente e' eletto dalla Commissione nel proprio seno. 
+</p>
+                    </content>
+                </paragraph>
+            </article>
+            <article eId="art_13">
+                <num>Art. 13.</num>
+                <heading/>
+                <paragraph>
+                    <content>
+                        <p>
+ 
+ Il Parlamento in seduta comune, nel porre in istato di accusa il Presidente della Repubblica, il Presidente del Consiglio dei Ministri o i Ministri, elegge, anche tra i suoi componenti, uno o piu' commissari per sostenere l'accusa. 
+ I commissari esercitano davanti alla Corte le funzioni di pubblico ministero e hanno la facolta' di assistere a tutti gli atti istruttori. 
+</p>
+                    </content>
+                </paragraph>
+            </article>
+            <article eId="art_14">
+                <num>Art. 14.</num>
+                <heading/>
+                <paragraph>
+                    <content>
+                        <p>
+ L'atto di accusa contro il Presidente del Consiglio dei Ministri o i Ministri implica di pieno diritto la sospensione dalla carica.
+</p>
+                    </content>
+                </paragraph>
+            </article>
+            <article eId="art_15">
+                <num>Art. 15.</num>
+                <heading/>
+                <paragraph>
+                    <content>
+                        <p>
+ Per i reati di attentato alla Costituzione e di alto tradimento commessi dal Presidente della Repubblica la Corte costituzionale, nel pronunciare sentenza di condanna, determina le sanzioni penali nei limiti del massimo di pena previsto dalle leggi vigenti al momento del fatto, nonche' le sanzioni costituzionali, amministrative e civili adeguate al fatto.
+ Le norme contenute nelle leggi penali relative alla sussistenza del reato, alla punibilita' ed alla perseguibilita' sono applicabili nei giudizi di accusa nei confronti del Presidente del Consiglio dei Ministri e dei Ministri, ma la Corte puo' aumentare la pena fino ad un terzo anche oltre la misura stabilita, in caso di circostanze che rivelino l'eccezionale gravita' del reato. La Corte puo' infliggere, altresi', le sanzioni costituzionali e amministrative adeguate al fatto.
+
+ Disposizione transitoria.
+
+ La prima elezione della Commissione preveduta dall'art. 12 avra' luogo entro due mesi dalla entrata in vigore della presente legge.
+
+ La presente legge costituzionale, munita del sigillo dello Stato, sara' inserta nella Raccolta ufficiale delle leggi e dei decreti della Repubblica italiana. E' fatto obbligo a chiunque spetti di osservarla e di farla osservare come legge dello Stato.
+
+ Data a Roma, addi' 11 marzo 1953
+
+ EINAUDI
+
+ DE GASPERI - ZOLI 
+Visto, il Guardasigilli: ZOLI
+</p>
+                    </content>
+                </paragraph>
+            </article>
+        </body>
+    </act>
+</akomaNtoso>
