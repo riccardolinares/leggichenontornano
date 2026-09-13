@@ -16,7 +16,7 @@ body:
         va discusso prima in una issue normale.
 
         Per una segnalazione giuridica che non regge usa invece
-        **«Non è un conflitto»**; per un difetto del software, **«Difetto»**.
+        **«Non è un conflitto»**; per un difetto del software, **«Difetto nel software»**.
 
   - type: textarea
     id: problema
