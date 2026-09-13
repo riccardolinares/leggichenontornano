@@ -127,9 +127,21 @@ export default function Numeri() {
           <strong>Cosa non dice:</strong> che quei provvedimenti non siano mai stati adottati. Il
           conteggio parte dalla scadenza del termine: se il decreto è poi arrivato con cinque anni
           di ritardo, quei cinque anni li conta lo stesso, ma il provvedimento c’è. Misura{' '}
-          <em>termini scaduti</em>, non attuazioni mancate. La verifica in Gazzetta Ufficiale non
-          l’abbiamo ancora fatta, ed è il motivo per cui nessuna singola mancata attuazione è
-          pubblicata come segnalazione.
+          <em>termini scaduti</em>, non attuazioni mancate.{' '}
+          {contatore.verified > 0 ? (
+            <>
+              Su <strong>{numero(contatore.verified)}</strong> di questi mandati siamo andati a
+              guardare in Gazzetta Ufficiale, uno per uno: per {numero(contatore.adottatiInRitardo)}{' '}
+              il decreto è arrivato dopo la scadenza, per {numero(contatore.nonAdottati)} non
+              risulta pubblicato. Sugli altri non lo sappiamo, e solo i mandati verificati possono
+              diventare una segnalazione.
+            </>
+          ) : (
+            <>
+              La verifica in Gazzetta Ufficiale non l’abbiamo ancora fatta, ed è il motivo per cui
+              nessuna singola mancata attuazione è pubblicata come segnalazione.
+            </>
+          )}
         </>
       ),
       sintesi: 'di ritardo sui termini dei provvedimenti attuativi',

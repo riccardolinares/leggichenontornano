@@ -1,0 +1,133 @@
+name: Verifica in Gazzetta Ufficiale
+
+# Ogni notte un blocco di mandati attuativi scaduti viene cercato in Gazzetta
+# Ufficiale, uno per uno, per sapere se il decreto sia poi arrivato.
+#
+# È lenta di proposito. Interroga un servizio pubblico che non ha un'API, con
+# una pausa fra una richiesta e l'altra e un `user-agent` che dice chi siamo:
+# la verifica dell'intero corpus dura settimane di notti, e va bene così.
+#
+# **Il registro sta nel repository**, non nel database del runner: si rilegge
+# all'inizio del giro, si riscrive alla fine e si apre una pull request con il
+# diff. È l'unico modo perché il lavoro si accumuli su una macchina che muore
+# con il job — e, come per la pipeline, il diff è il punto: una verifica che
+# cambia esito si vede, e qualcuno la guarda prima che vada in pagina.
+#
+# Senza le collezioni di Normattiva raggiungibili la Action **non fallisce**:
+# non trova mandati da verificare, lo dice ed esce con successo, come la Action
+# del bot e quella della redazione. Un fork non deve diventare rosso per una
+# cosa che non deve fare.
+
+on:
+  schedule:
+    # 02:00 UTC: prima della pipeline delle 04:30, così le verifiche di stanotte
+    # entrano nel dataset che la pipeline rigenera stamattina.
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      quanti:
+        description: 'Quanti mandati verificare in questo giro'
+        required: false
+        default: '60'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  # Mai due campagne insieme: interrogherebbero lo stesso sito in parallelo, che
+  # è esattamente quello che questa Action è costruita per non fare.
+  group: verifica-gazzetta
+  cancel-in-progress: false
+
+jobs:
+  verifica:
+    name: Cerca in Gazzetta i provvedimenti attuativi scaduti
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: leggichenontornano
+          POSTGRES_PASSWORD: leggichenontornano
+          POSTGRES_DB: leggichenontornano
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql://leggichenontornano:leggichenontornano@localhost:5432/leggichenontornano
+      QUANTI: ${{ github.event.inputs.quanti || '60' }}
+    steps:
+      - uses: actions/checkout@v4
+      # Nessun «version:» qui: la versione autorevole è `packageManager` in
+      # package.json, ed è più precisa (9.15.0, non 9). Dichiararla in due
+      # posti fa fallire l'azione — «Multiple versions of pnpm specified» — e
+      # tenerle allineate a mano è un lavoro che prima o poi qualcuno sbaglia.
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @leggichenontornano/corpus exec prisma db push
+      - run: pnpm run build
+
+      # I mandati si estraggono dai commi degli atti ingeriti: senza corpus non
+      # c'è niente da verificare. Si scaricano le collezioni che i mandati li
+      # contengono davvero — le leggi con deleghe e i decreti di proroga.
+      - name: Scarica e ingerisci gli atti che prevedono provvedimenti attuativi
+        run: |
+          for nome in "Leggi contenenti deleghe" "DL proroghe"; do
+            echo "::group::$nome"
+            node packages/corpus/dist/cli.js fetch "$nome" --formato M || true
+            echo "::endgroup::"
+          done
+          for dir in data/corpus/*/; do
+            [ -d "$dir" ] || continue
+            node packages/corpus/dist/cli.js ingest "$dir" || true
+          done
+          node packages/corpus/dist/cli.js stats
+
+      - name: Rileggi il registro delle verifiche già fatte
+        run: node packages/engine/dist/cli.js gazzetta importa data/snapshot/verifiche.jsonl
+
+      - name: Verifica un blocco di mandati
+        run: |
+          node packages/engine/dist/cli.js gazzetta \
+            --quanti "$QUANTI" --non-prima-di 90 --intervallo 2000
+
+      - name: Riscrivi il registro e riassumi
+        id: registro
+        run: |
+          node packages/engine/dist/cli.js gazzetta esporta data/snapshot/verifiche.jsonl
+          {
+            echo 'stato<<FINE'
+            node packages/engine/dist/cli.js gazzetta stato
+            echo FINE
+          } >> "$GITHUB_OUTPUT"
+          node packages/engine/dist/cli.js gazzetta stato >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Apri la pull request con le verifiche del giro
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: gazzetta/verifiche-attuazione
+          title: 'Verifiche in Gazzetta Ufficiale del ${{ github.run_id }}'
+          commit-message: 'Aggiorna il registro delle verifiche in Gazzetta Ufficiale'
+          labels: pipeline, gazzetta
+          body: |
+            Un altro blocco di mandati attuativi cercato in Gazzetta Ufficiale.
+
+            **Guardate le righe `non-adottato` prima di unire.** Sono le uniche
+            che autorizzano il controllo `attuazione-mancante` a pubblicare una
+            segnalazione, cioè le uniche per cui il sito dirà a qualcuno che un
+            decreto previsto da una legge non è mai arrivato. Ogni riga porta la
+            query esatta e l'URL interrogato: si ricontrollano a mano in un
+            minuto, ed è un minuto ben speso.
+
+            ```
+            ${{ steps.registro.outputs.stato }}
+            ```

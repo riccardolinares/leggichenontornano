@@ -26,6 +26,7 @@ export * from './store/write.js';
 export * from './store/graph-queries.js';
 export * from './pipeline.js';
 export * from './consulta/index.js';
+export * from './gazzetta/index.js';
 export { exportSnapshot, type ExportOptions } from './snapshot/export.js';
 export {
   SnapshotReader,
@@ -52,4 +53,5 @@ export type {
   SnapshotVersion,
   SnapshotVertical,
   SnapshotPronuncia,
+  SnapshotVerifica,
 } from './snapshot/index.js';

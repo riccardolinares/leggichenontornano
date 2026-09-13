@@ -9,7 +9,7 @@
  * al momento del calcolo, perché una segnalazione pubblicata deve restare
  * riproducibile anche dopo un aggiornamento del corpus (ADR 0007).
  */
-import { getPrisma } from '@leggichenontornano/corpus';
+import { getPrisma, mandatiNonAttuati } from '@leggichenontornano/corpus';
 import { CorpusView, type ActView, type ProvisionView } from './corpus-view.js';
 import {
   applyGate,
@@ -318,19 +318,30 @@ function deduplica(findings: readonly AnomalyFinding[]): AnomalyFinding[] {
 }
 
 /**
- * Copertura della verifica in Gazzetta Ufficiale per le attuazioni mancanti.
+ * Copertura della verifica per le attuazioni mancanti.
  *
- * Legge la tabella del gold standard: un atto è «coperto» quando esiste
- * un'annotazione che certifica l'assenza del provvedimento attuativo. Finché
- * nessuno ha fatto quella verifica, l'insieme è vuoto — ed è giusto che lo sia.
+ * Due fonti, e la prima è quella che conta.
+ *
+ *  - **Le verifiche in Gazzetta Ufficiale** (`VerificaAttuazione`), con esito
+ *    `non-adottato`: sono mandati per i quali qualcuno è andato a guardare e
+ *    non ha trovato il provvedimento. La copertura è per mandato, con la sua
+ *    prova allegata (ADR 0013).
+ *  - **Il gold standard**, che esprime la copertura per atto: è la granularità
+ *    che una fonte giuridica esterna ci dà, e resta valida.
+ *
+ * Finché nessuna verifica è stata fatta l'insieme è vuoto, il controllo non
+ * pubblica niente — ed è giusto che sia così.
  */
-async function loadImplementationCoverage(): Promise<Set<string>> {
+export async function loadImplementationCoverage(): Promise<Set<string>> {
   const prisma = getPrisma();
-  const rows = await prisma.goldItem.findMany({
-    where: { expectCheck: 'attuazione-mancante' },
-    select: { urns: true },
-  });
-  return new Set(rows.flatMap((r) => r.urns));
+  const [verificati, gold] = await Promise.all([
+    mandatiNonAttuati(),
+    prisma.goldItem.findMany({
+      where: { expectCheck: 'attuazione-mancante' },
+      select: { urns: true },
+    }),
+  ]);
+  return new Set([...verificati, ...gold.flatMap((r) => r.urns)]);
 }
 
 /**

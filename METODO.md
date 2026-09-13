@@ -54,7 +54,7 @@ anomalia ha:
 | Livello | Tipo                   | Metodo                                                      | Precisione attesa |
 | ------- | ---------------------- | ----------------------------------------------------------- | ----------------- |
 | 1       | Antinomia formale      | Attraversamento del grafo, zero AI                          | ~100%             |
-| 1       | Rinvio non attuato     | Grafo + verifica di pubblicazione in Gazzetta Ufficiale     | ~100%             |
+| 1       | Rinvio non attuato     | Grafo + verifica in Gazzetta Ufficiale, mandato per mandato | ~100%             |
 | 2       | Gerarchia e competenza | Regole su metadati di fonte + giurisprudenza costituzionale | 70-85%            |
 | 3       | Antinomia sostanziale  | Estrazione deontica + query                                 | 50-80%            |
 | 3       | Area grigia            | Estrazione definizioni + segnali giurisprudenziali esterni  | variabile         |
@@ -170,6 +170,39 @@ modi diversi: quante annotazioni il motore intercetta _in assoluto_, e quante ne
 intercetta _fra quelle i cui atti abbiamo davvero scaricato_. Il primo si alza
 ampliando il corpus, il secondo scrivendo controlli migliori. Vedi
 [docs/gold-standard.md](docs/gold-standard.md).
+
+## 5.1 La verifica in Gazzetta Ufficiale
+
+Il contatore nazionale dice una cifra grande — i giorni trascorsi dalla scadenza
+dei termini che le leggi si sono date per i propri decreti attuativi — e accanto
+una frase piccola: misura **termini scaduti, non attuazioni mancate**. Sappiamo
+che una data è passata; se il decreto sia poi arrivato è un'altra domanda.
+
+Per rispondere bisogna andare a guardare in Gazzetta Ufficiale, un mandato per
+volta. Il modulo che lo fa (`packages/corpus/src/gazzetta`) restituisce sempre
+uno di tre esiti, mai due:
+
+- **`adottato`** — c'è un provvedimento del tipo previsto dal mandato, e nel suo
+  titolo o nel suo preambolo si legge la citazione di quel comma. Si registrano
+  gli estremi (data, numero di Gazzetta, link) e la **frase letterale** su cui la
+  corrispondenza si basa.
+- **`non-adottato`** — nell'intervallo fra l'entrata in vigore dell'atto e oggi,
+  nessun atto della Serie Generale cita quell'atto: né per esteso né in forma
+  abbreviata. È l'unico esito che autorizza una segnalazione pubblica.
+- **`non-verificabile`** — tutto il resto: il mandato che dice «con decreto»
+  senza dire chi lo adotta, l'atto senza estremi citabili, la ricerca che
+  restituisce troppo o troppo poco, il portale che non risponde.
+
+`non-verificabile` non è un fallimento da nascondere: è l'esito onesto quando non
+si sa, e il sistema lo preferisce sempre al tirare a indovinare. Le sue righe
+stanno nel dataset pubblico come le altre — sapere dove la verifica non arriva è
+un'informazione, e tenerla fuori farebbe sembrare la copertura migliore di com'è.
+
+Il cancello lavora sul **singolo mandato**, non sull'atto: una legge può
+prevedere dieci decreti, nove arrivati e uno no, e un cancello per atto
+pubblicherebbe nove segnalazioni false. Vedi
+[ADR 0013](docs/adr/0013-la-verifica-in-gazzetta.md) per il perché di ogni
+scelta, compresa quella che tiene la copertura bassa a lungo.
 
 ## 6. Soglia di pubblicazione: 85%
 

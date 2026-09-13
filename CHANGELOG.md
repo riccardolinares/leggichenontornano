@@ -26,6 +26,14 @@ campione su cui è misurata.
 - **Motore dei controlli** su tre livelli, con cancello di pubblicazione all'85%
   di precisione su almeno 30 revisioni umane. La soglia è codificata e provata
   dai test, non dichiarata.
+- **Verifica in Gazzetta Ufficiale** dei provvedimenti attuativi, mandato per
+  mandato: tre esiti — `adottato`, `non-adottato`, `non-verificabile` — e solo
+  il secondo autorizza il controllo `attuazione-mancante` a pubblicare. Ogni
+  verifica registra la query esatta, l'URL interrogato, la data e, quando il
+  provvedimento c'è, i suoi estremi e la citazione letterale. Sul corpus di oggi
+  la copertura è **zero**: nessun mandato ha ancora prodotto un `non-adottato`,
+  e il contatore continua a dire quello che diceva prima. Vedi
+  [ADR 0013](docs/adr/0013-la-verifica-in-gazzetta.md).
 - **Corte costituzionale**: 8.674 pronunce, 2.902 dichiarazioni di illegittimità
   lette dal dispositivo, archi `DICHIARA_ILLEGITTIMO` nel grafo e 762 voci di
   gold standard.
@@ -86,10 +94,14 @@ in [docs/qualita-fonti.md](docs/qualita-fonti.md).
 
 - Revisione esterna del primo lotto da parte di giuristi. Dichiarata sul sito,
   nella pagina Dati.
-- Verifica in Gazzetta Ufficiale dell'adozione dei provvedimenti attuativi.
-  Finché manca, il contatore nazionale misura **termini scaduti**, non
-  attuazioni mancate, e il controllo `attuazione-mancante` si rifiuta di
-  produrre segnalazioni.
+- **La verifica in Gazzetta Ufficiale c'è, la copertura no.** Il sistema è
+  costruito e provato su risposte reali salvate su disco, ma sul corpus attuale
+  ha prodotto zero `non-adottato`: gli atti che contengono mandati sono tutti
+  molto citati in Gazzetta, e su un atto citato la domanda larga non conclude.
+  Finché è così il contatore nazionale continua a misurare **termini scaduti**,
+  non attuazioni mancate, e il controllo `attuazione-mancante` continua a non
+  produrre segnalazioni. La copertura cresce ampliando il corpus verso le leggi
+  poco citate, non allentando la regola.
 - Nessuna revisione umana registrata: le percentuali di precisione non esistono
   ancora, e i controlli di livello 1 pubblicano perché deterministici, non
   perché verificati.
