@@ -19,3 +19,4 @@ Formato: [MADR](https://adr.github.io/madr/) semplificato.
 | [0009](0009-il-verticale-e-un-elenco-di-atti.md)              | Il verticale è un elenco di atti, non di parole            | Accettata |
 | [0010](0010-il-modello-scrive-attorno-ai-fatti.md)            | Un modello scrive il blog, e non decide niente             | Accettata |
 | [0011](0011-il-modello-confronta-dove-la-query-non-arriva.md) | Il modello confronta, dove la query non arriva             | Accettata |
+| [0012](0012-il-grafo-si-puo-fare-se-non-si-muove.md)          | Il grafo si può fare, se non si muove                      | Accettata |

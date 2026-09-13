@@ -113,6 +113,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     <Link href="/corte">Pronunce della Consulta</Link>
                   </li>
                   <li>
+                    <Link href="/grafo">La mappa delle leggi</Link>
+                  </li>
+                  <li>
                     <Link href="/mappa">Mappa del sito</Link>
                   </li>
                 </ul>
