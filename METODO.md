@@ -9,25 +9,29 @@ di revisione lo applica, il sito lo mostra.
 
 ---
 
-## 1. Cosa questo progetto non fa
+## 1. Su cosa si può contare
 
 Prima di tutto il resto, perché è la parte che qualifica tutto il resto.
 
-- **Non dà consulenza legale.** Nessuna segnalazione è un parere.
-- **Non dichiara illegittima o incostituzionale alcuna norma.** L'unico soggetto
-  che può farlo è la Corte costituzionale. Quando una pronuncia esiste, la
-  citiamo; non ne produciamo di nuove.
-- **Non usa un modello linguistico per decidere se due norme si contraddicono.**
-  Il modello estrae struttura, il codice giudica. Vedi §4.
-- **Non assegna punteggi di qualità legislativa**, non produce classifiche
-  politiche, non attribuisce responsabilità a partiti, governi o singoli.
-- **Non raccoglie voti dei cittadini.** Trasformerebbe un osservatore in un
-  attore politico e renderebbe ogni segnalazione contestabile per motivi
-  estranei ai dati.
-- **Non tratta l'assenza di segnale come una promessa.** Che una norma non
-  compaia in questo sito non significa che sia coerente: significa che i
-  controlli attivi non hanno trovato nulla. L'interfaccia lo dice a chiare
-  lettere.
+- **Ogni segnalazione si può rifare da soli.** Regola in chiaro sulla scheda,
+  dataset scaricabile, stesse righe a ogni riesecuzione.
+- **I testi originali stanno sempre in pagina**, alla lettera e con la loro data
+  di vigenza.
+- **Chi ha fatto il confronto è scritto in ogni scheda.** Ai livelli 1-3 una
+  query su date e relazioni; al livello 4 un modello, dichiarato come tale con
+  la sua confidenza e le citazioni che il codice ha verificato (§4 e ADR 0011).
+- **Le pronunce della Corte sono riportate con le sue parole.** Dichiarare
+  illegittima una norma spetta a lei; collegare le sue decisioni al testo che
+  colpiscono è quello che facciamo noi.
+- **Parliamo di testi, non di partiti.** Nessun punteggio di qualità
+  legislativa, nessuna classifica, nessuna responsabilità attribuita a governi o
+  persone.
+- **Si contesta con gli argomenti, non con i voti.** Ogni scheda si smonta
+  indicando dove sbaglia, e quella risposta cambia la precisione misurata.
+- **Sappiamo sempre dire fin dove siamo arrivati**, e l'interfaccia lo dice a
+  chiare lettere: quali controlli girano, su quanti atti, con quale precisione.
+
+Il parere legale lo dà chi ha titolo per darlo.
 
 ## 2. L'unità di valore è la singola anomalia
 

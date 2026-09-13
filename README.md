@@ -38,27 +38,38 @@ pagina.
 
 ---
 
-## Cosa questo progetto non fa
+## Su cosa si può contare
 
 Prima di tutto il resto, perché è la parte che qualifica tutto il resto.
 
-- **Nessuna consulenza legale.** Nessuna segnalazione è un parere.
-- **Nessuna dichiarazione di illegittimità o incostituzionalità.** L'unico
-  soggetto che può farla è la Corte costituzionale.
-- **Nessun modello linguistico che giudica se due norme si contraddicono.** Il
-  modello estrae struttura, il codice giudica. Vedi [METODO.md](METODO.md) e
-  [ADR 0001](docs/adr/0001-estrazione-piu-query.md).
-- **Nessun punteggio di qualità legislativa**, nessuna classifica politica,
-  nessuna attribuzione di responsabilità a partiti o singoli.
-- **Nessun voto dei cittadini** nella prima fase
-  ([ADR 0004](docs/adr/0004-niente-voto-cittadino.md)).
-- **Assenza di segnale ≠ norma coerente.** Detto esplicitamente
-  nell'interfaccia, su ogni pagina dell'indice.
-- **Il confronto semantico non copre tutta la legislazione**, e non copre nemmeno
-  tutta la legislazione dei domini che tratta. Ogni dominio dichiara l'elenco
-  degli atti su cui lavora, e quell'elenco è pubblicato sulla pagina **Dati** e
-  nel dataset (`verticali.json`): si può contare
-  ([ADR 0009](docs/adr/0009-il-verticale-e-un-elenco-di-atti.md)).
+- **Ogni segnalazione si può rifare da soli.** La regola che l'ha prodotta è in
+  chiaro sulla scheda, il dataset è scaricabile, e chi riesegue la stessa
+  interrogazione ottiene le stesse righe.
+- **I testi originali stanno sempre in pagina**, citati alla lettera e con la
+  loro data di vigenza: se una segnalazione è sbagliata, l'errore si vede nel
+  testo e non nel riassunto.
+- **Chi confronta è scritto in ogni scheda.** Ai livelli 1-3 il confronto lo fa
+  una query su date e relazioni; al livello 4 lo fa un modello, e la scheda lo
+  dice con un blocco che si distingue senza doverlo leggere
+  ([ADR 0011](docs/adr/0011-il-modello-confronta-dove-la-query-non-arriva.md)).
+- **Quando la Corte costituzionale si è pronunciata, lo trovate scritto**, con
+  le sue parole e il collegamento al testo integrale. Dichiarare illegittima una
+  norma spetta a lei; collegare le sue decisioni al testo che colpiscono è
+  quello che facciamo noi.
+- **Parliamo di testi, non di partiti.** Niente punteggi di qualità
+  legislativa, niente classifiche, nessuna responsabilità attribuita a governi o
+  persone: un rinvio a una norma abrogata resta vero qualunque cosa si pensi di
+  chi l'ha scritto, ed è per questo che regge.
+- **Si contesta con gli argomenti, non con i voti**
+  ([ADR 0004](docs/adr/0004-niente-voto-cittadino.md)). Ogni scheda si può
+  smontare indicando dove sbaglia, e quella risposta cambia la precisione
+  misurata del controllo.
+- **Sappiamo sempre dire fin dove siamo arrivati.** La pagina **Dati** elenca
+  quali controlli girano, su quanti atti e con quale precisione; il dataset
+  porta con sé gli elenchi, e si possono contare.
+
+Il parere legale lo dà chi ha titolo per darlo: quello che trovate qui serve a
+farselo in fretta e con i testi davanti.
 
 ## La soglia di pubblicazione
 
@@ -312,19 +323,19 @@ Istruzioni e configurazioni per ogni client: [`packages/mcp`](packages/mcp).
 
 ## Documenti
 
-|                                                |                                                                                   |
-| ---------------------------------------------- | --------------------------------------------------------------------------------- |
-| [METODO.md](METODO.md)                         | Cosa il progetto non fa, la tassonomia delle anomalie, la soglia di pubblicazione |
-| [DESIGN.md](DESIGN.md)                         | Le regole di design, e da quale principio discendono                              |
-| [CONTRIBUTING.md](CONTRIBUTING.md)             | Come contribuire, e cosa non accettiamo                                           |
-| [GOVERNANCE.md](GOVERNANCE.md)                 | Chi decide cosa, e quali decisioni nessuno può prendere                           |
-| [CHANGELOG.md](CHANGELOG.md)                   | Le versioni, e perché il numero di segnalazioni cambia                            |
-| [SECURITY.md](SECURITY.md)                     | Come segnalare un problema di sicurezza                                           |
-| [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)       | Codice di condotta                                                                |
-| [docs/adr](docs/adr)                           | Le decisioni architetturali e il perché                                           |
-| [docs/qualita-fonti.md](docs/qualita-fonti.md) | Dodici irregolarità trovate eseguendo il motore sui dati veri                     |
-| [docs/gold-standard.md](docs/gold-standard.md) | Come misuriamo, e quanto vale la misura                                           |
-| [docs/accessibilita.md](docs/accessibilita.md) | Le scelte di accessibilità e come si verificano                                   |
+|                                                |                                                                                  |
+| ---------------------------------------------- | -------------------------------------------------------------------------------- |
+| [METODO.md](METODO.md)                         | Su cosa si può contare, la tassonomia delle anomalie, la soglia di pubblicazione |
+| [DESIGN.md](DESIGN.md)                         | Le regole di design, e da quale principio discendono                             |
+| [CONTRIBUTING.md](CONTRIBUTING.md)             | Come contribuire, e cosa non accettiamo                                          |
+| [GOVERNANCE.md](GOVERNANCE.md)                 | Chi decide cosa, e quali decisioni nessuno può prendere                          |
+| [CHANGELOG.md](CHANGELOG.md)                   | Le versioni, e perché il numero di segnalazioni cambia                           |
+| [SECURITY.md](SECURITY.md)                     | Come segnalare un problema di sicurezza                                          |
+| [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)       | Codice di condotta                                                               |
+| [docs/adr](docs/adr)                           | Le decisioni architetturali e il perché                                          |
+| [docs/qualita-fonti.md](docs/qualita-fonti.md) | Dodici irregolarità trovate eseguendo il motore sui dati veri                    |
+| [docs/gold-standard.md](docs/gold-standard.md) | Come misuriamo, e quanto vale la misura                                          |
+| [docs/accessibilita.md](docs/accessibilita.md) | Le scelte di accessibilità e come si verificano                                  |
 
 ---
 
