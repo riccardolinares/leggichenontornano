@@ -719,8 +719,8 @@ test.describe('la mappa delle leggi', () => {
     // grafo che cambia a ogni caricamento non si può citare.
     const leggi = async () => {
       await page.goto('/grafo');
-      await page.waitForSelector('.grafo__tela circle');
-      return page.locator('.grafo__tela circle').first().getAttribute('cx');
+      await page.waitForSelector('.grafo__nodi circle');
+      return page.locator('.grafo__nodi circle').first().getAttribute('cx');
     };
     const prima = await leggi();
     const dopo = await leggi();
@@ -728,28 +728,79 @@ test.describe('la mappa delle leggi', () => {
     expect(dopo).toBe(prima);
   });
 
+  test('ci sono tutte le norme e tutti i tipi di legame, non solo i buchi', async ({ page }) => {
+    /*
+     * La prima versione teneva solo i rinvii che partivano da una norma in
+     * vigore, e il risultato era un disegno in cui si vedevano due sole leggi:
+     * tutto il resto era grigio indistinto. Questo test difende la correzione —
+     * il grafo deve mostrare **come le leggi si tengono**, e per farlo servono
+     * tutte le norme e tutte le famiglie di legame, ciascuna con il suo colore.
+     */
+    await page.goto('/grafo');
+    await page.waitForSelector('.grafo__nodi circle');
+
+    expect(await page.locator('.grafo__nodi circle').count()).toBeGreaterThan(150);
+    expect(await page.locator('.grafo__archi line').count()).toBeGreaterThan(1000);
+
+    // Più di un colore fra gli archi: con un colore solo il disegno direbbe
+    // che tutti i legami sono la stessa cosa, e non lo sono.
+    const colori = new Set(
+      await page
+        .locator('.grafo__archi line')
+        .evaluateAll((righe) => righe.map((r) => r.getAttribute('stroke') ?? '')),
+    );
+    expect(colori.size, 'gli archi hanno un colore solo').toBeGreaterThan(2);
+
+    // Il menù offre le famiglie per quello che fanno, non per il nome interno
+    // della relazione nel database.
+    const opzioni = await page.locator('#grafo-legame option').allTextContents();
+    expect(opzioni.join(' ')).toMatch(/rimanda a/i);
+    expect(opzioni.join(' ')).not.toMatch(/RINVIA/);
+  });
+
+  test('il disegno si può ingrandire, e le norme non si spostano', async ({ page }) => {
+    await page.goto('/grafo');
+    await page.waitForSelector('.grafo__nodi circle');
+    const primoNodo = page.locator('.grafo__nodi circle').first();
+    const xPrima = await primoNodo.getAttribute('cx');
+
+    const vista = page.locator('.grafo__vista');
+    await expect(vista).toHaveAttribute('transform', /scale\(1\)/);
+
+    await page.getByRole('button', { name: 'Avvicina' }).click();
+    await expect(vista).not.toHaveAttribute('transform', /scale\(1\)/);
+
+    /* La condizione di ADR 0012: avvicinarsi cambia il **punto di vista**, non
+       il disegno. Le coordinate dei nodi restano quelle calcolate dal server —
+       se cambiassero, la pagina smetterebbe di essere citabile. */
+    expect(await primoNodo.getAttribute('cx')).toBe(xPrima);
+
+    await page.getByRole('button', { name: 'Tutto il grafo' }).click();
+    await expect(vista).toHaveAttribute('transform', /scale\(1\)/);
+  });
+
   test('i filtri finiscono nell’URL, e un link li riapre', async ({ page }) => {
     await page.goto('/grafo');
-    await page.waitForSelector('.grafo__tela circle');
-    const tutti = await page.locator('.grafo__tela line').count();
+    await page.waitForSelector('.grafo__nodi circle');
+    const tutti = await page.locator('.grafo__archi line').count();
 
-    await page.getByLabel(/solo i collegamenti a norme cancellate/i).check();
+    await page.getByLabel(/solo i collegamenti a norme che non ci sono più/i).check();
     await expect(page).toHaveURL(/rotti=1/);
-    const soloRotti = await page.locator('.grafo__tela line').count();
+    const soloRotti = await page.locator('.grafo__archi line').count();
     expect(soloRotti).toBeLessThan(tutti);
 
     // Il link condiviso deve riaprire esattamente quella vista.
     await page.goto('/grafo?rotti=1');
-    await page.waitForSelector('.grafo__tela circle');
-    await expect(page.getByLabel(/solo i collegamenti a norme cancellate/i)).toBeChecked();
-    expect(await page.locator('.grafo__tela line').count()).toBe(soloRotti);
+    await page.waitForSelector('.grafo__nodi circle');
+    await expect(page.getByLabel(/solo i collegamenti a norme che non ci sono più/i)).toBeChecked();
+    expect(await page.locator('.grafo__archi line').count()).toBe(soloRotti);
   });
 
   test('il disegno dice cosa mostra a chi non lo vede, e i numeri stanno anche in tabella', async ({
     page,
   }) => {
     await page.goto('/grafo');
-    const tela = page.locator('.grafo__tela');
+    const tela = page.locator('.grafo__tela-contenitore');
     const etichetta = await tela.getAttribute('aria-label');
     // Non «grafo a nodi»: l'etichetta deve contenere il dato.
     expect(etichetta).toMatch(/\d+ norme/);
