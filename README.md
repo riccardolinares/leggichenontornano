@@ -102,7 +102,7 @@ contrario.**
 | [`packages/api`](packages/api)               | API pubblica REST, OpenAPI                                          |
 | [`packages/mcp`](packages/mcp)               | server MCP: il progetto dentro Claude, Codex e altri assistenti     |
 | [`apps/web`](apps/web)                       | il sito, con i test di accessibilità e usabilità                    |
-| [`apps/bot`](apps/bot)                       | la segnalazione del giorno su Mastodon, Telegram e X                |
+| [`apps/bot`](apps/bot)                       | la segnalazione del giorno su Telegram, Facebook, LinkedIn e X      |
 
 ---
 

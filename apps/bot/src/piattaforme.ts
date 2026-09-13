@@ -24,36 +24,101 @@ export interface Pubblicatore {
   pubblica(messaggio: Messaggio): Promise<Esito>;
 }
 
-/** Mastodon: API standard, un token basta. */
-export class Mastodon implements Pubblicatore {
-  readonly nome = 'mastodon';
+/**
+ * Facebook: pubblicazione sulla pagina del progetto, con un token di pagina.
+ *
+ * In Italia Facebook è ancora il posto dove una notizia di servizio pubblico
+ * circola fuori dalla bolla di chi già segue il tema, ed è il motivo per cui
+ * c'è: non perché sia la piattaforma più amata, ma perché ci sta chi questa
+ * roba non la cercherebbe mai.
+ */
+export class Facebook implements Pubblicatore {
+  readonly nome = 'facebook';
 
   constructor(
-    private readonly istanza = process.env['MASTODON_INSTANCE'] ?? '',
-    private readonly token = process.env['MASTODON_TOKEN'] ?? '',
+    private readonly pagina = process.env['FACEBOOK_PAGE_ID'] ?? '',
+    private readonly token = process.env['FACEBOOK_PAGE_TOKEN'] ?? '',
     private readonly fetchImpl: typeof fetch = fetch,
   ) {}
 
   configurato(): boolean {
-    return this.istanza.length > 0 && this.token.length > 0;
+    return this.pagina.length > 0 && this.token.length > 0;
   }
 
   async pubblica(messaggio: Messaggio): Promise<Esito> {
-    const res = await this.fetchImpl(`${this.istanza.replace(/\/+$/, '')}/api/v1/statuses`, {
+    // `link` separato da `message`: così l'anteprima Open Graph viene
+    // costruita da Facebook a partire dalla pagina, invece che indovinata
+    // dall'URL dentro il testo.
+    const res = await this.fetchImpl(
+      `https://graph.facebook.com/v21.0/${encodeURIComponent(this.pagina)}/feed`,
+      {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          message: messaggio.testo,
+          link: messaggio.url,
+          access_token: this.token,
+        }),
+      },
+    );
+    if (!res.ok) {
+      return { piattaforma: this.nome, pubblicato: false, motivo: `HTTP ${res.status}` };
+    }
+    const body = (await res.json()) as { id?: string };
+    return {
+      piattaforma: this.nome,
+      pubblicato: true,
+      ...(body.id ? { url: `https://www.facebook.com/${body.id}` } : {}),
+    };
+  }
+}
+
+/**
+ * LinkedIn: pubblicazione come organizzazione.
+ *
+ * È il canale dove sta il pubblico che questo progetto serve davvero —
+ * funzionari, avvocati d'impresa, chi scrive bandi — e dove un rinvio a una
+ * norma abrogata non è una curiosità ma un problema di lavoro.
+ */
+export class LinkedIn implements Pubblicatore {
+  readonly nome = 'linkedin';
+
+  constructor(
+    private readonly organizzazione = process.env['LINKEDIN_ORG_URN'] ?? '',
+    private readonly token = process.env['LINKEDIN_TOKEN'] ?? '',
+    private readonly fetchImpl: typeof fetch = fetch,
+  ) {}
+
+  configurato(): boolean {
+    return this.organizzazione.length > 0 && this.token.length > 0;
+  }
+
+  async pubblica(messaggio: Messaggio): Promise<Esito> {
+    const res = await this.fetchImpl('https://api.linkedin.com/rest/posts', {
       method: 'POST',
       headers: {
         authorization: `Bearer ${this.token}`,
         'content-type': 'application/json',
-        // Due esecuzioni nello stesso giorno non devono produrre due post.
-        'idempotency-key': messaggio.url,
+        'linkedin-version': '202405',
+        'x-restli-protocol-version': '2.0.0',
       },
-      body: JSON.stringify({ status: messaggio.testo, language: 'it', visibility: 'public' }),
+      body: JSON.stringify({
+        author: this.organizzazione,
+        commentary: messaggio.testo,
+        visibility: 'PUBLIC',
+        distribution: { feedDistribution: 'MAIN_FEED' },
+        lifecycleState: 'PUBLISHED',
+      }),
     });
     if (!res.ok) {
       return { piattaforma: this.nome, pubblicato: false, motivo: `HTTP ${res.status}` };
     }
-    const body = (await res.json()) as { url?: string };
-    return { piattaforma: this.nome, pubblicato: true, ...(body.url ? { url: body.url } : {}) };
+    const id = res.headers.get('x-restli-id');
+    return {
+      piattaforma: this.nome,
+      pubblicato: true,
+      ...(id ? { url: `https://www.linkedin.com/feed/update/${id}` } : {}),
+    };
   }
 }
 
@@ -112,5 +177,5 @@ export class X implements Pubblicatore {
 }
 
 export function pubblicatoriAttivi(): Pubblicatore[] {
-  return [new Mastodon(), new Telegram(), new X()].filter((p) => p.configurato());
+  return [new Telegram(), new Facebook(), new LinkedIn(), new X()].filter((p) => p.configurato());
 }

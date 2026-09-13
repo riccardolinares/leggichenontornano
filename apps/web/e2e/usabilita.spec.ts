@@ -453,6 +453,42 @@ test.describe('pronunce della Corte costituzionale', () => {
   });
 });
 
+test.describe('condivisione e contatti', () => {
+  test('i canali di condivisione sono quelli che si usano in Italia', async ({ page }) => {
+    await page.goto('/numeri');
+    const azioni = page.locator('.azioni').last();
+
+    // WhatsApp prima di tutto: è lì che un link su una legge viene girato
+    // davvero, nel gruppo dell'ufficio o della categoria professionale.
+    await expect(azioni.getByRole('link', { name: 'WhatsApp' })).toHaveAttribute('href', /wa\.me/);
+    await expect(azioni.getByRole('link', { name: 'Telegram' })).toHaveAttribute('href', /t\.me/);
+    await expect(azioni.getByRole('link', { name: 'Facebook' })).toHaveAttribute(
+      'href',
+      /facebook\.com/,
+    );
+    await expect(azioni.getByRole('link', { name: 'LinkedIn' })).toHaveAttribute(
+      'href',
+      /linkedin\.com/,
+    );
+
+    // Nessun widget di terze parti in pagina: sono collegamenti normali.
+    const script = await page
+      .locator('script[src]')
+      .evaluateAll((nodi) => nodi.map((n) => (n as HTMLScriptElement).src));
+    expect(script.filter((src) => !src.includes(new URL(page.url()).host))).toEqual([]);
+  });
+
+  test('il sito dice a chi scrivere e come sostenerlo', async ({ page }) => {
+    await page.goto('/');
+    const piede = page.locator('.piede');
+    await expect(piede.getByRole('link', { name: /info@leggichenontornano\.it/ })).toBeVisible();
+    await expect(piede.getByRole('link', { name: /caffè/i })).toHaveAttribute(
+      'href',
+      /buymeacoffee\.com/,
+    );
+  });
+});
+
 test.describe('robustezza', () => {
   test('un URL inesistente risponde con la pagina «non trovata», non con un errore', async ({
     page,

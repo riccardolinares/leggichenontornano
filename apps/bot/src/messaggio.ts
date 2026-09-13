@@ -6,18 +6,19 @@
  * qualcosa che non è nel dataset, quella frase sarebbe indifendibile — e
  * arriverebbe a più persone della pagina da cui viene.
  *
- * I limiti di lunghezza sono quelli reali delle piattaforme: 500 caratteri su
- * Mastodon, 280 su X, nessun limite pratico su Telegram. Il messaggio si
- * accorcia togliendo dalla fine, mai riscrivendo.
+ * I limiti di lunghezza sono quelli reali delle piattaforme: 280 caratteri su
+ * X, 3.000 su LinkedIn, nessun limite pratico su Telegram e Facebook. Il
+ * messaggio si accorcia togliendo dalla fine, mai riscrivendo.
  */
 import type { SnapshotAnomaly } from '@leggichenontornano/corpus';
 
-export type Piattaforma = 'mastodon' | 'telegram' | 'x';
+export type Piattaforma = 'telegram' | 'facebook' | 'linkedin' | 'x';
 
 const LIMITI: Readonly<Record<Piattaforma, number>> = {
-  mastodon: 500,
   x: 280,
+  linkedin: 3000,
   telegram: 4000,
+  facebook: 4000,
 };
 
 export interface Messaggio {
@@ -45,8 +46,8 @@ export function componiMessaggio(
   if (corpo.length > spazio) {
     corpo = `${corpo.slice(0, Math.max(0, spazio - 1)).trimEnd()}…`;
   } else if (corpo.length + 2 + anomalia.plainLanguage.length <= spazio) {
-    // C'è posto anche per la spiegazione in lingua comune: su Telegram e
-    // Mastodon di solito sì, su X quasi mai.
+    // C'è posto anche per la spiegazione in lingua comune: su Telegram,
+    // Facebook e LinkedIn di solito sì, su X quasi mai.
     corpo = `${corpo}\n\n${anomalia.plainLanguage}`;
     if (corpo.length > spazio) corpo = `${corpo.slice(0, spazio - 1).trimEnd()}…`;
   }

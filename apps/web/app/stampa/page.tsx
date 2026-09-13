@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { REPO_URL, SITE_URL, dataset } from '@/lib/dataset';
+import { EMAIL, REPO_URL, SITE_URL, SOSTIENI_URL, dataset } from '@/lib/dataset';
 import { data, numero } from '@/lib/testo';
 import { Tabella } from '@/components/tabella';
 import { ContatoreNazionale } from '@/components/contatore';
@@ -173,12 +173,37 @@ export default function Stampa() {
           dentro. Se pensate che un numero di questa pagina sia sbagliato, ditecelo: le risposte
           cambiano la precisione misurata, e possono togliere un controllo dal sito.
         </p>
+        <p>
+          Se preferite scrivere in privato — una domanda che non volete lasciare pubblica, una
+          richiesta di intervista, una correzione che riguarda un caso delicato — l’indirizzo è{' '}
+          <a href={`mailto:${EMAIL}`}>{EMAIL}</a>.
+        </p>
         <p className="azioni">
           <a className="bottone bottone--primario" href={`${REPO_URL}/issues/new`}>
             Apri una issue
           </a>
+          <a className="bottone" href={`mailto:${EMAIL}`}>
+            Scrivi una mail
+          </a>
           <a className="bottone" href={REPO_URL}>
             Il progetto su GitHub
+          </a>
+        </p>
+      </section>
+
+      <section className="sezione" aria-labelledby="sostegno">
+        <h2 id="sostegno" className="sezione__titolo">
+          Sostenere il progetto
+        </h2>
+        <p>
+          Il progetto non ha un modello di business e non ne vuole uno: nessuna pubblicità, nessun
+          abbonamento, nessun dato di chi legge rivenduto a qualcuno. I costi sono quelli veri di
+          una cosa che gira tutti i giorni — il dominio, l’hosting, le chiamate a un modello per le
+          estrazioni.
+        </p>
+        <p className="azioni">
+          <a className="bottone" href={SOSTIENI_URL}>
+            Offri un caffè al progetto
           </a>
         </p>
       </section>
