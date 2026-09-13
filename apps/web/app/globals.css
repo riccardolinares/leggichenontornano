@@ -1216,3 +1216,159 @@ a.griglia-cifre__voce:focus-visible .griglia-cifre__etichetta {
   font-size: 0.85rem;
   color: var(--inchiostro-tenue);
 }
+
+/* ---------- Modulo di segnalazione ---------- */
+
+.segnala {
+  max-width: var(--misura);
+  margin: 2rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+}
+
+.segnala__campo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.segnala__campo label {
+  font-family: var(--grottesco);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.segnala__facoltativo {
+  font-weight: 400;
+  color: var(--inchiostro-debole);
+}
+
+.segnala__aiuto {
+  margin: 0 0 0.3rem;
+  font-size: 0.86rem;
+  line-height: 1.5;
+  color: var(--inchiostro-tenue);
+}
+
+.segnala select,
+.segnala input[type='email'],
+.segnala input[type='text'],
+.segnala textarea {
+  font: inherit;
+  font-size: 0.95rem;
+  padding: 0.6rem 0.7rem;
+  color: var(--inchiostro);
+  background: var(--carta-alta);
+  border: 1px solid var(--bordo-forte);
+  border-radius: 3px;
+  width: 100%;
+}
+
+.segnala textarea {
+  resize: vertical;
+  line-height: 1.55;
+}
+
+.segnala select:focus-visible,
+.segnala input:focus-visible,
+.segnala textarea:focus-visible {
+  outline: 3px solid var(--verderame);
+  outline-offset: 1px;
+}
+
+/*
+ * Il campo esca.
+ *
+ * Non `display: none`: alcuni programmi saltano i campi nascosti così, mentre
+ * riempiono quelli fuori schermo. Fuori dalla finestra, fuori dal percorso da
+ * tastiera e fuori dall'albero di accessibilità: per una persona non esiste.
+ */
+.segnala__esca {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.segnala__nota {
+  margin: 0;
+  font-size: 0.86rem;
+  line-height: 1.5;
+  color: var(--inchiostro-tenue);
+  border-left: 3px solid var(--ocra);
+  padding-left: 0.9rem;
+}
+
+.segnala__esito:empty {
+  display: none;
+}
+
+.segnala__esito {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--ossido);
+}
+
+.segnala--fatto {
+  border-left: 3px solid var(--verderame);
+  padding-left: 1rem;
+}
+
+/* Il richiamo compatto, da mettere in fondo a una pagina qualunque. */
+.richiamo-segnala {
+  margin: 3rem 0 0;
+  padding-top: 1.4rem;
+  border-top: 1px solid var(--bordo);
+  font-size: 0.92rem;
+  color: var(--inchiostro-tenue);
+  max-width: var(--misura);
+}
+
+/* ---------- Mappa del sito ---------- */
+
+.mappa {
+  display: grid;
+  gap: 2.2rem;
+  grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+  margin-top: 2rem;
+}
+
+.mappa h2 {
+  font-size: 1.05rem;
+  margin-bottom: 0.6rem;
+}
+
+.mappa ul {
+  margin: 0;
+  padding-left: 1.1rem;
+}
+
+.mappa li {
+  margin-bottom: 0.55rem;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--inchiostro-tenue);
+}
+
+/* ---------- Il blocco del sostegno nel piede ---------- */
+
+.piede__sostegno {
+  margin-top: 2rem;
+  padding: 1.2rem 1.3rem;
+  background: var(--carta-alta);
+  border: 1px solid var(--bordo);
+  border-radius: 3px;
+  max-width: 46rem;
+}
+
+.piede__sostegno p {
+  margin: 0 0 0.8rem;
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+.piede__sostegno .azioni {
+  margin: 0;
+}

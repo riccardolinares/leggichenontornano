@@ -107,10 +107,34 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div className="contenitore">
             <div className="piede__griglia">
               <div>
-                <h2>Il progetto</h2>
+                <h2>Cosa c’è nel sito</h2>
                 <ul>
                   <li>
-                    <Link href="/come-funziona">Come funziona</Link>
+                    <Link href="/">Le segnalazioni</Link>
+                  </li>
+                  <li>
+                    <Link href="/blog">Approfondimenti</Link>
+                  </li>
+                  <li>
+                    <Link href="/numeri">I numeri</Link>
+                  </li>
+                  <li>
+                    <Link href="/norme">Le norme del corpus</Link>
+                  </li>
+                  <li>
+                    <Link href="/corte">Pronunce della Consulta</Link>
+                  </li>
+                  <li>
+                    <Link href="/mappa">Mappa del sito</Link>
+                  </li>
+                </ul>
+              </div>
+
+              <div>
+                <h2>Usare il progetto</h2>
+                <ul>
+                  <li>
+                    <Link href="/assistente">Nel tuo assistente (MCP)</Link>
                   </li>
                   <li>
                     <Link href="/dati">Dati e precisione</Link>
@@ -119,10 +143,32 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     <Link href="/stampa">Per la stampa</Link>
                   </li>
                   <li>
+                    <Link href="/come-funziona">Come funziona</Link>
+                  </li>
+                  <li>
                     <a href={REPO_URL}>Codice sorgente su GitHub</a>
+                  </li>
+                  <li>
+                    <a href={`${REPO_URL}/releases`}>Scarica il dataset</a>
                   </li>
                 </ul>
               </div>
+
+              <div>
+                <h2>Scriverci</h2>
+                <ul>
+                  <li>
+                    <Link href="/segnala">Qualcosa non torna?</Link>
+                  </li>
+                  <li>
+                    <a href={`mailto:${EMAIL}`}>{EMAIL}</a>
+                  </li>
+                  <li>
+                    <Link href="/dicono">Dicono di noi</Link>
+                  </li>
+                </ul>
+              </div>
+
               <div>
                 <h2>Licenze</h2>
                 <ul>
@@ -131,44 +177,40 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   <li>
                     <a href="https://dati.normattiva.it">Fonte: Normattiva open data</a>
                   </li>
-                </ul>
-              </div>
-              <div>
-                <h2>Cosa non facciamo</h2>
-                <ul>
-                  <li>Nessuna consulenza legale</li>
-                  <li>Nessuna dichiarazione di illegittimità</li>
-                  <li>Nessun modello che giudica le norme</li>
-                  <li>Nessuna pubblicità, nessun tracciamento</li>
-                </ul>
-              </div>
-              <div>
-                <h2>Scrivere e sostenere</h2>
-                <ul>
                   <li>
-                    <a href={`mailto:${EMAIL}`}>{EMAIL}</a>
-                  </li>
-                  <li>
-                    <a href={`${REPO_URL}/issues/new`}>Segnala un errore</a>
-                  </li>
-                  {/* Il progetto non ha pubblicità né abbonamenti: o lo sostiene
-                      chi lo usa, o lo paga il manutentore di tasca sua. Meglio
-                      dirlo che lasciarlo intuire. */}
-                  <li>
-                    <a href={SOSTIENI_URL}>Offri un caffè al progetto</a>
-                  </li>
-                  <li>
-                    <Link href="/dicono">Dicono di noi</Link>
+                    <a href="https://www.cortecostituzionale.it">Fonte: Corte costituzionale</a>
                   </li>
                 </ul>
               </div>
             </div>
 
-            <p className="attribuzione" style={{ marginTop: '2rem' }}>
-              <strong>Fonte dei dati:</strong> Normattiva — Banca dati delle norme vigenti,{' '}
-              <a href="https://dati.normattiva.it">dati.normattiva.it</a>, distribuiti con licenza{' '}
-              <a href="https://creativecommons.org/licenses/by/4.0/deed.it">CC BY 4.0</a>. Le
-              elaborazioni, le segnalazioni e gli errori sono nostri.
+            {/* Il sostegno non è una voce d'elenco fra le altre: il progetto non
+                ha pubblicità né abbonamenti, e chi lo usa è l'unico posto da cui
+                possono arrivare i soldi che lo tengono in piedi. Sta in un
+                blocco suo, dove si vede. */}
+            <div className="piede__sostegno">
+              <p>
+                <strong>Questo sito non ha pubblicità, abbonamenti o tracciamento.</strong> Se vi
+                serve e volete che continui, il modo più diretto è questo.
+              </p>
+              <p className="azioni">
+                <a className="bottone bottone--primario" href={SOSTIENI_URL}>
+                  Offri un caffè al progetto
+                </a>
+                <Link className="bottone" href="/segnala">
+                  Segnala un problema
+                </Link>
+              </p>
+            </div>
+
+            <p className="attribuzione">
+              <strong>Fonti:</strong> Normattiva — Banca dati delle norme vigenti,{' '}
+              <a href="https://dati.normattiva.it">dati.normattiva.it</a>, con licenza{' '}
+              <a href="https://creativecommons.org/licenses/by/4.0/deed.it">CC BY 4.0</a>; Corte
+              costituzionale, open data con licenza{' '}
+              <a href="https://creativecommons.org/licenses/by-sa/3.0/it/">CC BY-SA 3.0</a>. Le
+              elaborazioni e le segnalazioni sono nostre, e{' '}
+              <Link href="/segnala">si possono contestare qui</Link>.
             </p>
           </div>
         </footer>
