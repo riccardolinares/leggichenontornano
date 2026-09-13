@@ -90,7 +90,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     <Link href="/stampa">Per la stampa</Link>
                   </li>
                   <li>
-                    <a href={REPO_URL}>Codice sorgente</a>
+                    <a href={REPO_URL}>Codice sorgente su GitHub</a>
                   </li>
                 </ul>
               </div>
