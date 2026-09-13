@@ -353,7 +353,12 @@ export default async function LettoreNorma({ params, searchParams }: Props) {
           <h2 id="grafo-titolo" className="sezione__titolo">
             Relazioni con altre norme
           </h2>
-          <EgoNetwork centro={urn} nodi={ego.nodes} archi={ego.edges} />
+          <EgoNetwork
+            centro={urn}
+            nodi={ego.nodes}
+            archi={ego.edges}
+            pronunce={reader.pronunce()}
+          />
         </section>
       ) : null}
     </div>

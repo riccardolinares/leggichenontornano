@@ -1,5 +1,6 @@
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
+import { percorsoPronuncia, type PronunciaIndirizzabile } from '../lib/testo';
 
 /**
  * I percorsi da verificare.
@@ -85,9 +86,20 @@ export function primoControlloConEsito(): string | null {
   return anomalie.find((a) => a.published)?.checkId ?? anomalie[0]?.checkId ?? null;
 }
 
+/**
+ * Tutte le pronunce del dataset, nella forma che basta a costruirne l'indirizzo.
+ *
+ * I test le vogliono tutte e non un campione: sono cinquantacinque, costano
+ * poco, e l'unica verifica che avrebbe intercettato il guasto in produzione è
+ * proprio «ognuna di queste ha una pagina che risponde».
+ */
+export function tuttePronunce(): PronunciaIndirizzabile[] {
+  return jsonl<PronunciaIndirizzabile>('pronunce.jsonl');
+}
+
 /** Una pronuncia presente nel dataset, per la pagina della singola decisione. */
-export function primaPronuncia(): string | null {
-  return jsonl<{ ecli: string }>('pronunce.jsonl')[0]?.ecli ?? null;
+export function primaPronuncia(): PronunciaIndirizzabile | null {
+  return tuttePronunce()[0] ?? null;
 }
 
 /** Uno degli articoli del blog, se ce n'è: la pagina ha una forma sua. */
@@ -101,6 +113,39 @@ export function primoApprofondimento(): string | null {
   return file ? file.replace(/\.json$/, '') : null;
 }
 
+/**
+ * Il registro dei consumi ha già qualche riga?
+ *
+ * La pagina dei costi ha due facce — quella con i numeri e quella che dice di
+ * non averli ancora — e su un clone appena fatto è la seconda. I test devono
+ * verificare quella che la build ha davvero prodotto: chiedere alla pagina
+ * quale sia significherebbe farsi dire dall'imputato com'è andata.
+ */
+export function registroConsumiVuoto(): boolean {
+  const cartella =
+    process.env['LCNT_CONSUMI'] ?? join(process.cwd(), '..', '..', 'data', 'consumi');
+  if (!existsSync(cartella)) return true;
+  return readdirSync(cartella)
+    .filter((f) => f.endsWith('.jsonl'))
+    .every((f) => readFileSync(join(cartella, f), 'utf8').trim().length === 0);
+}
+
+/**
+ * I percorsi delle pagine legali, indice compreso.
+ *
+ * Scritti qui e non importati da `lib/legale.ts` di proposito: un test che
+ * legge l'elenco dal codice che verifica non si accorge del giorno in cui una
+ * pagina sparisce dall'elenco. Questa è la lista che il progetto si è
+ * impegnato a servire, e vive dalla parte di chi controlla.
+ */
+export const PERCORSI_LEGALI = [
+  '/legal',
+  '/legal/privacy',
+  '/legal/termini',
+  '/legal/cookie',
+  '/legal/disclaimer',
+] as const;
+
 export function percorsiDaVerificare(): Percorso[] {
   const percorsi: Percorso[] = [
     { nome: 'home', url: '/' },
@@ -111,13 +156,23 @@ export function percorsiDaVerificare(): Percorso[] {
     { nome: 'mappa viva delle leggi', url: '/grafo/vivo' },
     { nome: 'elenco delle norme', url: '/norme' },
     { nome: 'elenco delle pronunce', url: '/corte' },
-    { nome: 'assistente', url: '/assistente' },
+    { nome: 'mcp', url: '/mcp' },
     { nome: 'come funziona', url: '/come-funziona' },
     { nome: 'dati', url: '/dati' },
+    { nome: 'costi e contributori', url: '/costi' },
     { nome: 'stampa', url: '/stampa' },
     { nome: 'dicono di noi', url: '/dicono' },
     { nome: 'segnala un problema', url: '/segnala' },
     { nome: 'mappa del sito', url: '/mappa' },
+    /* Le pagine legali passano di qui come tutte le altre: l'audit axe, la
+       gerarchia dei titoli, la larghezza da telefono e l'avvertenza nel piede
+       valgono per un'informativa quanto per una scheda — di più, visto che è
+       la pagina che qualcuno apre proprio perché ha un dubbio. */
+    { nome: 'indice delle pagine legali', url: '/legal' },
+    { nome: 'informativa privacy', url: '/legal/privacy' },
+    { nome: 'termini di servizio', url: '/legal/termini' },
+    { nome: 'cookie', url: '/legal/cookie' },
+    { nome: 'limitazione di responsabilità', url: '/legal/disclaimer' },
     { nome: 'pagina non trovata', url: '/percorso-che-non-esiste' },
   ];
 
@@ -134,11 +189,12 @@ export function percorsiDaVerificare(): Percorso[] {
     percorsi.push({ nome: 'approfondimento', url: `/blog/${approfondimento}` });
   }
 
-  const pronuncia = primaPronuncia();
+  const pronunce = tuttePronunce();
+  const pronuncia = pronunce[0];
   if (pronuncia) {
     percorsi.push({
       nome: 'pagina di una pronuncia',
-      url: `/corte/${encodeURIComponent(pronuncia)}`,
+      url: percorsoPronuncia(pronuncia, pronunce),
     });
   }
 

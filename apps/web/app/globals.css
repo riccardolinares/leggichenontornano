@@ -2142,3 +2142,79 @@ a.griglia-cifre__voce:focus-visible .griglia-cifre__etichetta {
   color: var(--inchiostro-tenue);
   max-width: 22rem;
 }
+
+/* ---------- Le tre strade per contribuire ---------- */
+
+/* Le tre strade hanno la stessa dignità, e in una pagina la dignità è una cosa
+   che si vede: stessa larghezza, stesso fondo, stesso corpo di testo, nessun
+   ordine che suggerisca una scala. Un elenco puntato le avrebbe messe in fila —
+   e la prima di una fila è sempre la più importante, anche quando chi l'ha
+   scritta giura di no. Su schermo stretto si impilano, ed è l'unico punto in cui
+   un ordine esiste: lì lo decide la larghezza, non noi. */
+.strade {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));
+  margin-top: 1.6rem;
+}
+
+.strada {
+  background: var(--carta-alta);
+  border: 1px solid var(--bordo);
+  border-radius: 2px;
+  padding: 1.3rem 1.4rem;
+}
+
+.strada h3 {
+  margin-top: 0;
+  margin-bottom: 0.7rem;
+  font-size: 1.05rem;
+}
+
+.strada p {
+  font-size: 0.94rem;
+  line-height: 1.6;
+}
+
+/* ---------- Pagine legali ---------- */
+
+/*
+ * La data di revisione sta sotto il titolo, nel corpo del testo e non in
+ * grigio chiaro: un'informativa vale a una data, e chi legge deve trovarla
+ * prima di decidere se fidarsi, non in fondo dopo aver già deciso.
+ */
+.legale-data {
+  margin-top: -0.4rem;
+  padding-bottom: 1.2rem;
+  border-bottom: 1px solid var(--bordo);
+  max-width: 46rem;
+}
+
+.legale-indice {
+  list-style: none;
+  margin: 2rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 1.4rem;
+  max-width: 46rem;
+}
+
+.legale-indice li {
+  padding-left: 1rem;
+  border-left: 3px solid var(--verderame-velo);
+}
+
+.legale-indice a {
+  font-weight: 600;
+}
+
+.legale-indice p {
+  margin: 0.3rem 0 0;
+  color: var(--inchiostro-tenue);
+}
+
+.legale-indice small {
+  display: block;
+  margin-top: 0.3rem;
+  color: var(--inchiostro-debole);
+}

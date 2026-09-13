@@ -12,9 +12,19 @@ const nextConfig = {
   ],
   poweredByHeader: false,
   eslint: { ignoreDuringBuilds: true },
-  /* La home era l'indice completo, e i suoi filtri erano `/?tipo=<controllo>`.
-     Un URL pubblicato non si rompe (ADR 0008): quei link riaprono la stessa
-     vista, che adesso vive a `/segnalazioni`. */
+  /**
+   * Gli indirizzi pubblicati non si rompono (ADR 0008).
+   *
+   * Due casi, e tutti e due nati da una pagina che ha cambiato posto.
+   *
+   * La home era l'indice completo, e i suoi filtri erano `/?tipo=<controllo>`:
+   * quei link riaprono la stessa vista, che adesso vive a `/segnalazioni`.
+   *
+   * La pagina del server MCP è nata come `/assistente`, quando «MCP» sembrava
+   * una sigla da iniziati. Adesso è la parola con cui la si cerca. Il 308
+   * passa a `/mcp` anche il peso accumulato dal vecchio indirizzo: un 302
+   * lascerebbe l'indice fermo dov'era.
+   */
   async redirects() {
     return [
       {
@@ -23,6 +33,14 @@ const nextConfig = {
         destination: '/segnalazioni?tipo=:tipo',
         permanent: true,
       },
+      { source: '/assistente', destination: '/mcp', permanent: true },
+      /* Il sito è in italiano e le rotte pure, ma `/legal/terms`,
+         `/legal/privacy-policy` e `/legal/cookie-policy` sono i nomi che
+         chiunque scrive a memoria quando incolla un collegamento di servizio.
+         Un 308 costa una riga e fa arrivare lo stesso chi legge. */
+      { source: '/legal/terms', destination: '/legal/termini', permanent: true },
+      { source: '/legal/privacy-policy', destination: '/legal/privacy', permanent: true },
+      { source: '/legal/cookie-policy', destination: '/legal/cookie', permanent: true },
     ];
   },
 

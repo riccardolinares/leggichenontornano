@@ -43,6 +43,12 @@ jobs:
           --health-retries 5
     env:
       DATABASE_URL: postgresql://leggichenontornano:leggichenontornano@localhost:5432/leggichenontornano
+      # L'estrazione deontica e il confronto assistito interrogano un modello, e
+      # ogni chiamata lascia una riga nel registro dei consumi. Il percorso è
+      # assoluto perché uno relativo punterebbe dentro la cartella del pacchetto
+      # che sta girando: le righe si scriverebbero lo stesso, in un posto da cui
+      # la pull request di fine giro non le raccoglie.
+      LCNT_CONSUMI: ${{ github.workspace }}/data/consumi
       COLLEZIONI: ${{ github.event.inputs.collezioni || 'Codici,Leggi costituzionali,Leggi contenenti deleghe,Leggi di delegazione europea,DL proroghe,Regolamenti di delegificazione,DL e leggi di conversione' }}
     steps:
       - uses: actions/checkout@v4

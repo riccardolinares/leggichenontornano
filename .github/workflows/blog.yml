@@ -52,20 +52,30 @@ jobs:
           # finché nessuno cambia la cartella di lavoro, e poi legge un dataset
           # vuoto senza dirlo.
           LCNT_SNAPSHOT: ${{ github.workspace }}/data/snapshot
+          # Idem per il registro dei consumi. Con un percorso relativo la riga
+          # finirebbe in una cartella dentro `packages/redazione`, da cui il
+          # passo successivo non la raccoglie: il consumo risulterebbe zero
+          # senza che niente fallisca.
+          LCNT_CONSUMI: ${{ github.workspace }}/data/consumi
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
           node packages/redazione/dist/cli.js scrivi \
             ${{ github.event.inputs.prova == 'false' && ' ' || '--prova' }}
 
-      - name: Pubblica l’articolo
+      # L'articolo e il suo costo si committano insieme, in un commit solo.
+      # Separarli significherebbe che il giorno in cui il secondo passo
+      # fallisce l'articolo è online e la sua riga di consumo è persa: il
+      # registro racconterebbe una spesa più bassa del vero, che è il modo
+      # peggiore di sbagliare, perché somiglia a un risultato.
+      - name: Pubblica l’articolo e la riga di consumo
         if: github.event.inputs.prova != 'true'
         run: |
-          if git diff --quiet -- data/blog; then
+          if git diff --quiet -- data/blog data/consumi; then
             echo "Nessun articolo nuovo da pubblicare."
             exit 0
           fi
           git config user.name "redazione leggichenontornano"
           git config user.email "info@leggichenontornano.it"
-          git add data/blog
+          git add data/blog data/consumi
           git commit -m "Approfondimento del $(date -u +%Y-%m-%d)"
           git push

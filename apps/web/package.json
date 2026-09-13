@@ -16,6 +16,7 @@
   "dependencies": {
     "@leggichenontornano/akn-parser": "workspace:*",
     "@leggichenontornano/api": "workspace:*",
+    "@leggichenontornano/consumi": "workspace:*",
     "@leggichenontornano/corpus": "workspace:*",
     "@leggichenontornano/engine": "workspace:*",
     "@leggichenontornano/redazione": "workspace:*",

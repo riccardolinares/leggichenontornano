@@ -24,8 +24,8 @@
   },
   "dependencies": {
     "@leggichenontornano/akn-parser": "workspace:*",
-    "@leggichenontornano/corpus": "workspace:*",
-    "@anthropic-ai/sdk": "^0.71.0"
+    "@leggichenontornano/consumi": "workspace:*",
+    "@leggichenontornano/corpus": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.7.2",

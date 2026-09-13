@@ -37,6 +37,16 @@ campione su cui è misurata.
   pipeline schedulata che riscarica il delta e apre una pull request con il diff.
 - **Dataset derivato** in JSONL e Parquet, con licenze e provenienza nel
   manifesto.
+- **Registro dei consumi e pagina «Costi e contributori»** (`/costi`). Ogni
+  chiamata a un modello linguistico passa da un unico client che ne registra
+  data, modello, token e costo stimato in `data/consumi/`, un JSONL append-only
+  versionato nel repository; i prezzi stanno in un file solo, ciascuno con la
+  data da cui vale, e le righe già scritte non si ricalcolano quando il listino
+  cambia. La pagina mostra la spesa, i contributori letti da GitHub in fase di
+  costruzione e le tre strade per contribuire — e quando il registro non ha
+  abbastanza righe per sostenere una cifra **lo dice**, invece di mostrare zeri
+  che somigliano a una misura. Chi contribuisce può dichiarare il proprio
+  consumo con `pnpm consumi dichiara`.
 
 ### Misurato
 
@@ -69,6 +79,14 @@ in [docs/qualita-fonti.md](docs/qualita-fonti.md).
 
 ### Corretto
 
+- **Le pagine delle pronunce rispondevano 404 in produzione, tutte e
+  cinquantacinque.** Stavano su `/corte/ECLI%3AIT%3ACOST%3A2026%3A121`, e un
+  percorso che contiene i due punti non arrivava mai alla pagina: in locale
+  funzionava, quindi nessun test lo vedeva. L'indirizzo ora è la citazione —
+  `/corte/sentenza-121-2026` — che è anche l'unica forma che qualcuno può
+  leggere al telefono (ADR 0017). I vecchi indirizzi reindirizzano in modo
+  permanente, l'ECLI resta nel dataset e scritto in pagina, e un test chiede
+  che **ogni** pronuncia del dataset abbia una pagina che risponde.
 - **L'integrazione continua non era mai partita.** `pnpm` era dichiarato due
   volte — nel workflow e in `packageManager` — e l'azione si rifiutava di
   scegliere. Il badge era rosso dal primo commit e nessuno dei passi

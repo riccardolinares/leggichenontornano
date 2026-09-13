@@ -48,6 +48,9 @@ importers:
       '@leggichenontornano/api':
         specifier: workspace:*
         version: link:../../packages/api
+      '@leggichenontornano/consumi':
+        specifier: workspace:*
+        version: link:../../packages/consumi
       '@leggichenontornano/corpus':
         specifier: workspace:*
         version: link:../../packages/corpus
@@ -130,6 +133,19 @@ importers:
         specifier: ^2.1.8
         version: 2.1.9(@types/node@22.20.2)
 
+  packages/consumi:
+    dependencies:
+      '@anthropic-ai/sdk':
+        specifier: ^0.71.0
+        version: 0.71.2(zod@3.25.76)
+    devDependencies:
+      typescript:
+        specifier: ^5.7.2
+        version: 5.9.3
+      vitest:
+        specifier: ^2.1.8
+        version: 2.1.9(@types/node@22.20.2)
+
   packages/corpus:
     dependencies:
       '@leggichenontornano/akn-parser':
@@ -160,12 +176,12 @@ importers:
 
   packages/engine:
     dependencies:
-      '@anthropic-ai/sdk':
-        specifier: ^0.71.0
-        version: 0.71.2(zod@3.25.76)
       '@leggichenontornano/akn-parser':
         specifier: workspace:*
         version: link:../akn-parser
+      '@leggichenontornano/consumi':
+        specifier: workspace:*
+        version: link:../consumi
       '@leggichenontornano/corpus':
         specifier: workspace:*
         version: link:../corpus
@@ -198,12 +214,12 @@ importers:
 
   packages/redazione:
     dependencies:
-      '@anthropic-ai/sdk':
-        specifier: ^0.71.0
-        version: 0.71.2(zod@3.25.76)
       '@leggichenontornano/akn-parser':
         specifier: workspace:*
         version: link:../akn-parser
+      '@leggichenontornano/consumi':
+        specifier: workspace:*
+        version: link:../consumi
       '@leggichenontornano/corpus':
         specifier: workspace:*
         version: link:../corpus

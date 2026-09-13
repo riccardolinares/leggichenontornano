@@ -156,10 +156,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   <h2>Usare il progetto</h2>
                   <ul>
                     <li>
-                      <Link href="/assistente">Nel tuo assistente (MCP)</Link>
+                      <Link href="/mcp">MCP: nel tuo assistente</Link>
                     </li>
                     <li>
                       <Link href="/dati">Dati e precisione</Link>
+                    </li>
+                    <li>
+                      <Link href="/costi">Costi e contributori</Link>
                     </li>
                     <li>
                       <Link href="/stampa">Per la stampa</Link>
@@ -201,6 +204,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     </li>
                     <li>
                       <a href="https://www.cortecostituzionale.it">Fonte: Corte costituzionale</a>
+                    </li>
+                    <li>
+                      <Link href="/legal">Privacy, termini e responsabilità</Link>
                     </li>
                   </ul>
                 </div>
