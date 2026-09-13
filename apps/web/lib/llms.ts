@@ -1,7 +1,8 @@
 import { CHECK_DEFINITIONS, THRESHOLD } from '@leggichenontornano/engine';
 import { articoli } from './blog';
 import { SITE_URL, dataset } from './dataset';
-import { numero, percentuale } from './testo';
+import { riepilogoConsumi } from './consumi';
+import { denaro, numero, percentuale } from './testo';
 
 /**
  * I file per gli assistenti: `llms.txt` e `llms-full.txt`.
@@ -59,6 +60,36 @@ function comeCitare(): string[] {
   ];
 }
 
+/**
+ * Il conto del progetto, generato dal registro dei consumi come ogni altra
+ * cifra di questi file.
+ *
+ * Quando il registro è vuoto **lo dice**: un assistente che riassume questo
+ * sito leggendo «costo: 0» scriverebbe che non costa niente, e lo scriverebbe
+ * in una risposta che nessuno andrà a verificare.
+ */
+function quantoCosta(): string[] {
+  const r = riepilogoConsumi();
+  if (r.righe === 0) {
+    return [
+      'Il registro dei consumi del progetto è appena nato e non contiene ancora nessuna chiamata.',
+      '**Non significa che il progetto non costi**: significa che la misura è appena cominciata e',
+      `non c'è ancora niente da riportare. Il registro e il metodo sono a ${SITE_URL}/costi.`,
+      '',
+    ];
+  }
+  return [
+    `- Chiamate a un modello linguistico registrate: ${numero(r.totali.chiamate)}, da ${r.dal} a ${r.al}.`,
+    `- Costo stimato complessivo: ${denaro(r.totali.costo)}. **Stimato, non fatturato**: è il prodotto dei token per un listino pubblico e versionato, e si rifà a mano.`,
+    r.costoMensile !== null
+      ? `- Media sui mesi conclusi: ${denaro(r.costoMensile)} al mese. Il mese in corso resta fuori perché è incompleto.`
+      : '- Non c’è ancora un mese concluso: una media mensile non esiste, e non va inventata.',
+    `- Il registro conta il consumo dei modelli e **nient'altro**: il tempo delle persone, che è la voce più grossa, non ha un prezzo di listino e non compare.`,
+    `- Nessuna pubblicità, nessun abbonamento, nessun tracciamento: ${SITE_URL}/costi.`,
+    '',
+  ];
+}
+
 export function llmsTxt(): string {
   const reader = dataset();
   const elenco = articoli().slice(0, 10);
@@ -70,6 +101,7 @@ export function llmsTxt(): string {
     `- [Le segnalazioni](${SITE_URL}/segnalazioni): l'indice di quello che i controlli hanno trovato.`,
     `- [I numeri](${SITE_URL}/numeri): le cifre principali, ciascuna con cosa misura e cosa no.`,
     `- [Dati e precisione](${SITE_URL}/dati): copertura del corpus e precisione misurata di ogni controllo.`,
+    `- [Costi e contributori](${SITE_URL}/costi): quanto costa far girare il progetto, misurato chiamata per chiamata, chi ci ha lavorato e come contribuire.`,
     `- [Come funziona](${SITE_URL}/come-funziona): il metodo, i livelli di analisi, i limiti dichiarati.`,
     `- [Le norme del corpus](${SITE_URL}/norme): gli atti ingeriti, leggibili a qualunque data.`,
     `- [Le pronunce della Consulta](${SITE_URL}/corte): le declaratorie di illegittimità che colpiscono il corpus.`,
@@ -147,6 +179,9 @@ export function llmsFullTxt(): string {
       ? `- Contatore: ${numero(contatore.totalDaysLate)} giorni trascorsi dalla scadenza dei termini fissati per ${numero(contatore.mandates)} provvedimenti attuativi previsti da ${numero(contatore.acts)} atti. **Misura termini scaduti, non attuazioni mancate**: che il provvedimento sia arrivato in ritardo o non sia arrivato affatto è una verifica in Gazzetta Ufficiale che il progetto non ha ancora fatto. Chi cita questo numero deve citarlo per quello che è.`
       : '',
     '',
+    '## Quanto costa, e chi lo paga',
+    '',
+    ...quantoCosta(),
     '## Le regole del metodo',
     '',
     '1. **La contraddizione è una query, non un giudizio.** Un modello linguistico, dove viene',

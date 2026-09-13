@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { CHECK_DEFINITIONS } from '@leggichenontornano/engine';
 import { articoli } from '@/lib/blog';
 import { SITE_URL, dataset } from '@/lib/dataset';
+import { PAGINE_LEGALI } from '@/lib/legale';
 import { metadatiPagina } from '@/lib/seo';
 import { numero, percorsoPronuncia, titoloPronuncia } from '@/lib/testo';
 
@@ -79,6 +80,10 @@ export default function Mappa() {
               <Link href="/dati">Dati e precisione</Link> — cosa copre il dataset e quanto è precisa
               ogni regola
             </li>
+            <li>
+              <Link href="/costi">Costi e contributori</Link> — quanto costa far girare il progetto,
+              chi ci ha lavorato, e le tre strade per dare una mano
+            </li>
           </ul>
         </section>
 
@@ -110,6 +115,21 @@ export default function Mappa() {
             <li>
               <Link href="/segnala">Qualcosa non torna?</Link> — segnalate un problema, senza
               bisogno di un account
+            </li>
+          </ul>
+        </section>
+
+        <section aria-labelledby="m-legali">
+          <h2 id="m-legali">Le pagine legali</h2>
+          <ul>
+            {PAGINE_LEGALI.map((p) => (
+              <li key={p.percorso}>
+                <Link href={p.percorso}>{p.titolo}</Link> — {p.sommario}
+              </li>
+            ))}
+            <li>
+              <Link href="/legal">Tutte insieme</Link> — l’indice, con la data di revisione di
+              ciascuna
             </li>
           </ul>
         </section>

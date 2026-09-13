@@ -1,5 +1,7 @@
+import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 import {
+  PERCORSI_LEGALI,
   normaConPiuVersioni,
   normaConPronuncia,
   percorsiDaVerificare,
@@ -9,6 +11,7 @@ import {
   primoControlloConEsito,
   primaPronuncia,
   tuttePronunce,
+  registroConsumiVuoto,
 } from './percorsi';
 import { percorsoPronuncia } from '../lib/testo';
 
@@ -1250,5 +1253,375 @@ test.describe('grafici', () => {
     }
 
     await contesto.close();
+  });
+});
+
+test.describe('costi e contributori', () => {
+  /*
+   * La pagina che pubblica i conti del progetto ha un modo di fallire che non
+   * somiglia a un guasto: mostrare zeri. Un registro vuoto e una spesa di zero
+   * dollari si disegnano nello stesso identico modo, e la seconda è una bugia —
+   * la stessa di cui il sito accusa chi pubblica una cifra senza dire come
+   * l'ha ottenuta. Questi test verificano la faccia che la build ha davvero
+   * prodotto, leggendo il registro invece di chiederlo alla pagina: chiederlo
+   * alla pagina significherebbe farsi raccontare dall'imputato com'è andata.
+   */
+
+  test('la pagina c’è, e dice le tre cose per cui esiste', async ({ page }) => {
+    const risposta = await page.goto('/costi');
+    expect(risposta?.status()).toBe(200);
+    await expect(page.locator('h1')).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: /quanto costa questo progetto/i }),
+    ).toBeVisible();
+    await expect(page.getByRole('heading', { name: /chi ha contribuito/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /come contribuire/i })).toBeVisible();
+  });
+
+  test('se il registro è vuoto la pagina lo dice, invece di mostrare zeri', async ({ page }) => {
+    test.skip(
+      !registroConsumiVuoto(),
+      'il registro ha già delle righe: si verifica l’altra faccia',
+    );
+    await page.goto('/costi');
+    const sezione = page.getByRole('region', { name: /quanto costa questo progetto/i });
+    await expect(sezione.getByText(/registro dei consumi è appena nato/i)).toBeVisible();
+
+    // Nessuna cifra di spesa: uno «0,00 USD» qui verrebbe letto come «non costa
+    // niente», che è l'unica cosa falsa che questa pagina può dire.
+    const testo = (await sezione.textContent()) ?? '';
+    expect(testo, 'la pagina mostra un totale in valuta su un registro vuoto').not.toMatch(
+      /\d+,\d+\s*(USD|\$)/,
+    );
+    // E nessun grafico: un disegno senza dati è una cornice vuota che promette
+    // una misura che non c'è.
+    expect(await sezione.locator('.grafico').count()).toBe(0);
+  });
+
+  test('se il registro ha righe, i numeri ci sono e sono all’italiana', async ({ page }) => {
+    test.skip(registroConsumiVuoto(), 'registro vuoto: si verifica l’altra faccia');
+    await page.goto('/costi');
+    const sezione = page.getByRole('region', { name: /quanto costa questo progetto/i });
+    const testo = (await sezione.textContent()) ?? '';
+
+    // Virgola decimale e valuta dichiarata: «12.35 USD» in una pagina italiana
+    // non si legge come un decimale, si legge come un refuso.
+    expect(testo).toMatch(/\d+,\d+\s*USD/);
+    expect(testo, 'un costo è scritto con il punto decimale').not.toMatch(/\d+\.\d{2}\s*USD/);
+
+    // Il grafico della distribuzione, con la sua alternativa testuale.
+    const grafico = sezione.locator('.grafico [role="img"][aria-label]').first();
+    await expect(grafico).toBeVisible();
+    const etichetta = (await grafico.getAttribute('aria-label')) ?? '';
+    expect(etichetta, 'l’etichetta del grafico non contiene nessuna cifra').toMatch(/\d/);
+    expect(etichetta).not.toMatch(/grafico|istogramma|diagramma/i);
+    expect(await grafico.locator('svg rect').count()).toBeGreaterThan(0);
+    await expect(
+      page.getByRole('region', { name: /spesa stimata per ciascun uso/i }),
+    ).toBeVisible();
+  });
+
+  test('la spesa è dichiarata come stima, non come fattura', async ({ page }) => {
+    await page.goto('/costi');
+    const testo = (await page.locator('main').textContent()) ?? '';
+    // Il costo è token per listino: scriverlo come «speso» senza dire
+    // «stimato» sarebbe la stessa sicurezza di troppo che il sito rimprovera
+    // a chi cita il contatore come provvedimenti mai adottati.
+    expect(testo).toMatch(/stimat/i);
+    expect(testo).toMatch(/listino/i);
+    // E quello che il conto non comprende va detto sul posto, non in una nota.
+    expect(testo).toMatch(/tempo delle persone/i);
+  });
+
+  test('la classifica dice cosa misura, senza girarci intorno', async ({ page }) => {
+    await page.goto('/costi');
+    const sezione = page.getByRole('region', { name: /chi ha contribuito/i });
+    await expect(
+      sezione.getByText(/numero di commit non è il valore di un contributo/i),
+    ).toBeVisible();
+  });
+
+  test('senza l’elenco da GitHub la pagina si costruisce lo stesso e spiega perché', async ({
+    page,
+  }) => {
+    await page.goto('/costi');
+    const sezione = page.getByRole('region', { name: /chi ha contribuito/i });
+    await expect(sezione).toBeVisible();
+    // O c'è la tabella dei contributori, o c'è la riga che dice perché non c'è.
+    // Quello che non è ammesso è una sezione muta: una pagina che mostra un
+    // vuoto senza spiegarlo lascia credere che non abbia contribuito nessuno.
+    if ((await sezione.locator('table').count()) === 0) {
+      const testo = (await sezione.textContent()) ?? '';
+      expect(testo).toMatch(/github/i);
+      expect(testo).toMatch(/costruit|raggiungibil|risposto|non risulta/i);
+    }
+  });
+
+  test('le tre strade per contribuire hanno lo stesso peso', async ({ page }) => {
+    await page.goto('/costi');
+    await expect(page.locator('.strada')).toHaveCount(3);
+    await expect(page.getByRole('heading', { name: /competenze tecniche/i })).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: /competenze legali o giuridiche/i }),
+    ).toBeVisible();
+    await expect(page.getByRole('heading', { name: /economicamente/i })).toBeVisible();
+
+    // La strada giuridica porta la soglia: è la parte che spiega perché quel
+    // contributo cambia davvero qualcosa invece di finire in un cassetto.
+    const giuridica = page.getByRole('region', { name: /competenze legali o giuridiche/i });
+    await expect(giuridica.getByText(/85%/)).toBeVisible();
+    await expect(giuridica.getByText(/30 revisioni/)).toBeVisible();
+    await expect(giuridica.getByText(/recettizio/i)).toBeVisible();
+
+    // E quella economica dice per cosa sono i soldi, e cosa il sito non ha.
+    const economica = page.getByRole('region', { name: /economicamente/i });
+    await expect(economica.getByRole('link', { name: /caffè/i })).toHaveAttribute(
+      'href',
+      /buymeacoffee\.com/,
+    );
+    await expect(economica.getByText(/pubblicità/i)).toBeVisible();
+  });
+
+  test('la pagina è raggiungibile dal piede, dalla mappa, dalla sitemap e da llms.txt', async ({
+    page,
+    request,
+    baseURL,
+  }) => {
+    await page.goto('/');
+    // Nome esatto, non una sottostringa: nel piede c'è già «Fonte: Corte
+    // costituzionale», e `/costi/i` prenderebbe anche quello.
+    await expect(
+      page.locator('.piede').getByRole('link', { name: 'Costi e contributori' }),
+    ).toBeVisible();
+
+    await page.goto('/mappa');
+    await expect(
+      page.locator('.mappa').getByRole('link', { name: 'Costi e contributori' }),
+    ).toBeVisible();
+
+    expect(await (await request.get(`${baseURL}/sitemap.xml`)).text()).toContain('/costi');
+    expect(await (await request.get(`${baseURL}/llms.txt`)).text()).toContain('/costi');
+  });
+
+  test('regge senza JavaScript e in un telefono da 400 px', async ({ browser }) => {
+    const contesto = await browser.newContext({
+      javaScriptEnabled: false,
+      viewport: { width: 400, height: 800 },
+    });
+    const pagina = await contesto.newPage();
+    await pagina.goto('/costi');
+
+    await expect(pagina.locator('h1')).toBeVisible();
+    await expect(pagina.getByRole('heading', { name: /come contribuire/i })).toBeVisible();
+    // Le tre strade si impilano: nessuna sparisce quando la riga non ci sta.
+    await expect(pagina.locator('.strada')).toHaveCount(3);
+    await expect(pagina.locator('.strada').last()).toBeVisible();
+
+    const straripa = await pagina.evaluate(
+      () => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
+    );
+    expect(straripa, '/costi scorre orizzontalmente a 400px').toBe(false);
+
+    await contesto.close();
+  });
+
+  test('l’anteprima social esiste davvero ed è un PNG 1200×630', async ({ page, request }) => {
+    await page.goto('/costi');
+    const indirizzo = await page.locator('meta[property="og:image"]').getAttribute('content');
+    expect(indirizzo).toBeTruthy();
+
+    const risposta = await request.get(localmente(indirizzo!, page.url()));
+    expect(risposta.status()).toBe(200);
+    const byte = await risposta.body();
+    expect([...byte.subarray(0, 4)]).toEqual([0x89, 0x50, 0x4e, 0x47]);
+    expect(byte.readUInt32BE(16)).toBe(1200);
+    expect(byte.readUInt32BE(20)).toBe(630);
+  });
+
+  test('dichiara i propri dati strutturati, come le altre pagine', async ({ page }) => {
+    await page.goto('/costi');
+    const blocchi = await page.locator('script[type="application/ld+json"]').allTextContents();
+    const tipi = blocchi.flatMap((b) => {
+      const letto: unknown = JSON.parse(b);
+      const voci = Array.isArray(letto) ? letto : [letto];
+      return voci.map((v) => String((v as Record<string, unknown>)['@type']));
+    });
+    expect(tipi).toContain('WebSite');
+    expect(tipi).toContain('Dataset');
+    expect(tipi).toContain('Article');
+  });
+});
+
+test.describe('pagine legali', () => {
+  /*
+   * Le pagine legali sono le uniche del sito in cui una frase sbagliata è un
+   * problema legale e non un refuso. Questi test legano quelle frasi a come il
+   * sito è fatto davvero: se il sito cambia e una pagina resta indietro, la
+   * build si ferma.
+   */
+
+  test('rispondono tutte, e portano in cima la data della loro revisione', async ({ page }) => {
+    for (const percorso of PERCORSI_LEGALI) {
+      const risposta = await page.goto(percorso);
+      expect(risposta?.status(), percorso).toBe(200);
+      await expect(page.locator('h1'), percorso).toBeVisible();
+      // La data viene dall'elenco in `lib/legale.ts`: in pagina deve arrivarci
+      // scritta per esteso, non in ISO e non «di recente».
+      await expect(
+        page.locator('.legale-data, .legale-indice small').first(),
+        percorso,
+      ).toContainText(/Ultimo aggiornamento: \d{1,2} [a-zà-ù]+ \d{4}/i);
+    }
+  });
+
+  test('nessuna violazione WCAG 2.1 AA su ciascuna', async ({ page }) => {
+    /* L'audit gira su tutto il sito in `accessibilita.spec.ts`, e queste
+       pagine sono nel suo elenco. È ripetuto qui perché la promessa deve
+       stare attaccata alle pagine: toglierle da quell'elenco non può
+       spegnere l'audit senza che nessuno se ne accorga. */
+    for (const percorso of PERCORSI_LEGALI) {
+      await page.goto(percorso);
+      const risultato = await new AxeBuilder({ page })
+        .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
+        .analyze();
+      const dettaglio = risultato.violations
+        .map((v) => `[${v.impact}] ${v.id}: ${v.help}`)
+        .join('\n');
+      expect(dettaglio, `Violazioni su ${percorso}:\n${dettaglio}`).toBe('');
+    }
+  });
+
+  test('gli indirizzi all’inglese non si rompono: 308 verso le rotte italiane', async ({
+    request,
+    baseURL,
+  }) => {
+    const coppie = [
+      ['/legal/terms', '/legal/termini'],
+      ['/legal/privacy-policy', '/legal/privacy'],
+      ['/legal/cookie-policy', '/legal/cookie'],
+    ];
+    for (const [inglese, italiano] of coppie) {
+      const risposta = await request.get(`${baseURL}${inglese}`, { maxRedirects: 0 });
+      // Permanente: la destinazione non cambierà, e un 302 lascerebbe il
+      // vecchio indirizzo negli indici per sempre.
+      expect(risposta.status(), inglese).toBe(308);
+      expect(risposta.headers()['location'], inglese).toContain(italiano!);
+    }
+  });
+
+  test('seguendo un indirizzo all’inglese si arriva alla pagina italiana', async ({ page }) => {
+    await page.goto('/legal/terms');
+    expect(new URL(page.url()).pathname).toBe('/legal/termini');
+    await expect(page.locator('h1')).toHaveText(/termini di servizio/i);
+  });
+
+  test('la pagina sui cookie dice il vero: dopo una visita il browser non ha niente addosso', async ({
+    page,
+    context,
+  }) => {
+    /*
+     * È il test che vale più di tutti gli altri di questo gruppo: lega una
+     * frase di una pagina legale a un fatto verificabile. Una cookie policy
+     * che elenca cookie inesistenti — o che tace su cookie esistenti — è una
+     * bugia, e qui non può diventarlo di nascosto.
+     *
+     * Si visitano le pagine da cui un cookie potrebbe arrivare: la home, il
+     * modulo che parla con il server, e la pagina che fa la promessa.
+     */
+    await page.goto('/');
+    await page.goto('/segnala');
+    await page.goto('/legal/cookie');
+
+    const cookie = await context.cookies();
+    expect(
+      cookie.map((c) => `${c.name} (${c.domain})`).join(', '),
+      'Il sito ha posto un cookie: la pagina /legal/cookie dice che non ne pone nessuno, ' +
+        'e adesso dice il falso. Va aggiornata la pagina, o tolto quello che pone il cookie.',
+    ).toBe('');
+
+    // La pagina deve dirlo in apertura, non in fondo dopo tre paragrafi.
+    await expect(page.locator('.apertura')).toContainText(/non pone cookie/i);
+  });
+
+  test('l’informativa dice, prima di tutto il resto, che la segnalazione diventa pubblica', async ({
+    page,
+  }) => {
+    await page.goto('/legal/privacy');
+    const avviso = page.locator('.niente-segnale').first();
+    await expect(avviso).toBeVisible();
+    await expect(avviso).toContainText(/issue pubblica/i);
+    // Chi scrive nel modulo deve trovarci il collegamento: l'informazione
+    // serve mentre si decide se scrivere, non dopo.
+    await page.goto('/segnala');
+    await expect(page.locator('.segnala__nota').getByRole('link')).toHaveAttribute(
+      'href',
+      '/legal/privacy',
+    );
+  });
+
+  test('l’informativa nomina chi tratta i dati e dove stanno', async ({ page }) => {
+    await page.goto('/legal/privacy');
+    const testo = (await page.locator('main').textContent()) ?? '';
+    // I due fornitori, per nome: senza il nome non si possono valutare.
+    expect(testo).toMatch(/Vercel/);
+    expect(testo).toMatch(/GitHub/);
+    // La regione europea è un fatto del progetto, dichiarato in vercel.json.
+    expect(testo).toMatch(/fra1/);
+    expect(testo).toMatch(/Francoforte/);
+    // I diritti, e chi ascolta un reclamo.
+    expect(testo).toMatch(/art\. 15|articoli dal 15/i);
+    expect(testo).toMatch(/Garante per la protezione dei dati personali/i);
+    // Il titolare va nominato: finché non lo è, resta il segnaposto in chiaro.
+    expect(testo).toMatch(/titolare del trattamento/i);
+  });
+
+  test('il disclaimer dice quale testo fa fede e cosa non dice l’assenza di una segnalazione', async ({
+    page,
+  }) => {
+    await page.goto('/legal/disclaimer');
+    const testo = (await page.locator('main').textContent()) ?? '';
+    expect(testo).toMatch(/Gazzetta Ufficiale/);
+    expect(testo).toMatch(/prevale in caso di discordanza/i);
+    expect(testo).toMatch(/non fornisce consulenza legale/i);
+    // La cautela più importante del sito, per esteso.
+    expect(testo).toMatch(/non è per questo una norma coerente/i);
+    expect(testo).toMatch(/termini scaduti, non attuazioni mancate/i);
+  });
+
+  test('i termini elencano le licenze con cui il progetto si è impegnato', async ({ page }) => {
+    await page.goto('/legal/termini');
+    const testo = (await page.locator('main').textContent()) ?? '';
+    expect(testo).toMatch(/EUPL 1\.2/);
+    expect(testo).toMatch(/CC BY 4\.0/);
+    expect(testo).toMatch(/CC BY-SA 3\.0/);
+  });
+
+  test('il piede porta alle pagine legali da qualunque pagina', async ({ page }) => {
+    for (const percorso of ['/', '/dati', '/legal/privacy']) {
+      await page.goto(percorso);
+      const voce = page.locator('footer.piede a[href="/legal"]');
+      await expect(voce, percorso).toHaveCount(1);
+      await expect(voce, percorso).toBeVisible();
+    }
+  });
+
+  test('l’indice le elenca tutte, e la mappa del sito pure', async ({ page }) => {
+    await page.goto('/legal');
+    for (const percorso of PERCORSI_LEGALI.filter((p) => p !== '/legal')) {
+      await expect(page.locator(`.legale-indice a[href="${percorso}"]`), percorso).toHaveCount(1);
+    }
+    await page.goto('/mappa');
+    for (const percorso of PERCORSI_LEGALI) {
+      await expect(page.locator(`.mappa a[href="${percorso}"]`), percorso).toHaveCount(1);
+    }
+  });
+
+  test('la sitemap le contiene', async ({ request, baseURL }) => {
+    const risposta = await request.get(`${baseURL}/sitemap.xml`);
+    expect(risposta.status()).toBe(200);
+    const xml = await risposta.text();
+    for (const percorso of PERCORSI_LEGALI) {
+      expect(xml, percorso).toContain(`${percorso}</loc>`);
+    }
   });
 });

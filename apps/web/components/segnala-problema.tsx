@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useState } from 'react';
 
 /**
@@ -178,7 +179,8 @@ export function SegnalaProblema({
 
       <p className="segnala__nota">
         La segnalazione diventa una <strong>issue pubblica</strong> su GitHub, con quello che avete
-        scritto. Non metteteci dati personali che non volete pubblici.
+        scritto. Non metteteci dati personali che non volete pubblici.{' '}
+        <Link href="/legal/privacy">Che fine fa quello che scrivete</Link>.
       </p>
 
       <div className="azioni">

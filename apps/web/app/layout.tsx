@@ -173,6 +173,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                       <Link href="/dati">Dati e precisione</Link>
                     </li>
                     <li>
+                      <Link href="/costi">Costi e contributori</Link>
+                    </li>
+                    <li>
                       <Link href="/stampa">Per la stampa</Link>
                     </li>
                     <li>
@@ -230,6 +233,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     </li>
                     <li>
                       <a href="https://www.cortecostituzionale.it">Fonte: Corte costituzionale</a>
+                    </li>
+                    <li>
+                      <Link href="/legal">Privacy, termini e responsabilità</Link>
                     </li>
                   </ul>
                 </div>

@@ -1,5 +1,5 @@
 {
-  "name": "@leggichenontornano/redazione",
+  "name": "@leggichenontornano/consumi",
   "version": "0.1.0",
   "license": "EUPL-1.2",
   "type": "module",
@@ -12,7 +12,7 @@
     }
   },
   "bin": {
-    "lcnt-redazione": "./dist/cli.js"
+    "lcnt-consumi": "./dist/cli.js"
   },
   "files": [
     "dist"
@@ -23,10 +23,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@leggichenontornano/akn-parser": "workspace:*",
-    "@leggichenontornano/consumi": "workspace:*",
-    "@leggichenontornano/corpus": "workspace:*",
-    "@leggichenontornano/engine": "workspace:*"
+    "@anthropic-ai/sdk": "^0.71.0"
   },
   "devDependencies": {
     "typescript": "^5.7.2",

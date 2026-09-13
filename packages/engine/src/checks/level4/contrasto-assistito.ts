@@ -27,6 +27,7 @@
  *     pagina Dati e il suo cancello di pubblicazione: non eredita la fiducia
  *     guadagnata dai livelli deterministici.
  */
+import { clienteModello, type ClienteModello } from '@leggichenontornano/consumi';
 import type { ActView } from '../../corpus-view.js';
 import type { DeonticProposition } from '../../deontic/types.js';
 import type { AnomalyFinding, CheckContext, CheckDefinition, EvidenceItem } from '../../types.js';
@@ -270,13 +271,7 @@ interface Grezzo {
   citazione_b: string;
 }
 
-export interface ClienteModello {
-  messages: {
-    create(params: Record<string, unknown>): Promise<{
-      content: Array<{ type: string; name?: string; input?: unknown }>;
-    }>;
-  };
-}
+export type { ClienteModello };
 
 /** Normalizzazione minima per confrontare una citazione con il testo da cui viene. */
 function normalizza(testo: string): string {
@@ -302,7 +297,16 @@ export function citazioneVerificata(citazione: string, testo: string): boolean {
 }
 
 export interface OpzioniConfronto {
-  cliente: ClienteModello;
+  /**
+   * Il client con cui interrogare il modello.
+   *
+   * Facoltativo, e quando manca non si costruisce un client qualunque: si
+   * chiede quello del registro dei consumi, che è l'unico che il progetto
+   * sappia costruire. Ogni coppia esaminata qui è una chiamata pagata, e il
+   * livello 4 è il più caro del motore — se non la contassimo, la voce più
+   * grossa della pagina dei costi sarebbe proprio quella che manca.
+   */
+  cliente?: ClienteModello;
   modello?: string;
   acts: ReadonlyMap<string, ActView>;
   onProgress?: (messaggio: string) => void;
@@ -326,6 +330,7 @@ export async function eseguiContrastoAssistito(
   ctx: CheckContext,
 ): Promise<AnomalyFinding[]> {
   const modello = opzioni.modello ?? MODELLO_PREDEFINITO;
+  const cliente = opzioni.cliente ?? clienteModello({ uso: 'analisi-assistita' });
   const log = opzioni.onProgress ?? (() => undefined);
   const trovate: AnomalyFinding[] = [];
   const limite = ctx.limit ?? coppie.length;
@@ -333,7 +338,7 @@ export async function eseguiContrastoAssistito(
   for (const coppia of coppie) {
     if (trovate.length >= limite) break;
 
-    const risposta = await opzioni.cliente.messages.create({
+    const risposta = await cliente.messages.create({
       model: modello,
       max_tokens: 2048,
       thinking: { type: 'adaptive' },

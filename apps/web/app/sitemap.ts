@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next';
 import { CHECK_DEFINITIONS } from '@leggichenontornano/engine';
 import { SITE_URL, dataset } from '@/lib/dataset';
 import { articoli } from '@/lib/blog';
+import { PAGINE_LEGALI } from '@/lib/legale';
 import { testimonianze } from '@/lib/testimonianze';
 import { percorsoPronuncia } from '@/lib/testo';
 
@@ -29,6 +30,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/come-funziona',
     '/dati',
     '/mcp',
+    '/costi',
     '/stampa',
   ].map((p) => ({
     url: `${SITE_URL}${p}`,
@@ -51,6 +53,25 @@ export default function sitemap(): MetadataRoute.Sitemap {
           },
         ]
       : [];
+
+  /* Le pagine legali cambiano di rado e non sono il contenuto del sito, ma
+     sono quelle che qualcuno cerca per nome («privacy leggichenontornano»):
+     stanno in sitemap con la data della loro ultima revisione, che è l'unica
+     data che per loro significhi qualcosa. */
+  const legali = [
+    {
+      url: `${SITE_URL}/legal`,
+      lastModified: ora,
+      changeFrequency: 'yearly' as const,
+      priority: 0.3,
+    },
+    ...PAGINE_LEGALI.map((p) => ({
+      url: `${SITE_URL}${p.percorso}`,
+      lastModified: new Date(`${p.aggiornataIl}T00:00:00Z`),
+      changeFrequency: 'yearly' as const,
+      priority: 0.3,
+    })),
+  ];
 
   const anomalie = reader.publishedAnomalies().map((a) => ({
     url: `${SITE_URL}/anomalia/${encodeURIComponent(a.id)}`,
@@ -113,6 +134,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     ...fisse,
     ...dicono,
+    ...legali,
     ...approfondimenti,
     ...anomalie,
     ...controlli,
