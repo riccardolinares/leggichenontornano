@@ -61,7 +61,7 @@ test.describe('il dataset da cui il sito è costruito', () => {
 });
 
 test.describe('vincoli non negoziabili', () => {
-  test('ogni pagina mostra l’attribuzione a Normattiva e il disclaimer, non in fondo in grigio chiaro', async ({
+  test('ogni pagina mostra l’attribuzione a Normattiva e il disclaimer, nel piede e leggibile', async ({
     page,
   }) => {
     for (const percorso of percorsiDaVerificare()) {
@@ -74,6 +74,19 @@ test.describe('vincoli non negoziabili', () => {
       // pagina. È scritta in positivo — «il parere lo dà chi ha titolo» — e
       // copre lo stesso perimetro del vecchio «non fornisce consulenza legale».
       await expect(avvertenza).toContainText(/parere legale lo dà chi ha titolo/i);
+      // Sta nel piede: è il posto dove si cercano le fonti, non un cartello
+      // piazzato davanti al contenuto. Ma «nel piede» non vuol dire nascosta —
+      // stesso corpo del testo attorno, e contrasto che regge (lo verifica
+      // l'audit axe su ogni tipo di pagina).
+      await expect(page.locator('footer.piede .avvertenza')).toHaveCount(1);
+      await expect(page.locator('header.testata .avvertenza')).toHaveCount(0);
+      const corpo = await avvertenza.evaluate((el) =>
+        Number.parseFloat(window.getComputedStyle(el).fontSize),
+      );
+      expect(
+        corpo,
+        `${percorso.url}: l’avvertenza è scritta troppo in piccolo`,
+      ).toBeGreaterThanOrEqual(14);
     }
   });
 
