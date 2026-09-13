@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import type { Metadata } from 'next';
 import { dataset } from '@/lib/dataset';
 import {
@@ -14,6 +14,9 @@ import {
   numero,
   percorsoNorma,
   percorsoPronuncia,
+  pronunciaDaEcli,
+  pronunciaDaSlug,
+  slugPronuncia,
   titoloPronuncia,
 } from '@/lib/testo';
 
@@ -25,26 +28,33 @@ import {
  * che qui si riporta **alla lettera** e non riassunto: il senso di una
  * declaratoria sta in «nella parte in cui prevede…», e un riassunto quella
  * parte la perde sempre.
+ *
+ * L'indirizzo è lo slug — `/corte/sentenza-251-2001` — e non più l'ECLI, che
+ * nessuno può leggere al telefono e che il routing statico non sapeva servire.
+ * Questa pagina risponde anche ai vecchi indirizzi, reindirizzandoli: erano in
+ * sitemap, e un URL pubblicato non si rompe due volte.
  */
 
 interface Props {
-  params: Promise<{ ecli: string }>;
+  params: Promise<{ pronuncia: string }>;
 }
 
 export function generateStaticParams() {
-  return dataset()
-    .pronunce()
-    .map((p) => ({ ecli: encodeURIComponent(p.ecli) }));
+  const tutte = dataset().pronunce();
+  return tutte.map((p) => ({ pronuncia: slugPronuncia(p, tutte) }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { ecli } = await params;
-  const decoded = decodeURIComponent(ecli);
+  const { pronuncia: segmento } = await params;
   const reader = dataset();
-  const pronuncia = reader.pronuncia(decoded);
+  const tutte = reader.pronunce();
+  const pronuncia = pronunciaDaSlug(segmento, tutte);
+  /* Anche il vecchio indirizzo finisce qui, ed è giusto che non venga
+     indicizzato: la pagina lo reindirizza, e l'indirizzo da indicizzare è
+     quello nuovo. */
   if (!pronuncia) return { title: 'Pronuncia non trovata', robots: { index: false, follow: true } };
 
-  const colpite = reader.attiColpitiDa(decoded);
+  const colpite = reader.attiColpitiDa(pronuncia.ecli);
   return metadatiPagina({
     titolo: titoloPronuncia(pronuncia),
     descrizione: `Dichiarazione di illegittimità costituzionale depositata il ${data(pronuncia.dataDeposito)}. ${
@@ -52,7 +62,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         ? `Colpisce ${colpite.map((c) => nomeNorma(c.act.urn)).join(', ')}.`
         : 'Nessuna norma del corpus risulta colpita.'
     }`,
-    percorso: percorsoPronuncia(decoded),
+    percorso: percorsoPronuncia(pronuncia, tutte),
     tipo: 'article',
   });
 }
@@ -63,13 +73,21 @@ function citazioni(relazioni: Array<{ evidence: string | null }>): string[] {
 }
 
 export default async function Pronuncia({ params }: Props) {
-  const { ecli } = await params;
-  const decoded = decodeURIComponent(ecli);
+  const { pronuncia: segmento } = await params;
   const reader = dataset();
-  const pronuncia = reader.pronuncia(decoded);
-  if (!pronuncia) notFound();
+  const tutte = reader.pronunce();
+  const pronuncia = pronunciaDaSlug(segmento, tutte);
 
-  const colpite = reader.attiColpitiDa(decoded);
+  if (!pronuncia) {
+    /* Prima di dire che non esiste: è uno dei vecchi indirizzi con l'ECLI?
+       Stavano in sitemap e possono essere stati incollati in un atto, quindi
+       vanno accompagnati al nuovo, non fatti morire su un 404. */
+    const spostata = pronunciaDaEcli(segmento, tutte);
+    if (spostata) permanentRedirect(percorsoPronuncia(spostata, tutte));
+    notFound();
+  }
+
+  const colpite = reader.attiColpitiDa(pronuncia.ecli);
 
   return (
     <article className="contenitore">
@@ -78,7 +96,7 @@ export default async function Pronuncia({ params }: Props) {
           datiStrutturatiDocumento({
             titolo: titoloPronuncia(pronuncia),
             descrizione: pronuncia.dispositivo.slice(0, 300),
-            percorso: percorsoPronuncia(pronuncia.ecli),
+            percorso: percorsoPronuncia(pronuncia, tutte),
             dataPubblicazione: pronuncia.dataDeposito,
             licenza: 'https://creativecommons.org/licenses/by-sa/3.0/it/',
           }),
@@ -88,7 +106,7 @@ export default async function Pronuncia({ params }: Props) {
         {...bloccoDatiStrutturati(
           datiStrutturatiBriciole([
             { nome: 'Pronunce della Corte', percorso: '/corte' },
-            { nome: titoloPronuncia(pronuncia), percorso: percorsoPronuncia(pronuncia.ecli) },
+            { nome: titoloPronuncia(pronuncia), percorso: percorsoPronuncia(pronuncia, tutte) },
           ]),
         )}
       />

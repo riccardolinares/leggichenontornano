@@ -8,7 +8,9 @@ import {
   primoApprofondimento,
   primoControlloConEsito,
   primaPronuncia,
+  tuttePronunce,
 } from './percorsi';
+import { percorsoPronuncia } from '../lib/testo';
 
 /**
  * Verifiche di usabilità e di contenuto.
@@ -502,6 +504,90 @@ test.describe('pronunce della Corte costituzionale', () => {
   });
 });
 
+/**
+ * Gli indirizzi delle pronunce.
+ *
+ * Questi test esistono per un guasto arrivato in produzione senza che niente
+ * suonasse: le pagine delle pronunce stavano su `/corte/<ecli>`, in locale
+ * rispondevano, e in produzione rispondevano 404 tutte e cinquantacinque,
+ * perché il routing dei file non ritrova un percorso con i due punti. C'era un
+ * test sulla prima pronuncia dell'elenco — e passava, perché girava in locale.
+ *
+ * La verifica che conta non è «lo slug è quello che mi aspetto»: è che ogni
+ * pronuncia del dataset abbia una pagina raggiungibile, e che nessun indirizzo
+ * contenga caratteri codificati. La prima dice che il sito funziona, la seconda
+ * impedisce di rimetterci dentro la causa.
+ */
+test.describe('gli indirizzi delle pronunce', () => {
+  const pronunce = tuttePronunce();
+  const indirizzi = pronunce.map((p) => percorsoPronuncia(p, pronunce));
+
+  test.skip(pronunce.length === 0, 'nessuna pronuncia nel dataset');
+
+  test('ogni pronuncia del dataset ha la sua pagina, e risponde', async ({ request }) => {
+    const rotte: string[] = [];
+    for (const indirizzo of indirizzi) {
+      // Senza seguire i redirect: l'indirizzo canonico deve essere servito
+      // direttamente, non fare un giro prima di arrivare.
+      const risposta = await request.get(indirizzo, { maxRedirects: 0 });
+      if (risposta.status() !== 200) rotte.push(`${indirizzo} → ${risposta.status()}`);
+    }
+    expect(rotte, 'pronunce senza una pagina che risponde').toEqual([]);
+    expect(indirizzi).toHaveLength(pronunce.length);
+  });
+
+  test('nessun indirizzo contiene caratteri codificati', () => {
+    // Un `%3A` qui dentro è esattamente il difetto di prima. La regola vale su
+    // tutti e cinquantacinque, non sul primo.
+    const codificati = indirizzi.filter((i) => /%[0-9a-f]{2}/i.test(i));
+    expect(codificati, 'indirizzi con caratteri percent-encoded').toEqual([]);
+    // E nemmeno caratteri che un browser codificherebbe da sé.
+    expect(indirizzi.filter((i) => encodeURI(i) !== i)).toEqual([]);
+  });
+
+  test('due pronunce non finiscono mai allo stesso indirizzo', () => {
+    // Se numero, anno e tipologia smettessero di identificarne una sola, se ne
+    // accorge questo test — non la produzione, che servirebbe una pagina al
+    // posto di un'altra senza dirlo a nessuno.
+    expect(new Set(indirizzi).size).toBe(pronunce.length);
+  });
+
+  test('il vecchio indirizzo con l’ECLI porta al nuovo, in modo permanente', async ({
+    request,
+  }) => {
+    for (const pronuncia of pronunce.slice(0, 3)) {
+      const vecchio = `/corte/${encodeURIComponent(pronuncia.ecli)}`;
+      const risposta = await request.get(vecchio, { maxRedirects: 0 });
+      expect(risposta.status(), `redirect da ${vecchio}`).toBe(308);
+      expect(risposta.headers()['location']).toContain(percorsoPronuncia(pronuncia, pronunce));
+    }
+  });
+
+  test('dall’indice si arriva alla decisione, e il dispositivo c’è', async ({ page }) => {
+    await page.goto('/corte');
+    const collegamento = page.locator('tbody th a').first();
+    const href = await collegamento.getAttribute('href');
+    expect(href, 'nessun collegamento nell’indice delle pronunce').toBeTruthy();
+    expect(href!).not.toMatch(/%[0-9a-f]{2}/i);
+
+    // Il link c'era anche prima, e portava a un errore: è così che il guasto è
+    // arrivato in produzione senza che nessuno se ne accorgesse. Qui si segue
+    // davvero, e si guarda che in fondo ci sia il dispositivo.
+    const risposta = await page.goto(href!);
+    expect(risposta?.status()).toBe(200);
+    const sezione = page.getByRole('region', { name: /dispositivo/i });
+    await expect(sezione).toBeVisible();
+    const dispositivo = sezione.locator('.prova__testo').first();
+    expect(((await dispositivo.textContent()) ?? '').length).toBeGreaterThan(40);
+  });
+
+  test('l’ECLI resta scritto in pagina: è l’identificatore, non l’indirizzo', async ({ page }) => {
+    const pronuncia = pronunce[0]!;
+    await page.goto(percorsoPronuncia(pronuncia, pronunce));
+    await expect(page.getByText(pronuncia.ecli, { exact: false }).first()).toBeVisible();
+  });
+});
+
 test.describe('approfondimenti', () => {
   const slug = primoApprofondimento();
 
@@ -616,7 +702,7 @@ test.describe('dati strutturati', () => {
   test('le pagine di dettaglio portano le briciole di pane', async ({ page }) => {
     const percorsi = [
       anomalia ? `/anomalia/${encodeURIComponent(anomalia.id)}` : null,
-      pronuncia ? `/corte/${encodeURIComponent(pronuncia)}` : null,
+      pronuncia ? percorsoPronuncia(pronuncia, tuttePronunce()) : null,
       controllo ? `/controllo/${controllo}` : null,
       approfondimento ? `/blog/${approfondimento}` : null,
     ].filter((p): p is string => p !== null);
