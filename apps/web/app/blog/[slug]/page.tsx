@@ -214,13 +214,13 @@ export default async function Approfondimento({ params }: Props) {
             </>
           ) : null}
 
-          <h3>Se pensate che sia sbagliata</h3>
+          <h3>Se pensi che sia sbagliata</h3>
           <p>
             È il contributo più utile che esista, e non richiede né titoli né codice.{' '}
             <a
               href={`${REPO_URL}/issues/new?title=${encodeURIComponent(`Non è un conflitto: ${segnalazione.id}`)}&labels=${encodeURIComponent('non-e-un-conflitto')}`}
             >
-              Aprite una issue
+              Apri una issue
             </a>
             : le risposte cambiano la precisione misurata del controllo, e possono toglierlo dal
             sito.

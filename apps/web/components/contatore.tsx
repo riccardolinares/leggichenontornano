@@ -35,7 +35,7 @@ export function ContatoreNazionale({ contatore }: { contatore: SnapshotCounter }
         questa cifra si può citare: ogni giorno che conta corrisponde a una data che sta in una
         legge. {contatore.caveat} Calcolato al {data(contatore.computedAt)}.
         {contatore.verified > 0
-          ? ` Verifica in Gazzetta Ufficiale completata su ${numero(contatore.verified)} atti.`
+          ? ` Verifica in Gazzetta Ufficiale completata su ${numero(contatore.verified)} di questi mandati, uno per uno: per ${numero(contatore.adottatiInRitardo)} il decreto è arrivato dopo la scadenza, per ${numero(contatore.nonAdottati)} non risulta pubblicato.`
           : ' Su nessuno di questi atti la verifica in Gazzetta Ufficiale è già stata fatta: per questo nessuna singola mancata attuazione è pubblicata come segnalazione.'}
       </p>
     </div>

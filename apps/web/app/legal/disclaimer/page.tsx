@@ -25,7 +25,7 @@ export const dynamic = 'force-static';
 export const metadata = metadatiPagina({
   titolo: 'Limitazione di responsabilità',
   descrizione:
-    'Quanto vale quello che leggete qui: il testo che fa fede resta quello della Gazzetta Ufficiale, le segnalazioni sono elaborazioni automatiche, e il parere lo dà chi ha titolo per darlo.',
+    'Quanto vale quello che leggi qui: il testo che fa fede resta quello della Gazzetta Ufficiale, le segnalazioni sono elaborazioni automatiche, e il parere lo dà chi ha titolo per darlo.',
   percorso: PERCORSO,
 });
 
@@ -59,7 +59,7 @@ export default function Disclaimer() {
           Qual è il testo che fa fede
         </h2>
         <p>
-          I testi normativi che trovate qui vengono dagli open data di <strong>Normattiva</strong> e
+          I testi normativi che trovi qui vengono dagli open data di <strong>Normattiva</strong> e
           sono citati alla lettera, così ogni affermazione del sito si può risalire fino alla fonte.
           Quella banca dati però <strong>non ha carattere di ufficialità</strong>, e nemmeno questa
           sua rielaborazione ce l’ha: il testo ufficiale resta quello pubblicato sulla{' '}
@@ -67,7 +67,7 @@ export default function Disclaimer() {
         </p>
         <p>
           In pratica: quando la cosa conta davvero — un termine che scade, un importo, una sanzione
-          — si controlla in Gazzetta. Il sito vi dà l’URN e la data di vigenza esatta proprio perché
+          — si controlla in Gazzetta. Il sito ti dà l’URN e la data di vigenza esatta proprio perché
           quel controllo si faccia in un minuto invece che in un pomeriggio.
         </p>
       </section>
@@ -78,7 +78,7 @@ export default function Disclaimer() {
         </h2>
         <p>
           <strong>Questo sito non fornisce consulenza legale</strong> e nessuna segnalazione è un
-          parere: non conosce il vostro caso, le sue circostanze, gli atti che ci sono dietro né la
+          parere: non conosce il tuo caso, le sue circostanze, gli atti che ci sono dietro né la
           giurisprudenza che vi si applica. Quello che fa è metterlo davanti a chi il parere lo deve
           dare: i due testi che non tornano, le loro finestre di vigenza, l’intersezione, i criteri
           classici di risoluzione valutati uno per uno. Con quella scheda in mano un professionista
@@ -107,8 +107,8 @@ export default function Disclaimer() {
           {percentuale(THRESHOLD.minPrecision)} di precisione misurata su revisione umana, e per
           questo la <Link href="/dati">pagina dei dati</Link> mostra anche i controlli che restano
           fuori, con il motivo. <strong>Una segnalazione può essere sbagliata</strong>, e la cosa
-          più utile che potete farci è dircelo: il pulsante «Non è un conflitto» su ogni scheda, o
-          il modulo <Link href="/segnala">«Qualcosa non torna?»</Link>. Le risposte cambiano la
+          più utile che puoi farci è dircelo: il pulsante «Non è un conflitto» su ogni scheda, o il
+          modulo <Link href="/segnala">«Qualcosa non torna?»</Link>. Le risposte cambiano la
           precisione misurata del controllo e possono toglierlo dal sito — è già il meccanismo con
           cui il sito si corregge, non un canale di cortesia.
         </p>
@@ -120,9 +120,7 @@ export default function Disclaimer() {
         </h2>
         <div className="niente-segnale">
           <p>
-            <strong>
-              Una norma su cui non trovate niente non è per questo una norma coerente.
-            </strong>{' '}
+            <strong>Una norma su cui non trovi niente non è per questo una norma coerente.</strong>{' '}
             Il corpus è la porzione di legislazione che abbiamo ingerito, non l’ordinamento
             italiano: una norma può essere fuori dal corpus, oppure dentro un controllo che non ha
             ancora superato la soglia, oppure dentro un tipo di incongruenza che nessun controllo

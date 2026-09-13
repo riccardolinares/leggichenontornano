@@ -54,9 +54,9 @@ export default function Dicono() {
             attribuite a «un funzionario pubblico» costerebbe molto più di quanto renderebbe.
           </p>
           <p>
-            Se il progetto vi è servito per qualcosa — una verifica prima di scrivere un pezzo, un
-            rinvio che non tornava, una norma che credevate in vigore — scrivetelo dove vi pare e{' '}
-            <a href={`mailto:${EMAIL}`}>mandateci il link</a>. Anche una critica: se regge, sta qui
+            Se il progetto ti è servito per qualcosa — una verifica prima di scrivere un pezzo, un
+            rinvio che non tornava, una norma che credevi in vigore — scrivilo dove ti pare e{' '}
+            <a href={`mailto:${EMAIL}`}>mandaci il link</a>. Anche una critica: se regge, sta qui
             uguale.
           </p>
         </div>
@@ -85,7 +85,7 @@ export default function Dicono() {
 
       <section className="sezione" aria-labelledby="sostieni">
         <h2 id="sostieni" className="sezione__titolo">
-          Se volete che continui
+          Se vuoi che continui
         </h2>
         <p>
           Il progetto non ha pubblicità, non ha abbonamenti e non rivende i dati di chi legge. I

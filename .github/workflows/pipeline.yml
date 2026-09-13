@@ -108,6 +108,13 @@ jobs:
             echo "::endgroup::"
           done
 
+      # Il registro delle verifiche in Gazzetta Ufficiale va riletto **prima**
+      # dei controlli: è quello che autorizza `attuazione-mancante` a pubblicare,
+      # e su un runner nuovo il database è vuoto. Senza questo passo il cancello
+      # resterebbe chiuso anche sui mandati già verificati.
+      - name: Rileggi le verifiche in Gazzetta Ufficiale
+        run: node packages/engine/dist/cli.js gazzetta importa data/snapshot/verifiche.jsonl || true
+
       - name: Esegui i controlli
         run: node packages/engine/dist/cli.js run --verticale appalti
 
@@ -156,7 +163,7 @@ jobs:
           body: |
             Aggiornamento automatico del dataset derivato.
 
-            **Guardate il diff prima di unire.** Un aggiornamento che cambia
+            **Guarda il diff prima di unire.** Un aggiornamento che cambia
             molte segnalazioni di solito significa una di due cose: il corpus è
             cresciuto, oppure una regola ha iniziato a comportarsi diversamente.
             La seconda è il motivo per cui questa PR esiste invece di un push

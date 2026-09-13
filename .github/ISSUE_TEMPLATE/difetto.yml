@@ -6,7 +6,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Per una segnalazione giuridica che non regge usate invece
+        Per una segnalazione giuridica che non regge usa invece
         **«Non è un conflitto»**: è un'altra cosa e prende un'altra strada.
 
   - type: dropdown
@@ -34,7 +34,7 @@ body:
   - type: textarea
     id: atteso
     attributes:
-      label: Cosa vi aspettavate, e cosa è successo
+      label: Cosa ti aspettavi, e cosa è successo
     validations:
       required: true
 

@@ -50,7 +50,7 @@ export default function Cookie() {
 
       <p className="apertura">
         <strong>Questo sito non pone cookie.</strong> Nessuno: né tecnici, né di sessione, né di
-        terze parti. Non c’è un banner perché non c’è niente da chiedervi.
+        terze parti. Non c’è un banner perché non c’è niente da chiederti.
       </p>
 
       <section className="sezione" aria-labelledby="perche">
@@ -62,26 +62,26 @@ export default function Cookie() {
           pagine sono costruite durante la build e servite identiche a chiunque le chieda, non c’è
           un account, non c’è un carrello, non c’è una preferenza da ricordare. Anche il modulo{' '}
           <Link href="/segnala">«Qualcosa non torna?»</Link> funziona senza sessione — manda quello
-          che avete scritto e riceve una risposta, e con quella finisce.
+          che hai scritto e riceve una risposta, e con quella finisce.
         </p>
         <p>
           Il resto è conseguenza di come il sito è fatto. I caratteri tipografici vengono scaricati
-          in fase di build e serviti da questo dominio, così il vostro browser non contatta nessun
+          in fase di build e serviti da questo dominio, così il tuo browser non contatta nessun
           altro per leggerli. Non ci sono video incorporati, mappe, pulsanti social, misure di
           pubblico o inserzioni: sono le cose che di solito portano i cookie dentro un sito, e
-          ciascuna avrebbe voluto in cambio un pezzo di quello che fate. Nemmeno la memoria del
+          ciascuna avrebbe voluto in cambio un pezzo di quello che fai. Nemmeno la memoria del
           browser viene usata: niente <code>localStorage</code>, niente <code>sessionStorage</code>.
         </p>
       </section>
 
       <section className="sezione" aria-labelledby="prova">
         <h2 id="prova" className="sezione__titolo">
-          E come fate a verificarlo
+          E come fai a verificarlo
         </h2>
         <p>
           In due modi, e nessuno dei due richiede di fidarsi di questa pagina. Il primo è aprire gli
-          strumenti di sviluppo del vostro browser e guardare l’elenco dei cookie per questo
-          dominio: è vuoto.
+          strumenti di sviluppo del tuo browser e guardare l’elenco dei cookie per questo dominio: è
+          vuoto.
         </p>
         <p>
           Il secondo è che lo verifica la build. Fra i test end-to-end del progetto ce n’è uno che
@@ -91,7 +91,7 @@ export default function Cookie() {
             <code>apps/web/e2e/usabilita.spec.ts</code>
           </a>
           . Se qualcuno aggiungesse un componente che pone un cookie, quel test fallirebbe e la
-          pagina che state leggendo non potrebbe diventare falsa senza che nessuno se ne accorga.
+          pagina che stai leggendo non potrebbe diventare falsa senza che nessuno se ne accorga.
         </p>
       </section>
 

@@ -9,7 +9,20 @@
  *   lcnt-engine contatore
  *   lcnt-engine controlli
  */
-import { disconnectPrisma, exportSnapshot, getPrisma } from '@leggichenontornano/corpus';
+import {
+  coperturaVerifiche,
+  disconnectPrisma,
+  esportaVerifiche,
+  exportSnapshot,
+  GazzettaClient,
+  GAZZETTA_FONTE,
+  importaVerifiche,
+  readJsonl,
+  riepilogoVerifiche,
+  verificaAttuazioni,
+  writeJsonl,
+  type SnapshotVerifica,
+} from '@leggichenontornano/corpus';
 import { buildNationalCounter, computeMetrics } from './metrics.js';
 import { CHECK_DEFINITIONS } from './registry.js';
 import { recordReview, sampleForReview, type ReviewVerdict } from './review/queue.js';
@@ -26,6 +39,10 @@ Comandi:
   revisiona <id> <esito>  registra una revisione umana
   contatore               contatore nazionale dei giorni di ritardo
   controlli               elenco dei controlli con le loro regole
+  gazzetta                verifica in Gazzetta Ufficiale i mandati attuativi scaduti
+  gazzetta stato          quanti mandati verificati, con che esito, e dove ci si ferma
+  gazzetta importa [file] rilegge il registro delle verifiche versionato
+  gazzetta esporta [file] riscrive il registro delle verifiche versionato
   esporta                 esporta il dataset con le metriche calcolate
   estrai                  estrae le proposizioni deontiche di un verticale
   gold importa <file>     importa annotazioni del gold standard (JSONL)
@@ -46,6 +63,17 @@ Opzioni di esporta:
 
 Esiti ammessi per «revisiona»:
   CONFERMATA  NON_E_UN_CONFLITTO  ESTRAZIONE_ERRATA  DA_APPROFONDIRE
+
+Opzioni di gazzetta:
+  --quanti <n>            mandati da verificare in questo giro (default 25)
+  --non-prima-di <g>      non rifare le verifiche più recenti di <g> giorni (default 30)
+  --intervallo <ms>       pausa minima fra due richieste (default 1500, minimo 1000)
+  --oggi <YYYY-MM-DD>     data di riferimento (riproducibilita')
+  --senza-scrittura       verifica senza scrivere nel database
+
+  Il comando interroga un sito pubblico: e' serializzato, si presenta con il
+  nome del progetto e aspetta fra una richiesta e l'altra. Riprende da dove si
+  era fermato, quindi va bene lanciarlo ogni notte con un --quanti piccolo.
 
 Opzioni di run:
   --oggi <YYYY-MM-DD>     data di riferimento (riproducibilita')
@@ -173,17 +201,94 @@ async function main(): Promise<number> {
       const today = flags.has('oggi')
         ? String(flags.get('oggi'))
         : new Date().toISOString().slice(0, 10);
-      const prisma = getPrisma();
-      const verified = new Set(
-        (
-          await prisma.goldItem.findMany({
-            where: { expectCheck: 'attuazione-mancante' },
-            select: { urns: true },
-          })
-        ).flatMap((r) => r.urns),
-      );
-      const counter = buildNationalCounter(allMandates(view), today, verified);
+      const counter = buildNationalCounter(allMandates(view), today, await coperturaVerifiche());
       process.stdout.write(`${JSON.stringify(counter, null, 2)}\n`);
+      return 0;
+    }
+
+    case 'gazzetta': {
+      // Il registro viaggia nel repository, non nel database del runner: la
+      // campagna gira una notte per volta su una macchina che poi sparisce, e
+      // senza queste due mosse ogni giro ricomincerebbe da capo.
+      if (positional[1] === 'importa' || positional[1] === 'esporta') {
+        const file = positional[2] ?? 'data/snapshot/verifiche.jsonl';
+        if (positional[1] === 'importa') {
+          const righe = readJsonl<SnapshotVerifica>(file);
+          const lette = await importaVerifiche(righe);
+          process.stdout.write(`${lette} verifiche rilette da ${file}.\n`);
+          return 0;
+        }
+        const righe = await esportaVerifiche();
+        writeJsonl(file, righe);
+        process.stdout.write(`${righe.length} verifiche scritte in ${file}.\n`);
+        return 0;
+      }
+
+      if (positional[1] === 'stato') {
+        const r = await riepilogoVerifiche();
+        if (r.verificati === 0) {
+          process.stdout.write(
+            'Nessun mandato è ancora stato verificato in Gazzetta Ufficiale.\n' +
+              'Finché la copertura è zero il controllo «attuazione-mancante» non pubblica\n' +
+              'niente, ed è giusto così: vedi docs/adr/0013-la-verifica-in-gazzetta.md.\n',
+          );
+          return 0;
+        }
+        process.stdout.write(
+          [
+            '',
+            `verificati:        ${r.verificati}`,
+            `  adottati:        ${r.adottati} (di cui ${r.adottatiInRitardo} dopo la scadenza)`,
+            `  non adottati:    ${r.nonAdottati}  <- gli unici che possono diventare segnalazioni`,
+            `  non verificabili:${String(r.nonVerificabili).padStart(4)}`,
+            `ultima verifica:   ${r.ultimaVerifica ?? '-'}`,
+            '',
+            'Dove la verifica si ferma, e perché:',
+            ...r.motiviNonVerificabili.map((m) => `  ${String(m.quanti).padStart(5)}  ${m.motivo}`),
+            '',
+          ].join('\n'),
+        );
+        return 0;
+      }
+
+      // I mandati arrivano dal corpus, non da un file: il verificatore lavora
+      // sulla stessa estrazione che alimenta il contatore, o le due cose
+      // parlerebbero di mandati diversi con lo stesso nome.
+      const view = await buildViewFromDatabase(true);
+      const oggi = flags.has('oggi')
+        ? String(flags.get('oggi'))
+        : new Date().toISOString().slice(0, 10);
+      // Si verificano solo i mandati con il termine già scaduto: su quelli non
+      // ancora scaduti non c'è niente da affermare, e la richiesta al portale
+      // pubblico sarebbe sprecata.
+      const scaduti = allMandates(view).filter((m) => m.dueBy && m.dueBy < oggi);
+      const rapporto = await verificaAttuazioni(scaduti, {
+        oggi,
+        quanti: flags.has('quanti') ? Number(flags.get('quanti')) : 25,
+        ...(flags.has('non-prima-di')
+          ? { nonPrimaDiGiorni: Number(flags.get('non-prima-di')) }
+          : {}),
+        ...(flags.has('intervallo')
+          ? { client: new GazzettaClient({ intervalloMs: Number(flags.get('intervallo')) }) }
+          : {}),
+        persist: !flags.has('senza-scrittura'),
+        onProgress: (m) => process.stdout.write(`  ${m}\n`),
+      });
+      process.stdout.write(
+        [
+          '',
+          `mandati scaduti nel corpus: ${scaduti.length}`,
+          `già verificati di recente:  ${rapporto.saltati}`,
+          `esaminati in questo giro:   ${rapporto.esaminati}`,
+          `  adottato:                 ${rapporto.perEsito.adottato}`,
+          `  non adottato:             ${rapporto.perEsito['non-adottato']}`,
+          `  non verificabile:         ${rapporto.perEsito['non-verificabile']}`,
+          `durata:                     ${(rapporto.durataMs / 1000).toFixed(1)}s`,
+          '',
+          GAZZETTA_FONTE,
+          '',
+        ].join('\n'),
+      );
       return 0;
     }
 

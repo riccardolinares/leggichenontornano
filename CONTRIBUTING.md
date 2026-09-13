@@ -10,8 +10,8 @@ pull request**.
 Ogni scheda del sito ha un pulsante **«Non è un conflitto»**. Apre una issue
 pubblica, senza registrazione, con tutti i riferimenti già dentro.
 
-Se siete avvocati, magistrati, funzionari, o semplicemente conoscete bene una
-materia, quel pulsante è il modo più utile di aiutarci. Le vostre risposte
+Se sei un avvocato, un magistrato, un funzionario, o semplicemente conosci bene
+una materia, quel pulsante è il modo più utile di aiutarci. Le tue risposte
 alimentano il gold standard e **cambiano la precisione misurata** del controllo
 che ha prodotto la segnalazione: possono farlo scendere sotto l'85% e toglierlo
 dal sito.
@@ -20,7 +20,7 @@ Il pulsante non si chiama «segnala un falso positivo» di proposito. «Non è u
 conflitto» è una valutazione giuridica, che un professionista dà volentieri;
 l'altra è un bug report, e presuppone che qualcuno lavori gratis per noi.
 
-Quando rispondete, la cosa più utile è dire **quale** delle due cose non torna:
+Quando rispondi, la cosa più utile è dire **quale** delle due cose non torna:
 
 - **i fatti sono giusti, la qualificazione no** — rinvio recettizio, norma
   speciale, delegificazione autorizzata, disciplina transitoria;
@@ -32,7 +32,7 @@ correggere il parser. Anche una riga basta.
 
 ---
 
-## Se volete scrivere codice
+## Se vuoi scrivere codice
 
 ### Prima di aprire una pull request
 
@@ -77,7 +77,7 @@ Non è burocrazia: sono i vincoli che tengono in piedi il progetto.
    ([ADR 0004](docs/adr/0004-niente-voto-cittadino.md)).
 6. **Nessuna dipendenza da servizi chiusi** nel percorso principale.
 
-Se pensate che uno di questi vincoli sia sbagliato, la strada è una nuova ADR che
+Se pensi che uno di questi vincoli sia sbagliato, la strada è una nuova ADR che
 argomenti il contrario, non una pull request che lo aggira.
 
 ### Aggiungere un controllo
@@ -96,7 +96,7 @@ Un controllo nuovo ha bisogno di:
 
 Un controllo nuovo **non pubblica** finché non ha 30 revisioni umane e l'85% di
 precisione, con l'eccezione dei deterministici di livello 1. È automatico: non
-dovete fare niente per ottenerlo, e non potete fare niente per evitarlo.
+devi fare niente per ottenerlo, e non puoi fare niente per evitarlo.
 
 ### Aggiungere un verticale semantico
 
@@ -141,7 +141,7 @@ generato. Il primo, su appalti e contratti pubblici, è in
 [`data/vocabolari/appalti.json`](data/vocabolari/appalti.json).
 
 **Il prezzo è dichiarato**: il recall del livello 3 è limitato dalle radici che
-scrivete. Una divergenza verso una norma fuori elenco non la vediamo. Preferiamo
+scrivi. Una divergenza verso una norma fuori elenco non la vediamo. Preferiamo
 non vederla piuttosto che pubblicarla insieme a duecento coppie inventate.
 
 ### Se lavorate con un assistente, dichiarate il consumo
@@ -234,7 +234,7 @@ la scarta in silenzio.
 
 ## Segnalare un problema di sicurezza
 
-Non aprite una issue pubblica: vedi [SECURITY.md](SECURITY.md).
+Non aprire una issue pubblica: vedi [SECURITY.md](SECURITY.md).
 
 ## Codice di condotta
 
@@ -242,7 +242,7 @@ Non aprite una issue pubblica: vedi [SECURITY.md](SECURITY.md).
 
 ## Licenza dei contributi
 
-Contribuendo accettate che il vostro contributo sia distribuito con licenza
+Contribuendo accetti che il tuo contributo sia distribuito con licenza
 **EUPL 1.2**, la stessa del progetto. Non chiediamo la firma di un CLA: la
 licenza basta, e un adempimento in più fra chi vuole aiutare e il progetto è un
 adempimento che non ci serve.

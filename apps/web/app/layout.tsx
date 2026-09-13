@@ -218,8 +218,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 blocco suo, dove si vede. */}
               <div className="piede__sostegno">
                 <p>
-                  <strong>Questo sito non ha pubblicità, abbonamenti o tracciamento.</strong> Se vi
-                  serve e volete che continui, il modo più diretto è questo.
+                  <strong>Questo sito non ha pubblicità, abbonamenti o tracciamento.</strong> Se ti
+                  serve e vuoi che continui, il modo più diretto è questo.
                 </p>
                 <p className="azioni">
                   <a className="bottone bottone--primario" href={SOSTIENI_URL}>
@@ -259,7 +259,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   I testi vengono da <strong>Normattiva</strong> e sono citati alla lettera, così
                   ogni affermazione di questo sito si può risalire fino alla fonte. Il testo che fa
                   fede resta quello pubblicato sulla <em>Gazzetta Ufficiale</em>, e prevale in caso
-                  di discordanza. Quello che trovate qui serve a farsi un’opinione documentata in
+                  di discordanza. Quello che trovi qui serve a farsi un’opinione documentata in
                   fretta: <strong>questo sito non fornisce consulenza legale</strong>.
                 </p>
                 <p className="attribuzione__fonti">

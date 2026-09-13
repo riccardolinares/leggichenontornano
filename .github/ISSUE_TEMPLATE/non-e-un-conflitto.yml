@@ -20,7 +20,7 @@ body:
     id: segnalazione
     attributes:
       label: Indirizzo della segnalazione
-      description: L'URL della scheda. Se avete usato il pulsante sul sito è già qui.
+      description: L'URL della scheda. Se hai usato il pulsante sul sito è già qui.
       placeholder: https://leggichenontornano.it/anomalia/...
     validations:
       required: true
@@ -44,7 +44,7 @@ body:
     attributes:
       label: Perché non è un conflitto
       description: >
-        Con parole vostre. Se c'è un riferimento — un articolo, una sentenza,
+        Con parole tue. Se c'è un riferimento — un articolo, una sentenza,
         una circolare — vale più di qualunque spiegazione.
     validations:
       required: true
@@ -61,7 +61,7 @@ body:
   - type: input
     id: competenza
     attributes:
-      label: In che veste scrivete (facoltativo)
+      label: In che veste scrivi (facoltativo)
       description: >
         Non è un requisito e non filtriamo nessuno. Serve a noi per capire
         quanto peso dare a una valutazione quando due si contraddicono.

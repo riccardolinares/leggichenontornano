@@ -9,6 +9,7 @@ import { getPrisma } from '@leggichenontornano/corpus';
 import type { SnapshotCheckMetric } from '@leggichenontornano/corpus';
 import { evaluateGate, type ReviewTally } from './publication-gate.js';
 import { CHECK_DEFINITIONS } from './registry.js';
+import { mandateKey } from './checks/level1/attuazione-mancante.js';
 
 export interface CheckMetric extends SnapshotCheckMetric {
   description: string;
@@ -83,13 +84,16 @@ export async function computeMetrics(): Promise<CheckMetric[]> {
  * che abbiamo ingerito. Sottostimare è l'errore innocuo.
  *
  * Dall'altro lato misura una cosa più stretta di quella che verrebbe voglia di
- * annunciare. Sappiamo che un termine di legge è passato; non sappiamo ancora
- * se il provvedimento sia arrivato dopo la scadenza, perché la verifica in
- * Gazzetta Ufficiale non c'è. «Provvedimenti mai adottati» sarebbe un titolo
- * migliore e un'affermazione che non possiamo sostenere. Il controllo che
- * quell'affermazione la farebbe — `attuazione-mancante` — si rifiuta infatti di
- * produrre segnalazioni finché la copertura in Gazzetta non esiste, e oggi
- * produce zero.
+ * annunciare: sappiamo che un termine di legge è passato, non che il decreto
+ * non sia mai arrivato. Da quando esiste la verifica in Gazzetta Ufficiale
+ * (ADR 0013) quella distanza si può **misurare** invece che soltanto
+ * dichiarare, e il contatore se la porta dietro: quanti mandati sono stati
+ * verificati, per quanti il decreto è arrivato in ritardo, per quanti non
+ * risulta pubblicato.
+ *
+ * Finché la copertura è zero il caveat resta quello di prima, parola per
+ * parola. Un avvertimento che cambia forma senza che sia cambiato niente
+ * insegna al lettore che quella riga è decorativa.
  */
 export interface NationalCounter {
   label: string;
@@ -99,19 +103,48 @@ export interface NationalCounter {
   mandates: number;
   /** Atti coinvolti. */
   acts: number;
-  /** Quanti di questi hanno l'assenza verificata in Gazzetta Ufficiale. */
+  /** Quanti di questi mandati sono stati verificati in Gazzetta Ufficiale. */
   verified: number;
+  /** Dei verificati, quelli il cui decreto è arrivato dopo la scadenza. */
+  adottatiInRitardo: number;
+  /** Dei verificati, quelli per cui il decreto non risulta pubblicato. */
+  nonAdottati: number;
   computedAt: string;
   caveat: string;
 }
 
+/** Il minimo che serve al contatore per identificare e datare un mandato. */
+export interface CounterMandate {
+  actUrn: string;
+  articleNumber?: string | null;
+  provisionNumber?: string | null;
+  deadlineDays?: number;
+  dueBy: string | null;
+}
+
+/**
+ * Gli esiti della verifica in Gazzetta, per chiave di mandato.
+ *
+ * `inRitardo` sono i mandati `adottato` il cui provvedimento è stato pubblicato
+ * **dopo** la scadenza del termine. È la quota di giorni che il contatore somma
+ * e che però un decreto, arrivando tardi, ha già chiuso: è l'informazione che
+ * rende il numero citabile senza note a piè di pagina.
+ */
+export interface CounterCoverage {
+  esiti: ReadonlyMap<string, string>;
+  inRitardo: ReadonlySet<string>;
+}
+
 export function buildNationalCounter(
-  mandates: ReadonlyArray<{ actUrn: string; dueBy: string | null }>,
+  mandates: ReadonlyArray<CounterMandate>,
   today: string,
-  verifiedActs: ReadonlySet<string>,
+  coverage: CounterCoverage = { esiti: new Map(), inRitardo: new Set() },
 ): NationalCounter {
   let totalDaysLate = 0;
   let count = 0;
+  let verified = 0;
+  let adottatiInRitardo = 0;
+  let nonAdottati = 0;
   const acts = new Set<string>();
   for (const m of mandates) {
     if (!m.dueBy || m.dueBy >= today) continue;
@@ -120,22 +153,57 @@ export function buildNationalCounter(
     );
     count++;
     acts.add(m.actUrn);
+
+    const chiave = mandateKey({
+      actUrn: m.actUrn,
+      articleNumber: m.articleNumber ?? null,
+      provisionNumber: m.provisionNumber ?? null,
+      deadlineDays: m.deadlineDays ?? 0,
+    });
+    const esito = coverage.esiti.get(chiave);
+    // «Verificato» vuol dire che qualcuno è andato a guardare e ne è uscita una
+    // risposta. `non-verificabile` è una risposta onesta, ma non è una verifica
+    // riuscita: contarla fra le verifiche gonfierebbe la copertura, che è
+    // esattamente il numero che questo progetto non deve gonfiare.
+    if (esito === 'adottato' || esito === 'non-adottato') verified++;
+    if (esito === 'adottato' && coverage.inRitardo.has(chiave)) adottatiInRitardo++;
+    if (esito === 'non-adottato') nonAdottati++;
   }
   return {
     // L'etichetta dice **quello che abbiamo misurato**, non quello che sarebbe
-    // più efficace dire. Misuriamo che un termine di legge è scaduto; non
-    // verifichiamo, oggi, se il provvedimento sia poi stato adottato. Chiamare
-    // questi «provvedimenti mai adottati» sarebbe un titolo migliore e
-    // un'affermazione che non possiamo sostenere — e una sola affermazione
-    // falsa su una legge distrugge più di quanto dieci corrette costruiscano.
+    // più efficace dire. Misuriamo che un termine di legge è scaduto; per la
+    // quota verificata sappiamo anche se il provvedimento sia poi arrivato.
+    // Chiamare tutti questi «provvedimenti mai adottati» sarebbe un titolo
+    // migliore e un'affermazione che non possiamo sostenere — e una sola
+    // affermazione falsa su una legge distrugge più di quanto dieci corrette
+    // costruiscano.
     label:
       'Giorni trascorsi dalla scadenza dei termini fissati per i provvedimenti attuativi previsti',
     totalDaysLate,
     mandates: count,
     acts: acts.size,
-    verified: [...acts].filter((a) => verifiedActs.has(a)).length,
+    verified,
+    adottatiInRitardo,
+    nonAdottati,
     computedAt: today,
-    caveat:
-      'Il conteggio riguarda i soli atti presenti nel corpus ingerito e i soli mandati con un termine espresso nel testo: da questo lato è una sottostima. Dall’altro lato parte dalla scadenza del termine: se il decreto è poi arrivato con cinque anni di ritardo, quei cinque anni li conta lo stesso, ma il provvedimento c’è. Misura termini scaduti, non attuazioni mancate — l’adozione dopo la scadenza non la verifichiamo ancora in Gazzetta Ufficiale, se non per la quota indicata come verificata.',
+    caveat: caveat(verified, adottatiInRitardo, nonAdottati),
   };
+}
+
+const SOTTOSTIMA =
+  'Il conteggio riguarda i soli atti presenti nel corpus ingerito e i soli mandati con un termine espresso nel testo: da questo lato è una sottostima.';
+const SOPRASTIMA =
+  'Dall’altro lato parte dalla scadenza del termine: se il decreto è poi arrivato con cinque anni di ritardo, quei cinque anni li conta lo stesso, ma il provvedimento c’è.';
+
+function caveat(verificati: number, adottatiInRitardo: number, nonAdottati: number): string {
+  if (verificati === 0) {
+    return `${SOTTOSTIMA} ${SOPRASTIMA} Misura termini scaduti, non attuazioni mancate — l’adozione dopo la scadenza non la verifichiamo ancora in Gazzetta Ufficiale, se non per la quota indicata come verificata.`;
+  }
+  return [
+    SOTTOSTIMA,
+    SOPRASTIMA,
+    `Su ${verificati} di questi mandati siamo andati a guardare in Gazzetta Ufficiale, uno per uno:`,
+    `per ${adottatiInRitardo} il decreto è arrivato dopo la scadenza — il ritardo è reale, il buco no — e per ${nonAdottati} non risulta pubblicato.`,
+    'Sugli altri non lo sappiamo, e per quelli il numero misura termini scaduti, non attuazioni mancate.',
+  ].join(' ');
 }
