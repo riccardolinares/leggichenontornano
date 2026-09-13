@@ -1,4 +1,4 @@
-# 0012 — Come si verifica in Gazzetta Ufficiale, e quando una mancata attuazione si può pubblicare
+# 0013 — Come si verifica in Gazzetta Ufficiale, e quando una mancata attuazione si può pubblicare
 
 - **Stato:** Accettata
 - **Data:** 2026-09-13
