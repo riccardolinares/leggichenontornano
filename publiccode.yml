@@ -5,7 +5,7 @@ publiccodeYmlVersion: '0.4'
 name: Antinomia
 applicationSuite: Le leggi che non tornano
 url: 'https://github.com/riccardolinares/leggichenontornano'
-landingURL: 'https://leleggichenontornano.it'
+landingURL: 'https://leggichenontornano.it'
 
 softwareVersion: '0.1.0'
 releaseDate: '2026-09-12'

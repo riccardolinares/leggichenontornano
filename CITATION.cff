@@ -13,7 +13,7 @@ message: >-
 type: software
 license: EUPL-1.2
 repository-code: 'https://github.com/riccardolinares/leggichenontornano'
-url: 'https://leleggichenontornano.it'
+url: 'https://leggichenontornano.it'
 keywords:
   - diritto
   - legimatica

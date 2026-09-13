@@ -45,7 +45,7 @@ jobs:
           # nessuno cambia la cartella di lavoro, e poi legge un dataset vuoto
           # senza dirlo.
           ANTINOMIA_SNAPSHOT: ${{ github.workspace }}/data/snapshot
-          ANTINOMIA_SITE_URL: https://leleggichenontornano.it
+          ANTINOMIA_SITE_URL: https://leggichenontornano.it
           MASTODON_INSTANCE: ${{ secrets.MASTODON_INSTANCE }}
           MASTODON_TOKEN: ${{ secrets.MASTODON_TOKEN }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
@@ -62,7 +62,7 @@ jobs:
             exit 0
           fi
           git config user.name "bot antinomia"
-          git config user.email "bot@leleggichenontornano.it"
+          git config user.email "bot@leggichenontornano.it"
           git add data/bot/pubblicate.json
           git commit -m "Registra la segnalazione pubblicata oggi"
           git push

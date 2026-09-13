@@ -23,7 +23,7 @@ import { selezionaDelGiorno } from './selezione.js';
 
 const SNAPSHOT = process.env['ANTINOMIA_SNAPSHOT'] ?? 'data/snapshot';
 const REGISTRO = process.env['ANTINOMIA_BOT_REGISTRO'] ?? 'data/bot/pubblicate.json';
-const SITE = process.env['ANTINOMIA_SITE_URL'] ?? 'https://leleggichenontornano.it';
+const SITE = process.env['ANTINOMIA_SITE_URL'] ?? 'https://leggichenontornano.it';
 
 interface VocePubblicata {
   id: string;
