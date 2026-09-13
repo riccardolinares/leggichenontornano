@@ -69,6 +69,7 @@ export default async function LettoreNorma({ params, searchParams }: Props) {
   const articoli = vigente ? reader.articles(vigente.id) : [];
   const principali = articoli.filter((a) => a.principal);
   const mostrati = art ? principali.filter((a) => a.number === art.toLowerCase()) : principali;
+  const piuContenitori = new Set(mostrati.map((a) => a.container ?? '')).size > 1;
   const anomalie = reader.anomaliesFor(urn);
   const anomaliePerArticolo = new Map<string, typeof anomalie>();
   for (const a of anomalie) {
@@ -144,7 +145,7 @@ export default async function LettoreNorma({ params, searchParams }: Props) {
                       {versione.dateConflict ? (
                         <>
                           <br />
-                          <small style={{ color: 'var(--ocra)' }}>
+                          <small className="nota-fonte">
                             Discordanza nella fonte: {versione.dateConflict}
                           </small>
                         </>
@@ -200,7 +201,14 @@ export default async function LettoreNorma({ params, searchParams }: Props) {
                 >
                   <p className="articolo__num">
                     {articolo.num ?? `Art. ${articolo.number}`}
-                    {articolo.container ? ` — ${articolo.container}` : ''}
+                    {/* Il contenitore — l'allegato che ospita l'articolo — si
+                        mostra solo quando ce n'è più d'uno. Un atto come il
+                        codice civile ha due numerazioni e lì serve davvero
+                        distinguerle; su un atto con un contenitore solo,
+                        ripeterne il nome sopra ogni articolo vuol dire
+                        stampare il titolo dell'atto cinquanta volte in una
+                        pagina che lo ha già in cima. */}
+                    {piuContenitori && articolo.container ? ` — ${articolo.container}` : ''}
                   </p>
                   {articolo.heading ? (
                     <h3 className="articolo__rubrica">{articolo.heading}</h3>
