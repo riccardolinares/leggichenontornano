@@ -36,7 +36,7 @@ export interface RelationRecord {
   effectiveFrom: string | null;
   evidence: string | null;
   confidence: 'alta' | 'bassa';
-  origin: 'activeModifications' | 'passiveModifications' | 'ref' | 'nota' | 'preambolo';
+  origin: 'activeModifications' | 'passiveModifications' | 'ref' | 'nota' | 'preambolo' | 'consulta';
 }
 
 const ACTION_TO_TYPE: Record<string, RelationType> = {

@@ -20,6 +20,7 @@ export default function Dati() {
   const pubblicati = metriche.filter((m) => m.published);
   const fermi = metriche.filter((m) => !m.published);
   const verticali = reader.verticals();
+  const revisioni = metriche.reduce((n, m) => n + m.reviewed, 0);
   const contatore = reader.counter();
 
   return (
@@ -159,6 +160,29 @@ export default function Dati() {
             nessuna regola ha ancora superato la soglia sul corpus che abbiamo.
           </p>
         ) : null}
+
+        <h3 style={{ marginTop: '2rem' }}>Cosa manca ancora</h3>
+        <div className="niente-segnale">
+          <p style={{ marginBottom: 0 }}>
+            {revisioni === 0 ? (
+              <>
+                <strong>Nessuna revisione umana è ancora stata registrata.</strong> Le percentuali
+                di precisione qui sopra non esistono perché non c’è ancora niente da misurare, e i
+                controlli di livello 1 pubblicano in attesa di quelle revisioni perché sono
+                deterministici, non perché siano stati verificati.{' '}
+              </>
+            ) : (
+              <>
+                Le revisioni registrate sono <strong>{numero(revisioni)}</strong>, e le percentuali
+                qui sopra valgono quanto quel campione.{' '}
+              </>
+            )}
+            Il primo lotto di segnalazioni <strong>non è ancora stato demolito da giuristi
+            esterni</strong>: è il passo previsto prima del lancio pubblico, e l’incarico è «trova
+            tutto quello che non regge», non «controlla se vanno bene». Finché non sarà fatto,
+            questa riga resta qui.
+          </p>
+        </div>
       </section>
 
       {verticali.length > 0 ? (

@@ -118,6 +118,40 @@ Codice: `packages/engine/src/publication-gate.ts`. I test che lo verificano:
 
 ---
 
+## Cosa misuriamo oggi
+
+Le pronunce della Corte costituzionale sono importate e misurate. Il comando
+`antinomia-engine gold valuta` produce **due numeri**, non uno:
+
+```
+Annotazioni:            762
+  di cui con atti nel corpus: 83
+
+Recall complessivo:     4.3%  (33/762)
+Recall sul corpus:      39.8% (33/83)
+```
+
+La differenza non è cosmetica. Il recall complessivo mescola due mancanze che si
+riparano in modi opposti:
+
+- **l'atto non ce l'abbiamo.** Il corpus ingerito è una frazione di Normattiva,
+  e un'annotazione su una legge che non abbiamo scaricato non dice niente sui
+  controlli. Si alza scaricando più corpus.
+- **l'atto ce l'abbiamo e non l'abbiamo visto.** Questo misura i controlli, ed è
+  il numero che deve salire scrivendone di migliori.
+
+Confonderli produce una cifra che sembra un giudizio sul motore e non lo è.
+
+Resta la generosità dichiarata del criterio: una segnalazione «intercetta»
+un'annotazione se tocca almeno un URN di atto in comune. **Il recall qui è un
+limite superiore**, non una misura stretta, e va letto come tale.
+
+Le due grandezze restano inoltre asimmetriche per costruzione: le pronunce della
+Consulta certificano un tipo di contraddizione — il contrasto con la
+Costituzione — che nessuno dei controlli attuali cerca. Che il recall su quella
+fonte sia basso è un'informazione sul perimetro dei controlli, non un difetto da
+correggere gonfiando i numeri.
+
 ## Prima del lancio pubblico
 
 Il primo lotto di segnalazioni va **demolito**, non validato, da due o tre

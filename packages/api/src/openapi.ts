@@ -108,7 +108,7 @@ export function openApiDocument(basePath = '/v1'): Record<string, unknown> {
         get: {
           summary: 'Ego-network a profondità 1 o 2 attorno a una norma',
           description:
-            'Il layout non è incluso: viene precalcolato server-side e persistito, perché deve essere deterministico e citabile.',
+            'Nessun layout a forze. Ogni nodo porta le due coordinate del diagramma a strati che il sito disegna — «date» (il tempo, sull\'asse x) e «layer» (la distanza dal centro) — calcolate server-side e identiche a ogni chiamata, perché il disegno di una relazione fra norme deve essere deterministico e citabile come il resto.',
           parameters: [
             pathParam('urn', 'URN:NIR'),
             param('profondita', '1 (predefinito) oppure 2', 'integer'),

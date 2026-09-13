@@ -1,20 +1,26 @@
 {
   "formatVersion": 1,
-  "generatedAt": "2026-09-13T01:06:21.012Z",
-  "knownAt": "2026-09-13T01:06:21.012Z",
+  "generatedAt": "2026-09-13T01:29:48.648Z",
+  "knownAt": "2026-09-13T01:29:48.648Z",
   "counts": {
     "acts": 161,
     "versions": 704,
     "articles": 2500,
-    "relations": 3652,
+    "relations": 3722,
     "anomalies": 362,
-    "publishedAnomalies": 103
+    "publishedAnomalies": 103,
+    "pronunce": 55
   },
   "sources": [
     {
       "name": "Normattiva open data",
       "licence": "CC BY 4.0",
-      "retrievedAt": "2026-09-13T01:06:21.012Z"
+      "retrievedAt": "2026-09-13T01:29:48.648Z"
+    },
+    {
+      "name": "Corte costituzionale open data",
+      "licence": "CC BY-SA 3.0",
+      "retrievedAt": "2026-09-13T01:29:48.648Z"
     }
   ],
   "publicationThreshold": {

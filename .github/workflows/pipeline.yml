@@ -78,6 +78,12 @@ jobs:
           done
           node packages/corpus/dist/cli.js stats
 
+      # Le pronunce della Corte costituzionale: archi DICHIARA_ILLEGITTIMO e voci
+      # di gold standard. Gli archivi sono aggiornati quotidianamente dalla
+      # Consulta, quindi ha senso rileggerli a ogni giro.
+      - name: Ingerisci le pronunce della Corte costituzionale
+        run: node packages/corpus/dist/cli.js consulta || true
+
       - name: Esegui i controlli
         run: node packages/engine/dist/cli.js run
 
@@ -93,6 +99,8 @@ jobs:
           {
             echo 'sommario<<FINE'
             node packages/engine/dist/cli.js metriche
+            echo ''
+            node packages/engine/dist/cli.js gold valuta | head -20
             echo ''
             echo 'Righe cambiate nel dataset:'
             git diff --stat -- data/snapshot || true

@@ -155,6 +155,18 @@ annotate da giuristi:
    dove la pubblica amministrazione ha dovuto chiarire perché il testo non
    bastava.
 
+La seconda è integrata: gli open data della Corte costituzionale contengono
+tutte le pronunce dal 1956 con ECLI nativo, e dal dispositivo — la parte in cui
+la Corte scrive cosa ha deciso — si leggono gli estremi delle norme dichiarate
+illegittime. Il parser copia il riferimento e non interpreta niente: il giudizio
+l'ha già dato l'unico organo che poteva.
+
+La misura si legge in **due numeri**, perché due mancanze diverse si riparano in
+modi diversi: quante annotazioni il motore intercetta *in assoluto*, e quante ne
+intercetta *fra quelle i cui atti abbiamo davvero scaricato*. Il primo si alza
+ampliando il corpus, il secondo scrivendo controlli migliori. Vedi
+[docs/gold-standard.md](docs/gold-standard.md).
+
 ## 6. Soglia di pubblicazione: 85%
 
 > Un tipo di controllo viene pubblicato soltanto quando la revisione umana su

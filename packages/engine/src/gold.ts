@@ -91,6 +91,8 @@ export interface EsitoGold {
   trovata: boolean;
   /** Identificatori delle segnalazioni che la intercettano. */
   segnalazioni: string[];
+  /** `true` quando almeno uno degli atti dell'annotazione è nel corpus ingerito. */
+  nelCorpus: boolean;
   summary: string;
 }
 
@@ -99,7 +101,21 @@ export interface RapportoGold {
   trovate: number;
   /** Recall complessivo: quante annotazioni il motore intercetta. */
   recall: number;
+  /**
+   * Annotazioni i cui atti sono nel corpus ingerito.
+   *
+   * Il recall complessivo da solo non dice niente di utile: il corpus è
+   * parziale per costruzione, e un'annotazione su una legge che non abbiamo
+   * scaricato non è un mancato riconoscimento, è un atto mancante. Le due cose
+   * si sistemano in modi diversi — una scaricando più corpus, l'altra
+   * scrivendo controlli migliori — e confonderle nasconde quale dei due lavori
+   * serva.
+   */
+  nelCorpus: number;
+  /** Recall calcolato solo sulle annotazioni i cui atti abbiamo davvero. */
+  recallNelCorpus: number;
   perControllo: Array<{ checkId: string; attese: number; trovate: number; recall: number }>;
+  perFonte: Array<{ fonte: string; totali: number; nelCorpus: number; trovate: number }>;
   esiti: EsitoGold[];
 }
 
@@ -114,13 +130,15 @@ export interface RapportoGold {
  */
 export async function valutaGold(): Promise<RapportoGold> {
   const prisma = getPrisma();
-  const [voci, anomalie] = await Promise.all([
+  const [voci, anomalie, atti] = await Promise.all([
     prisma.goldItem.findMany(),
     prisma.anomaly.findMany({
       where: { resolvedAt: null },
       select: { id: true, checkId: true, urns: true },
     }),
+    prisma.act.findMany({ select: { urn: true } }),
   ]);
+  const attiNoti = new Set(atti.map((a) => a.urn));
 
   const perAtto = new Map<string, Array<{ id: string; checkId: string }>>();
   for (const a of anomalie) {
@@ -145,6 +163,7 @@ export async function valutaGold(): Promise<RapportoGold> {
       urns: voce.urns,
       trovata: segnalazioni.length > 0,
       segnalazioni,
+      nelCorpus: voce.urns.some((u) => attiNoti.has(u.split('~')[0]!)),
       summary: voce.summary,
     };
   });
@@ -158,17 +177,32 @@ export async function valutaGold(): Promise<RapportoGold> {
     perControllo.set(key, acc);
   }
 
+  const perFonte = new Map<string, { totali: number; nelCorpus: number; trovate: number }>();
+  for (const esito of esiti) {
+    const acc = perFonte.get(esito.sourceKind) ?? { totali: 0, nelCorpus: 0, trovate: 0 };
+    acc.totali++;
+    if (esito.nelCorpus) acc.nelCorpus++;
+    if (esito.trovata) acc.trovate++;
+    perFonte.set(esito.sourceKind, acc);
+  }
+
   const trovate = esiti.filter((e) => e.trovata).length;
+  const nelCorpus = esiti.filter((e) => e.nelCorpus).length;
   return {
     totali: esiti.length,
     trovate,
     recall: esiti.length > 0 ? trovate / esiti.length : 0,
+    nelCorpus,
+    recallNelCorpus: nelCorpus > 0 ? esiti.filter((e) => e.nelCorpus && e.trovata).length / nelCorpus : 0,
     perControllo: [...perControllo.entries()].map(([checkId, v]) => ({
       checkId,
       attese: v.attese,
       trovate: v.trovate,
       recall: v.attese > 0 ? v.trovate / v.attese : 0,
     })),
+    perFonte: [...perFonte.entries()]
+      .map(([fonte, v]) => ({ fonte, ...v }))
+      .sort((a, b) => b.totali - a.totali),
     esiti,
   };
 }

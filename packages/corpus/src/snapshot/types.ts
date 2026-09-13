@@ -80,6 +80,26 @@ export interface SnapshotAnomaly {
   computedAt: string;
 }
 
+/**
+ * Una pronuncia della Corte costituzionale che ha colpito una norma del corpus.
+ *
+ * Nel dataset sta in un file suo, non fra gli atti: una sentenza non è un atto
+ * normativo e non deve comparire nell'elenco delle norme. Il legame con la
+ * norma colpita passa dagli archi `DICHIARA_ILLEGITTIMO`, la cui sorgente è
+ * l'ECLI.
+ */
+export interface SnapshotPronuncia {
+  ecli: string;
+  numero: string;
+  anno: string;
+  /** `S` sentenza, `O` ordinanza. */
+  tipologia: string;
+  dataDeposito: string | null;
+  /** Il dispositivo: le parole con cui la Corte ha deciso. */
+  dispositivo: string;
+  url: string | null;
+}
+
 export interface SnapshotCheckMetric {
   checkId: string;
   label: string;
@@ -138,6 +158,8 @@ export interface SnapshotManifest {
     relations: number;
     anomalies: number;
     publishedAnomalies: number;
+    /** Pronunce della Corte costituzionale incluse, quando ce ne sono. */
+    pronunce?: number;
   };
   sources: Array<{
     name: string;

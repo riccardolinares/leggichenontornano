@@ -130,6 +130,13 @@ node packages/engine/dist/cli.js estrai --vocabolario data/vocabolari/appalti.js
 node packages/engine/dist/cli.js run --verticale appalti
 ```
 
+Le pronunce della Corte costituzionale e la misura del recall:
+
+```bash
+node packages/corpus/dist/cli.js consulta          # archi + gold standard
+node packages/engine/dist/cli.js gold valuta       # quanto il motore intercetta
+```
+
 L'API pubblica si alza con o senza database:
 
 ```bash
@@ -150,9 +157,29 @@ Usiamo le API di export e le collezioni predefinite previste dal portale, con
 rate limiting e cache locale. Non c'è nel nostro codice un percorso che faccia
 scraping del sito di consultazione.
 
-Altre fonti previste dall'architettura: open data della Corte costituzionale
-(ECLI nativo, tutte le decisioni dal 1956), SPARQL di Camera e Senato — non i
-dump RDF, che hanno file mancanti ed errori di parsing — Banca Dati di Merito,
+**Corte costituzionale open data**
+([dati.cortecostituzionale.it](https://dati.cortecostituzionale.it)) — tutte le
+pronunce dal 1956, con ECLI nativo. Licenza **CC BY-SA 3.0**.
+
+Una dichiarazione di illegittimità costituzionale è una contraddizione
+**certificata dall'ordinamento**: non la troviamo noi, la dichiara l'unico
+organo che può farlo. La usiamo per due cose, e restano separate:
+
+- **archi del grafo** `DICHIARA_ILLEGITTIMO`, mostrati nel lettore norma con le
+  parole del dispositivo e il collegamento al testo integrale;
+- **gold standard**, per misurare quanto il motore intercetta. Una pronuncia non
+  è mai insieme input del motore e verità contro cui lo si misura.
+
+Leggiamo il **dispositivo**, cioè la parte in cui la Corte scrive cosa ha
+deciso, e ne copiamo gli estremi. Non interpretiamo, non riassumiamo, non
+valutiamo: il giudizio l'ha già dato chi poteva darlo. Il parser si rifiuta di
+produrre un arco quando la norma è regionale (fuori dal nostro spazio di URN),
+quando il dispositivo nomina più atti senza che il primo sia inequivoco, e
+quando la declaratoria è parziale — in quel caso l'arco nasce a bassa
+confidenza, perché la norma non cade, cambia contenuto.
+
+Altre fonti previste dall'architettura: SPARQL di Camera e Senato — non i dump
+RDF, che hanno file mancanti ed errori di parsing — Banca Dati di Merito,
 Gazzetta Ufficiale per la verifica degli atti attuativi, EUR-Lex per i rinvii
 sovranazionali.
 
@@ -168,6 +195,10 @@ estremi e non si ospita il testo.
 > La banca dati Normattiva **non ha carattere di ufficialità**: l'unico testo
 > ufficiale è quello pubblicato sulla *Gazzetta Ufficiale*, che prevale in caso
 > di discordanza.
+>
+> Pronunce: elaborazione su dati **Corte costituzionale**
+> ([dati.cortecostituzionale.it](https://dati.cortecostituzionale.it)),
+> licenza [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/it/).
 
 Questa avvertenza è su ogni pagina del sito e in due intestazioni HTTP di ogni
 risposta dell'API. Non è nel footer in grigio chiaro.
@@ -178,11 +209,15 @@ risposta dell'API. Non è nel footer in grigio chiaro.
 
 Gli open data di Normattiva hanno irregolarità che, prese per buone, producono
 segnalazioni che **sembrano errori del legislatore e sono errori di marcatura**.
-Ne abbiamo trovate sette. Altre due erano nostre, e sono le più istruttive: il
-confronto semantico delimitato dalle parole invece che dagli atti, e un «stesso
-soggetto» che confrontava concetti trovati in qualunque punto della frase. Tutte
-e nove sono venute fuori eseguendo il motore sul corpus vero e leggendo le
-segnalazioni una per una. Sono documentate in
+Ne abbiamo trovate sette. Altre cinque erano nostre, e sono le più istruttive:
+il confronto semantico delimitato dalle parole invece che dagli atti, un «stesso
+soggetto» che confrontava concetti trovati in qualunque punto della frase, una
+citazione letta dentro il titolo di un altro atto che dichiarava caduta una
+legge costituzionale vigente, una data scritta «1° ottobre» che spariva, e un
+confine di parola sbagliato che trasformava le declaratorie parziali della Corte
+costituzionale in declaratorie totali. Tutte e dodici sono venute fuori
+eseguendo il motore sul corpus vero e leggendo l'output una riga per volta. Sono
+documentate in
 [docs/qualita-fonti.md](docs/qualita-fonti.md), con cosa producevano e cosa
 facciamo adesso.
 

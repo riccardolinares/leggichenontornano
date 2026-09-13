@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { normaConPiuVersioni, percorsiDaVerificare, primaAnomalia, primaNorma } from './percorsi';
+import { normaConPiuVersioni, normaConPronuncia, percorsiDaVerificare, primaAnomalia, primaNorma } from './percorsi';
 
 /**
  * Verifiche di usabilità e di contenuto.
@@ -62,6 +62,15 @@ test.describe('vincoli non negoziabili', () => {
     await page.goto('/come-funziona');
     const testo = (await page.locator('main').textContent()) ?? '';
     expect(testo).toMatch(/elenco degli atti/i);
+  });
+
+  test('la pagina Dati dice che la revisione esterna non è ancora stata fatta', async ({ page }) => {
+    // docs/gold-standard.md promette che questo sia detto «qui e nella pagina
+    // Dati del sito». Una promessa di trasparenza che vale solo dentro il
+    // repository non è trasparenza.
+    await page.goto('/dati');
+    const testo = (await page.locator('main').textContent()) ?? '';
+    expect(testo).toMatch(/non è ancora stato demolito da giuristi esterni/i);
   });
 
   test('la home dice che assenza di segnale non significa norma coerente', async ({ page }) => {
@@ -179,6 +188,43 @@ test.describe('lettore norma', () => {
     await articolo.waitFor();
     const font = await articolo.evaluate((el) => getComputedStyle(el).fontFamily);
     expect(font.toLowerCase()).toMatch(/newsreader|serif/);
+  });
+});
+
+test.describe('pronunce della Corte costituzionale', () => {
+  const colpita = normaConPronuncia();
+
+  test.skip(!colpita, 'nessuna norma colpita da una pronuncia nel dataset');
+
+  test('la pagina distingue la declaratoria di illegittimità dall’abrogazione', async ({ page }) => {
+    await page.goto(`/norma/${encodeURIComponent(colpita!)}`);
+    const sezione = page.getByRole('region', {
+      name: /dichiarazioni di illegittimità costituzionale/i,
+    });
+    await expect(sezione).toBeVisible();
+    // Sono due cose diverse, e la pagina deve dirlo: l'abrogazione dispone per
+    // il futuro, la declaratoria fa cessare l'efficacia della norma.
+    await expect(sezione.getByText(/non è un’abrogazione/i)).toBeVisible();
+  });
+
+  test('mostra le parole della Corte e il collegamento al testo integrale', async ({ page }) => {
+    await page.goto(`/norma/${encodeURIComponent(colpita!)}`);
+    const sezione = page.getByRole('region', {
+      name: /dichiarazioni di illegittimità costituzionale/i,
+    });
+    // Il dispositivo è la prova: nessun riassunto generato al suo posto.
+    const prova = sezione.locator('.prova__testo').first();
+    await expect(prova).toBeVisible();
+    expect(((await prova.textContent()) ?? '').length).toBeGreaterThan(40);
+    await expect(sezione.getByText(/ECLI:IT:COST:/).first()).toBeVisible();
+    await expect(sezione.getByRole('link', { name: /testo integrale/i }).first()).toBeVisible();
+  });
+
+  test('attribuisce la fonte e la sua licenza', async ({ page }) => {
+    await page.goto(`/norma/${encodeURIComponent(colpita!)}`);
+    const testo = (await page.locator('main').textContent()) ?? '';
+    expect(testo).toMatch(/Corte costituzionale/);
+    expect(testo).toMatch(/CC BY-SA 3\.0/);
   });
 });
 

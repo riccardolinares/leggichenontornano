@@ -19,6 +19,7 @@ import {
   type SnapshotArticle,
   type SnapshotCheckMetric,
   type SnapshotManifest,
+  type SnapshotPronuncia,
   type SnapshotRelation,
   type SnapshotVersion,
 } from './types.js';
@@ -180,8 +181,19 @@ export async function exportSnapshot(opts: ExportOptions): Promise<SnapshotManif
       // In modalità ridotta si tengono solo gli archi i cui **due** estremi sono
       // nel dataset: un arco che punta fuori non è navigabile e gonfierebbe il
       // file senza aggiungere nulla di verificabile.
+      //
+      // Con un'eccezione: gli archi che nascono da una pronuncia della Corte
+      // costituzionale. La loro sorgente è un ECLI, non un atto, e non sarà mai
+      // fra gli URN esportati — ma la pronuncia viaggia con il dataset, quindi
+      // l'arco è navigabile eccome. Senza questa eccezione le declaratorie di
+      // illegittimità sparivano dal dataset in silenzio.
       ...(opts.onlyAnomalyActs
-        ? { AND: [{ sourceUrn: { in: actUrns } }, { targetUrn: { in: actUrns } }] }
+        ? {
+            OR: [
+              { AND: [{ sourceUrn: { in: actUrns } }, { targetUrn: { in: actUrns } }] },
+              { AND: [{ type: 'DICHIARA_ILLEGITTIMO' as const }, { targetUrn: { in: actUrns } }] },
+            ],
+          }
         : {}),
     },
     orderBy: { id: 'asc' },
@@ -201,6 +213,26 @@ export async function exportSnapshot(opts: ExportOptions): Promise<SnapshotManif
     origin: r.origin,
   }));
 
+  // Le pronunce che colpiscono un atto esportato: senza di esse gli archi
+  // `DICHIARA_ILLEGITTIMO` sarebbero un ECLI nudo, e il sito non potrebbe
+  // mostrare le parole con cui la Corte ha deciso — che sono la prova.
+  const ecliCitati = new Set(
+    relations.filter((r) => r.type === 'DICHIARA_ILLEGITTIMO').map((r) => r.sourceUrn),
+  );
+  const pronunce: SnapshotPronuncia[] = (
+    ecliCitati.size > 0
+      ? await prisma.pronuncia.findMany({ where: { ecli: { in: [...ecliCitati] } } })
+      : []
+  ).map((p) => ({
+    ecli: p.ecli,
+    numero: p.numero,
+    anno: p.anno,
+    tipologia: p.tipologia,
+    dataDeposito: p.dataDeposito,
+    dispositivo: p.dispositivo,
+    url: p.url,
+  }));
+
   const manifest: SnapshotManifest = {
     formatVersion: 1,
     generatedAt: knownAt.toISOString(),
@@ -212,9 +244,19 @@ export async function exportSnapshot(opts: ExportOptions): Promise<SnapshotManif
       relations: relations.length,
       anomalies: anomalies.length,
       publishedAnomalies: anomalies.filter((a) => a.published).length,
+      pronunce: pronunce.length,
     },
     sources: opts.sources ?? [
       { name: 'Normattiva open data', licence: 'CC BY 4.0', retrievedAt: knownAt.toISOString() },
+      ...(pronunce.length > 0
+        ? [
+            {
+              name: 'Corte costituzionale open data',
+              licence: 'CC BY-SA 3.0',
+              retrievedAt: knownAt.toISOString(),
+            },
+          ]
+        : []),
     ],
     publicationThreshold: opts.publicationThreshold ?? { minPrecision: 0.85, minSample: 30 },
     disclaimer: `${DISCLAIMER} ${ATTRIBUTION}`,
@@ -225,6 +267,7 @@ export async function exportSnapshot(opts: ExportOptions): Promise<SnapshotManif
   writeJsonl(snapshotPath(opts.dir, 'articles'), articles);
   writeJsonl(snapshotPath(opts.dir, 'relations'), relations);
   writeJsonl(snapshotPath(opts.dir, 'anomalies'), anomalies);
+  writeJsonl(snapshotPath(opts.dir, 'pronunce'), pronunce);
   writeJson(snapshotPath(opts.dir, 'metrics'), opts.metrics ?? []);
   writeJson(snapshotPath(opts.dir, 'manifest'), manifest);
 

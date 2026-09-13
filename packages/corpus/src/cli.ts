@@ -20,6 +20,7 @@ import { ensureSearchIndexes, ingestDirectory } from './pipeline.js';
 import { disconnectPrisma } from './store/client.js';
 import { corpusStats } from './store/read.js';
 import { exportSnapshot } from './snapshot/export.js';
+import { ingestConsulta } from './consulta/ingest.js';
 
 const USAGE = `antinomia-corpus — ingestione del corpus normativo
 
@@ -27,6 +28,7 @@ Comandi:
   collections                      elenca le collezioni predefinite di Normattiva
   fetch <nome> [opzioni]           scarica ed estrae una collezione in data/corpus/
   ingest <cartella> [opzioni]      ingerisce una collezione estratta nel database
+  consulta [opzioni]               ingerisce le pronunce della Corte costituzionale
   export [opzioni]                 esporta il dataset derivato in JSONL
   stats                            conteggi del corpus
 
@@ -39,14 +41,20 @@ Opzioni di ingest:
   --collezione <nome>              nome da registrare sugli atti
   --senza-rinvii                   non genera gli archi RINVIA
 
+Opzioni di consulta:
+  --periodo <a,b>                  1956-1980, 1981-2000, 2001-oggi (default: tutti)
+  --senza-scrittura                legge e misura senza toccare il database
+
 Opzioni di export:
   --dest <cartella>                cartella di destinazione (default data/snapshot)
   --solo-anomalie                  solo gli atti toccati da un'anomalia
   --campione <n>                   atti aggiuntivi da includere nel campione
   --max-articoli <n>               tetto agli articoli esportati
 
-I dati provengono da Normattiva (dati.normattiva.it), licenza CC BY 4.0.
+I dati normativi provengono da Normattiva (dati.normattiva.it), licenza CC BY 4.0.
 La banca dati Normattiva non ha carattere di ufficialita'.
+Le pronunce provengono dalla Corte costituzionale (dati.cortecostituzionale.it),
+licenza CC BY-SA 3.0.
 `;
 
 interface Args {
@@ -99,6 +107,32 @@ async function main(): Promise<number> {
       }
       process.stdout.write(
         `\n${byName.size} collezioni. Formati: O originale, M multivigente, V vigente.\n`,
+      );
+      return 0;
+    }
+
+    case 'consulta': {
+      const periodi = flags.get('periodo');
+      const rapporto = await ingestConsulta({
+        ...(typeof periodi === 'string' ? { periodi: periodi.split(',') } : {}),
+        persist: !flags.has('senza-scrittura'),
+        onProgress: (m) => process.stdout.write(`  ${m}\n`),
+      });
+      process.stdout.write(
+        [
+          '',
+          `pronunce lette:       ${rapporto.pronunce}`,
+          `dichiarazioni:        ${rapporto.dichiarazioni}`,
+          `con atto statale:     ${rapporto.risolte}`,
+          `archi scritti:        ${rapporto.relazioniScritte}`,
+          `voci gold standard:   ${rapporto.voceGoldScritte}`,
+          '',
+          'Dichiarazioni che non producono un arco:',
+          ...rapporto.scartate.map((s) => `  ${String(s.quante).padStart(5)}  ${s.motivo}`),
+          '',
+          rapporto.licenza,
+          '',
+        ].join('\n'),
       );
       return 0;
     }

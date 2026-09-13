@@ -62,6 +62,23 @@ export function normaConPiuVersioni(): string | null {
   return primo && primo[1] > 1 ? primo[0] : null;
 }
 
+/**
+ * Una norma colpita da una dichiarazione di illegittimità costituzionale.
+ *
+ * La sua pagina ha una sezione che le altre non hanno — citazioni, elenco di
+ * definizioni, collegamenti esterni — e senza un percorso dedicato l'audit di
+ * accessibilità non la vedrebbe mai.
+ */
+export function normaConPronuncia(): string | null {
+  const relazioni = jsonl<{ type: string; targetUrn: string }>('relations.jsonl');
+  const articoli = jsonl<{ actUrn: string }>('articles.jsonl');
+  const conTesto = new Set(articoli.map((a) => a.actUrn));
+  const colpita = relazioni.find(
+    (r) => r.type === 'DICHIARA_ILLEGITTIMO' && conTesto.has(r.targetUrn),
+  );
+  return colpita?.targetUrn ?? null;
+}
+
 export function percorsiDaVerificare(): Percorso[] {
   const percorsi: Percorso[] = [
     { nome: 'home', url: '/' },
@@ -82,6 +99,14 @@ export function percorsiDaVerificare(): Percorso[] {
   const norma = primaNorma();
   if (norma) {
     percorsi.push({ nome: 'lettore norma', url: `/norma/${encodeURIComponent(norma)}` });
+  }
+
+  const colpita = normaConPronuncia();
+  if (colpita && colpita !== norma) {
+    percorsi.push({
+      nome: 'norma con pronuncia della Consulta',
+      url: `/norma/${encodeURIComponent(colpita)}`,
+    });
   }
 
   return percorsi;

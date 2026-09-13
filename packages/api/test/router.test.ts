@@ -261,6 +261,21 @@ describe('/v1/norme', () => {
     expect(body.nodes).toHaveLength(2);
     expect(body.edges).toHaveLength(1);
   });
+
+  it('include le coordinate del diagramma a strati, non un layout a forze', async () => {
+    // ADR 0003: il layout è deterministico e calcolato qui. Se l'API non desse
+    // le coordinate, chi la consuma le inventerebbe — e quasi sempre con un
+    // layout a forze, che è ciò che abbiamo escluso.
+    const body = (await json(`/v1/norme/${encodeURIComponent(URN)}/grafo`)) as unknown as {
+      nodes: Array<{ urn: string; date: string | null; layer: number }>;
+    };
+    const centro = body.nodes.find((n) => n.urn === URN);
+    expect(centro?.layer).toBe(0);
+    for (const nodo of body.nodes) {
+      expect(nodo).toHaveProperty('date');
+      expect(typeof nodo.layer).toBe('number');
+    }
+  });
 });
 
 describe('/v1/metriche e /v1/dataset', () => {

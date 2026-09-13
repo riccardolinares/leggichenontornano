@@ -272,20 +272,45 @@ async function main(): Promise<number> {
           );
           return 0;
         }
+        // Due numeri, non uno. Il recall complessivo mescola due mancanze
+        // diverse — «non abbiamo quell'atto» e «lo abbiamo e non l'abbiamo
+        // visto» — che si riparano in due modi diversi.
         process.stdout.write(
-          `Recall complessivo: ${(rapporto.recall * 100).toFixed(1)}% ` +
-            `(${rapporto.trovate}/${rapporto.totali})\n\n`,
+          [
+            `Annotazioni:            ${rapporto.totali}`,
+            `  di cui con atti nel corpus: ${rapporto.nelCorpus}`,
+            '',
+            `Recall complessivo:     ${(rapporto.recall * 100).toFixed(1)}% (${rapporto.trovate}/${rapporto.totali})`,
+            `Recall sul corpus:      ${(rapporto.recallNelCorpus * 100).toFixed(1)}% (${rapporto.esiti.filter((e) => e.nelCorpus && e.trovata).length}/${rapporto.nelCorpus})`,
+            '',
+            'Il primo numero comprende annotazioni su atti che non abbiamo scaricato:',
+            'si alza scaricando piu\' corpus. Il secondo misura i controlli.',
+            '',
+            'Per fonte:',
+            ...rapporto.perFonte.map(
+              (f) =>
+                `  ${f.fonte.padEnd(24)} ${String(f.totali).padStart(5)} annotazioni, ` +
+                `${String(f.nelCorpus).padStart(5)} sul corpus, ${String(f.trovate).padStart(4)} intercettate`,
+            ),
+            '',
+            'Per controllo atteso:',
+          ].join('\n') + '\n',
         );
         for (const r of rapporto.perControllo) {
           process.stdout.write(
             `  ${r.checkId.padEnd(36)} ${r.trovate}/${r.attese}  ${(r.recall * 100).toFixed(1)}%\n`,
           );
         }
-        const perse = rapporto.esiti.filter((e) => !e.trovata);
+        // Si mostrano solo le annotazioni **i cui atti abbiamo**: le altre non
+        // dicono niente sul motore, e riempirebbero lo schermo nascondendo
+        // quelle che invece un controllo avrebbe dovuto vedere.
+        const perse = rapporto.esiti.filter((e) => !e.trovata && e.nelCorpus);
         if (perse.length > 0) {
-          process.stdout.write('\nNon intercettate:\n');
-          for (const e of perse.slice(0, 20)) {
-            process.stdout.write(`  [${e.sourceKind}] ${e.sourceRef}: ${e.summary}\n`);
+          process.stdout.write(
+            `\nNon intercettate, con l'atto nel corpus (${perse.length}):\n`,
+          );
+          for (const e of perse.slice(0, 15)) {
+            process.stdout.write(`  [${e.sourceKind}] ${e.sourceRef}\n    ${e.urns.join(' ')}\n`);
           }
         }
         return 0;

@@ -15,6 +15,7 @@ import type {
   SnapshotCheckMetric,
   SnapshotCounter,
   SnapshotVertical,
+  SnapshotPronuncia,
   SnapshotManifest,
   SnapshotRelation,
   SnapshotVersion,
@@ -30,6 +31,7 @@ export interface SnapshotData {
   manifest: SnapshotManifest | null;
   counter?: SnapshotCounter | null;
   verticals?: SnapshotVertical[];
+  pronunce?: SnapshotPronuncia[];
 }
 
 export class SnapshotReader {
@@ -71,6 +73,7 @@ export class SnapshotReader {
       manifest: readJson<SnapshotManifest | null>(snapshotPath(dir, 'manifest'), null),
       counter: readJson<SnapshotCounter | null>(snapshotPath(dir, 'counter'), null),
       verticals: readJson<SnapshotVertical[]>(snapshotPath(dir, 'verticals'), []),
+      pronunce: readJsonl<SnapshotPronuncia>(snapshotPath(dir, 'pronunce')),
     });
   }
 
@@ -182,6 +185,34 @@ export class SnapshotReader {
   /** I verticali del layer semantico, con il confine per atti che si sono dati. */
   verticals(): SnapshotVertical[] {
     return this.data.verticals ?? [];
+  }
+
+  /**
+   * Le pronunce che hanno dichiarato illegittima una norma di questo atto.
+   *
+   * Si passa dagli archi, non da un campo sull'atto: la relazione è tipizzata
+   * e datata, e un flag «questo atto ha preso una pronuncia» perderebbe quale
+   * articolo, da quando, e con quali parole.
+   */
+  pronunceSuAtto(urn: string): Array<{ pronuncia: SnapshotPronuncia; relazioni: SnapshotRelation[] }> {
+    const archi = this.data.relations.filter(
+      (r) => r.type === 'DICHIARA_ILLEGITTIMO' && r.targetUrn === urn,
+    );
+    if (archi.length === 0) return [];
+    const perEcli = new Map<string, SnapshotRelation[]>();
+    for (const a of archi) {
+      const lista = perEcli.get(a.sourceUrn);
+      if (lista) lista.push(a);
+      else perEcli.set(a.sourceUrn, [a]);
+    }
+    const out: Array<{ pronuncia: SnapshotPronuncia; relazioni: SnapshotRelation[] }> = [];
+    for (const [ecli, relazioni] of perEcli) {
+      const pronuncia = (this.data.pronunce ?? []).find((p) => p.ecli === ecli);
+      if (pronuncia) out.push({ pronuncia, relazioni });
+    }
+    return out.sort((a, b) =>
+      (b.pronuncia.dataDeposito ?? '') < (a.pronuncia.dataDeposito ?? '') ? -1 : 1,
+    );
   }
 
   metric(checkId: string): SnapshotCheckMetric | null {

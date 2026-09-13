@@ -18,6 +18,7 @@ import {
   articleHistory as dbArticleHistory,
   corpusStats as dbCorpusStats,
   egoNetwork as dbEgoNetwork,
+  layeredGraph as dbLayeredGraph,
   getAct as dbGetAct,
   listActs as dbListActs,
   listVersions as dbListVersions,
@@ -63,6 +64,16 @@ export interface GraphNode {
   urn: string;
   title: string;
   abrogated: boolean;
+  /**
+   * Data dell'atto e distanza dal centro: sono le due coordinate del diagramma
+   * a strati che il sito disegna (tempo sull'asse x, profondità sull'asse y).
+   *
+   * Stanno nell'API perché il layout è **deterministico e calcolato qui**
+   * (ADR 0003): chi consuma l'API deve poter ridisegnare lo stesso diagramma,
+   * non inventarne uno a forze.
+   */
+  date: string | null;
+  layer: number;
 }
 
 export interface GraphEdgeOut {
@@ -189,7 +200,13 @@ export class SnapshotSource implements ApiSource {
   async graph(urn: string, _depth: 1 | 2) {
     const ego = this.reader.egoNetwork(urn);
     return {
-      nodes: ego.nodes.map((n) => ({ urn: n.urn, title: n.title, abrogated: n.abrogated })),
+      nodes: ego.nodes.map((n) => ({
+        urn: n.urn,
+        title: n.title,
+        abrogated: n.abrogated,
+        date: this.reader.act(n.urn)?.publicationDate ?? null,
+        layer: n.urn === urn ? 0 : 1,
+      })),
       edges: ego.edges.map((e) => ({
         type: e.type,
         sourceUrn: e.sourceUrn,
@@ -306,9 +323,16 @@ export class DatabaseSource implements ApiSource {
   }
 
   async graph(urn: string, depth: 1 | 2) {
-    const ego = await dbEgoNetwork(urn, depth);
+    const [ego, strati] = await Promise.all([dbEgoNetwork(urn, depth), dbLayeredGraph(urn, depth)]);
+    const perUrn = new Map(strati.nodes.map((n) => [n.urn, n]));
     return {
-      nodes: ego.nodes.map((n) => ({ urn: n.urn, title: n.title, abrogated: n.abrogated })),
+      nodes: ego.nodes.map((n) => ({
+        urn: n.urn,
+        title: n.title,
+        abrogated: n.abrogated,
+        date: perUrn.get(n.urn)?.date ?? null,
+        layer: perUrn.get(n.urn)?.layer ?? (n.urn === urn ? 0 : 1),
+      })),
       edges: ego.edges.map((e) => ({
         type: e.type,
         sourceUrn: e.sourceUrn,

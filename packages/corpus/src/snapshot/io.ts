@@ -19,6 +19,7 @@ export const SNAPSHOT_FILES = {
   manifest: 'manifest.json',
   counter: 'contatore.json',
   verticals: 'verticali.json',
+  pronunce: 'pronunce.jsonl',
 } as const;
 
 export function writeJsonl(path: string, rows: readonly unknown[]): void {

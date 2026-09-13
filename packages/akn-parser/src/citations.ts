@@ -62,7 +62,14 @@ const MESI: Readonly<Record<string, string>> = {
  * data, poi si guardano i 60 caratteri che la precedono.
  */
 const DATED_RE = new RegExp(
-  String.raw`(\d{1,2})\s+(${Object.keys(MESI).join('|')})\s+(\d{4})\s*,?\s*n\.\s*(\d+(?:[-\s]?(?:bis|ter|quater))?)`,
+  // Il giorno può portare il marcatore ordinale: «1° ottobre 2007» è la grafia
+  // corrente nei testi normativi italiani per il primo del mese, e senza
+  // questo carattere nell'espressione quelle citazioni sparivano in silenzio.
+  // Nel corpus ingerito la forma compare in oltre quattromila articoli, e su
+  // una pronuncia della Corte costituzionale saltare la prima citazione voleva
+  // dire attribuire la declaratoria di illegittimità alla legge di conversione
+  // invece che al decreto-legge.
+  String.raw`(\d{1,2})\s*[°º]?\s+(${Object.keys(MESI).join('|')})\s+(\d{4})\s*,?\s*n\.\s*(\d+(?:[-\s]?(?:bis|ter|quater))?)`,
   'gi',
 );
 

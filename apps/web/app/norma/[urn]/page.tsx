@@ -88,6 +88,7 @@ export default async function LettoreNorma({ params, searchParams }: Props) {
   const testoConfronto = new Map(articoliConfronto.map((a) => [a.number ?? '', a.text]));
 
   const ego = reader.egoNetwork(urn);
+  const pronunce = reader.pronunceSuAtto(urn);
 
   return (
     <div className="contenitore">
@@ -252,6 +253,67 @@ export default async function LettoreNorma({ params, searchParams }: Props) {
           </div>
         )}
       </section>
+
+      {/* Le pronunce della Corte costituzionale che hanno colpito questo atto.
+          Stanno sopra il grafo e in una sezione propria: una sentenza non è un
+          atto normativo, e infilarla fra gli archi la farebbe sembrare tale. */}
+      {pronunce.length > 0 ? (
+        <section className="sezione" aria-labelledby="consulta-titolo">
+          <h2 id="consulta-titolo" className="sezione__titolo">
+            Dichiarazioni di illegittimità costituzionale
+          </h2>
+          <p>
+            La Corte costituzionale ha dichiarato illegittime, in tutto o in parte, norme di questo
+            atto. Non è un’abrogazione: la norma cessa di avere efficacia, e quando la declaratoria
+            è parziale il testo resta con un contenuto diverso da quello scritto qui sopra.
+          </p>
+          <dl>
+            {pronunce.map(({ pronuncia, relazioni }) => (
+              <div key={pronuncia.ecli} style={{ marginBottom: '1.5rem' }}>
+                <dt style={{ fontWeight: 600 }}>
+                  {pronuncia.tipologia === 'O' ? 'Ordinanza' : 'Sentenza'} n.{' '}
+                  {pronuncia.numero}/{pronuncia.anno}
+                  {pronuncia.dataDeposito ? `, depositata il ${data(pronuncia.dataDeposito)}` : ''}
+                </dt>
+                <dd style={{ margin: '0.3rem 0 0' }}>
+                  <p style={{ margin: '0 0 0.5rem' }}>
+                    {relazioni
+                      .map((r) =>
+                        r.targetArticle
+                          ? `art. ${r.targetArticle}${
+                              r.targetParagraphs.length > 0
+                                ? `, comma ${r.targetParagraphs.join(', ')}`
+                                : ''
+                            }`
+                          : 'l’intero atto',
+                      )
+                      .join('; ')}
+                  </p>
+                  {/* Le parole della Corte, non un nostro riassunto. */}
+                  <blockquote className="prova" style={{ margin: '0 0 0.5rem' }}>
+                    <p className="prova__etichetta">Dal dispositivo della pronuncia</p>
+                    <p className="prova__testo">{relazioni[0]?.evidence}</p>
+                  </blockquote>
+                  <p style={{ margin: 0, fontSize: '0.9rem' }}>
+                    <code>{pronuncia.ecli}</code>
+                    {pronuncia.url ? (
+                      <>
+                        {' — '}
+                        <a href={pronuncia.url}>testo integrale sul sito della Corte</a>
+                      </>
+                    ) : null}
+                  </p>
+                </dd>
+              </div>
+            ))}
+          </dl>
+          <p style={{ fontSize: '0.9rem', color: 'var(--inchiostro-tenue)' }}>
+            Fonte: Corte costituzionale, <a href="https://dati.cortecostituzionale.it">dati.cortecostituzionale.it</a>,
+            licenza CC BY-SA 3.0. Gli estremi sono letti automaticamente dal dispositivo: prima di
+            trarne conclusioni, apri il testo integrale.
+          </p>
+        </section>
+      ) : null}
 
       {/* Ego-network deterministica, a profondità 1 */}
       {ego.edges.length > 0 ? (

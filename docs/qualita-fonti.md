@@ -10,7 +10,7 @@ sta fra un dataset pubblico e un'affermazione pubblica. Ogni caso qui sotto è
 stato trovato eseguendo il motore sul corpus vero e leggendo le segnalazioni una
 per una — non ipotizzato a tavolino.
 
-Gli ultimi due casi (§8 e §9) **non sono difetti della fonte: sono nostri**.
+Gli ultimi cinque casi (§8-§12) **non sono difetti della fonte: sono nostri**.
 Stanno qui lo stesso, perché si sono manifestati allo stesso modo — leggendo
 l'output — e perché un progetto che elenca gli errori altrui e tace i propri
 non è quello che vogliamo essere.
@@ -215,6 +215,69 @@ permettersi: se la regola sotto la scheda non è la query che gira, la scheda
 mente.
 
 Codice: `packages/engine/src/deontic/rule-based.ts`.
+
+---
+
+## 10. La citazione dentro il titolo di un altro atto
+
+**Cosa succede.** Nel dispositivo di una pronuncia della Corte costituzionale il
+titolo dell'atto colpito è virgolettato, e dentro quel titolo può esserci la
+citazione di **un'altra** norma:
+
+> Dichiara l'illegittimità costituzionale della deliberazione legislativa
+> statutaria adottata […] dal Consiglio regionale della Regione Marche e recante
+> "Disciplina transitoria in attuazione dell'articolo 3 della **legge
+> costituzionale 22 novembre 1999, n. 1**".
+
+**Cosa produceva.** L'unica citazione datata della frase sta dentro il titolo.
+Presa per buona, il grafo diceva che l'art. 3 di una legge costituzionale
+**vigente** era stato dichiarato illegittimo. Un arco, e la cosa più dannosa che
+questo progetto possa dire.
+
+**Cosa facciamo.** I titoli — parentesi, virgolette caporali, virgolette dritte
+— si rimuovono prima di cercare la norma. La stessa rimozione toglie anche il
+rumore innocuo: i titoli dei codici citano le direttive europee che attuano.
+
+Codice: `packages/corpus/src/consulta/dispositivo.ts`.
+
+---
+
+## 11. «1° ottobre» non è una data, per un'espressione regolare distratta
+
+**Cosa succede.** Nei testi normativi italiani il primo del mese si scrive con il
+marcatore ordinale: «decreto-legge 1° ottobre 2007, n. 159». L'espressione che
+riconosce le citazioni chiedeva una o due cifre seguite da uno spazio.
+
+**Cosa produceva.** Niente di visibile, che è sempre il problema. Su una
+pronuncia della Corte costituzionale la prima citazione spariva e la
+declaratoria di illegittimità finiva sulla **legge di conversione** invece che
+sul decreto-legge. Nel corpus ingerito la forma compare in oltre quattromila
+articoli.
+
+**Cosa facciamo.** L'espressione accetta il marcatore ordinale. In più, nel
+dispositivo, tutto ciò che segue la formula «convertito, con modificazioni,
+nella legge…» viene ignorato: la legge di conversione non è mai la norma caduta.
+
+Codice: `packages/akn-parser/src/citations.ts`,
+`packages/corpus/src/consulta/dispositivo.ts`.
+
+---
+
+## 12. `limitatamente a\b` non corrisponde mai a «limitatamente alle parole»
+
+**Cosa succede.** Lo stesso inciampo di `/\bpuò\b/` sull'accento, con un'altra
+lettera: fra la «a» di «limitatamente a» e la «l» di «alle» non c'è alcun
+confine di parola, e l'espressione che riconosce le declaratorie **parziali** non
+scattava.
+
+**Cosa produceva.** «Dichiara l'illegittimità costituzionale dell'art. 287,
+comma 1, […] limitatamente alle parole "rilasciato dall'ispettorato"» veniva
+registrata come declaratoria **totale**: cioè come se la norma fosse caduta per
+intero, quando invece resta in vigore con un contenuto diverso.
+
+**Cosa facciamo.** Il confine finale sta su ciascuna alternativa che lo
+sopporta, non sul gruppo. Il caso è in `packages/corpus/test/consulta.test.ts`,
+con il testo reale che lo ha rivelato.
 
 ---
 
