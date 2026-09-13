@@ -54,7 +54,7 @@ export interface GateDecision {
  *
  * Restituisce sempre una motivazione: la pagina «Dati» mostra anche i controlli
  * che non pubblicano, con il perché. Dichiarare cosa non pubblichiamo è la parte
- * che regge l'esame di un giurista ostile.
+ * che regge quando qualcuno arriva per smontarci.
  */
 export function evaluateGate(
   definition: CheckDefinition,

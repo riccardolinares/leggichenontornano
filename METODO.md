@@ -184,8 +184,17 @@ La dimensione minima del campione è 30 revisioni per tipo; sotto quella soglia 
 tipo è `non misurato` e resta non pubblicato, perché una precisione del 100% su
 tre casi non è una precisione.
 
-Prima del lancio pubblico, il primo lotto di segnalazioni va **demolito**, non
-validato, da due o tre giuristi esterni. Si pubblica ciò che sopravvive.
+Le revisioni vengono da chi legge, non da un comitato. Ogni scheda è costruita
+per essere **demolita**, non ammirata: i testi originali, la query che l'ha
+prodotta e i criteri di risoluzione stanno tutti in pagina, e il pulsante «Non è
+un conflitto» apre una issue senza bisogno di un account. Si pubblica ciò che
+sopravvive, e la pagina Dati dice a che punto è ogni controllo.
+
+Questo non è un ripiego in attesa di esperti: è il motivo per cui il progetto è
+open source. Un comitato ristretto vede una volta sola un campione, mentre una
+segnalazione esposta con le sue prove resta contestabile per sempre, da
+chiunque, compreso chi quella norma la applica tutti i giorni — che sulla sua
+materia ne sa più di qualunque revisore ingaggiato.
 
 ## 7. Uso delle fonti
 

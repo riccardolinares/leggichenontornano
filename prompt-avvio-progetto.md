@@ -149,7 +149,7 @@ Servono metriche reali, non impressioni. Quattro fonti pubbliche di anomalie gi�
 
 **Soglia di pubblicazione:** un tipo di controllo si pubblica solo quando la revisione umana su campione supera l'**85% di precisione**. Sotto soglia resta in coda interna. La regola va scritta nel README e mostrata nel sito: è un elemento di credibilità, non una limitazione.
 
-Prima del lancio pubblico: far **demolire** (non validare) il primo lotto di segnalazioni da due o tre giuristi. Si pubblica ciò che sopravvive.
+Le revisioni non vengono da un comitato: vengono da chi legge. Ogni scheda espone i testi originali, la query e i criteri di risoluzione, e chiede apertamente di essere **demolita** — il pulsante «Non è un conflitto» apre una issue senza account. Si pubblica ciò che sopravvive, e la pagina Dati dice a che punto è ogni controllo.
 
 ---
 
@@ -225,7 +225,7 @@ docs/                ADR, metodo, metriche
 6. Gold standard e misurazione. Nessuna pubblicazione sopra il livello 1 finché non si supera l'85%.
 7. Primo verticale semantico: vocabolario controllato, estrazione deontica, anomalie di livello 3.
 8. Bot quotidiano e pagina stampa.
-9. Revisione esterna da parte di giuristi, poi lancio con un caso singolo.
+9. Apertura delle segnalazioni alla revisione pubblica, poi lancio con un caso singolo.
 
 ---
 

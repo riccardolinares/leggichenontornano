@@ -11,8 +11,9 @@ riga sembrerebbe che il motore si fosse rotto.
 
 ## [Non rilasciato]
 
-Prima versione completa. Non ancora pubblicata: manca la revisione esterna dei
-giuristi, che è il passo previsto prima del lancio.
+Prima versione completa. Le revisioni registrate sono ancora poche, e finché lo
+sono la pagina Dati lo dichiara: la precisione di un controllo vale quanto il
+campione su cui è misurata.
 
 ### Aggiunto
 
