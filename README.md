@@ -89,6 +89,7 @@ contrario.**
 | [`packages/corpus`](packages/corpus)         | client Normattiva, ingestione, store bitemporale, grafo, dataset    |
 | [`packages/engine`](packages/engine)         | controlli livelli 1-3, cancello di pubblicazione, coda di revisione |
 | [`packages/api`](packages/api)               | API pubblica REST, OpenAPI                                          |
+| [`packages/mcp`](packages/mcp)               | server MCP: il progetto dentro Claude, Codex e altri assistenti     |
 | [`apps/web`](apps/web)                       | il sito, con i test di accessibilità e usabilità                    |
 | [`apps/bot`](apps/bot)                       | la segnalazione del giorno su Mastodon, Telegram e X                |
 
@@ -269,6 +270,31 @@ Gli [ADR](docs/adr) registrano le decisioni prese e il perché. Le principali:
 - [0007](docs/adr/0007-store-bitemporale.md) — store bitemporale
 - [0008](docs/adr/0008-url-come-prodotto.md) — gli URL sono il prodotto
 - [0009](docs/adr/0009-il-verticale-e-un-elenco-di-atti.md) — il verticale è un elenco di atti, non di parole
+
+---
+
+## Usarlo dentro un assistente
+
+C'è un server [MCP](https://modelcontextprotocol.io): dà a Claude, Codex o
+qualunque altro client il corpus, le segnalazioni e le pronunce della Consulta.
+Non serve clonare né configurare niente — al primo avvio scarica il dataset
+pubblico e lo tiene in cache.
+
+```json
+{
+  "mcpServers": {
+    "antinomia": { "command": "npx", "args": ["-y", "@antinomia/mcp"] }
+  }
+}
+```
+
+Sette strumenti e cinque esempi pronti, fra cui _«esamina questa segnalazione
+per demolirla»_ e _«sto per scrivere questo numero: regge?»_. Le cautele del
+progetto valgono anche lì: nessuno strumento chiede un giudizio, il testo
+originale viene prima dei campi estratti, e una ricerca vuota dice che il corpus
+è parziale invece di lasciar credere che la norma non esista.
+
+Istruzioni e configurazioni per ogni client: [`packages/mcp`](packages/mcp).
 
 ---
 
