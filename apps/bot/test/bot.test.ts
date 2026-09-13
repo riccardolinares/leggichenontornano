@@ -5,7 +5,7 @@ import {
 } from '@leggichenontornano/corpus';
 import { describe, expect, it, vi } from 'vitest';
 import { componiContatore, componiMessaggio } from '../src/messaggio.js';
-import { Mastodon } from '../src/piattaforme.js';
+import { Facebook, LinkedIn } from '../src/piattaforme.js';
 import { selezionaDelGiorno } from '../src/selezione.js';
 
 function anomalia(partial: Partial<SnapshotAnomaly> & { id: string }): SnapshotAnomaly {
@@ -89,14 +89,14 @@ describe('messaggio', () => {
     expect(m.testo.length).toBeLessThanOrEqual(280);
   });
 
-  it('rispetta il limite di Mastodon', () => {
-    const m = componiMessaggio(a, 'mastodon', 'https://esempio.it');
-    expect(m.testo.length).toBeLessThanOrEqual(500);
+  it('rispetta il limite di LinkedIn', () => {
+    const m = componiMessaggio(a, 'linkedin', 'https://esempio.it');
+    expect(m.testo.length).toBeLessThanOrEqual(3000);
   });
 
   it('l’URL non viene mai accorciato: è la parte verificabile', () => {
     const lunga = anomalia({ id: 'y', title: 'x'.repeat(900) });
-    for (const p of ['x', 'mastodon', 'telegram'] as const) {
+    for (const p of ['x', 'linkedin', 'telegram', 'facebook'] as const) {
       const m = componiMessaggio(lunga, p, 'https://esempio.it');
       expect(m.testo).toContain('https://esempio.it/anomalia/y');
     }
@@ -125,37 +125,53 @@ describe('messaggio', () => {
 });
 
 describe('pubblicatori', () => {
-  it('Mastodon non è configurato senza credenziali', () => {
-    expect(new Mastodon('', '').configurato()).toBe(false);
+  it('nessuna piattaforma è configurata senza credenziali', () => {
+    expect(new Facebook('', '').configurato()).toBe(false);
+    expect(new LinkedIn('', '').configurato()).toBe(false);
   });
 
-  it('Mastodon manda una chiave di idempotenza', async () => {
+  it('Facebook manda il link separato dal testo, così l’anteprima è quella della pagina', async () => {
     const fetchFinto = vi.fn().mockResolvedValue({
       ok: true,
-      json: async () => ({ url: 'https://mastodon.esempio/1' }),
+      json: async () => ({ id: '123_456' }),
     });
-    const m = new Mastodon(
-      'https://mastodon.esempio',
-      'token',
-      fetchFinto as unknown as typeof fetch,
-    );
-    const esito = await m.pubblica(
-      componiMessaggio(anomalia({ id: 'z' }), 'mastodon', 'https://esempio.it'),
+    const f = new Facebook('123', 'token', fetchFinto as unknown as typeof fetch);
+    const esito = await f.pubblica(
+      componiMessaggio(anomalia({ id: 'z' }), 'facebook', 'https://esempio.it'),
     );
     expect(esito.pubblicato).toBe(true);
     const [, init] = fetchFinto.mock.calls[0] as [string, RequestInit];
-    expect((init.headers as Record<string, string>)['idempotency-key']).toContain('/anomalia/z');
+    const corpo = JSON.parse(String(init.body)) as { link: string; message: string };
+    expect(corpo.link).toBe('https://esempio.it/anomalia/z');
+    expect(corpo.message).toContain('https://esempio.it/anomalia/z');
+  });
+
+  it('LinkedIn pubblica come organizzazione, non come persona', async () => {
+    const fetchFinto = vi.fn().mockResolvedValue({
+      ok: true,
+      headers: { get: () => 'urn:li:share:1' },
+      json: async () => ({}),
+    });
+    const l = new LinkedIn(
+      'urn:li:organization:42',
+      'token',
+      fetchFinto as unknown as typeof fetch,
+    );
+    const esito = await l.pubblica(
+      componiMessaggio(anomalia({ id: 'z' }), 'linkedin', 'https://esempio.it'),
+    );
+    expect(esito.pubblicato).toBe(true);
+    const [, init] = fetchFinto.mock.calls[0] as [string, RequestInit];
+    const corpo = JSON.parse(String(init.body)) as { author: string; visibility: string };
+    expect(corpo.author).toBe('urn:li:organization:42');
+    expect(corpo.visibility).toBe('PUBLIC');
   });
 
   it('un errore della piattaforma non viene nascosto', async () => {
     const fetchFinto = vi.fn().mockResolvedValue({ ok: false, status: 503 });
-    const m = new Mastodon(
-      'https://mastodon.esempio',
-      'token',
-      fetchFinto as unknown as typeof fetch,
-    );
-    const esito = await m.pubblica(
-      componiMessaggio(anomalia({ id: 'z' }), 'mastodon', 'https://esempio.it'),
+    const f = new Facebook('123', 'token', fetchFinto as unknown as typeof fetch);
+    const esito = await f.pubblica(
+      componiMessaggio(anomalia({ id: 'z' }), 'facebook', 'https://esempio.it'),
     );
     expect(esito.pubblicato).toBe(false);
     expect(esito.motivo).toContain('503');

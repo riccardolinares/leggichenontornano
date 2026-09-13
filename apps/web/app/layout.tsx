@@ -3,7 +3,7 @@ import { Archivo, Newsreader } from 'next/font/google';
 import Link from 'next/link';
 import './globals.css';
 import { Navigazione } from '@/components/navigazione';
-import { REPO_URL, SITE_URL, dataset } from '@/lib/dataset';
+import { EMAIL, REPO_URL, SITE_URL, SOSTIENI_URL, dataset } from '@/lib/dataset';
 import { NOME_SITO, datiStrutturatiSito } from '@/lib/seo';
 
 /*
@@ -139,7 +139,24 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   <li>Nessuna consulenza legale</li>
                   <li>Nessuna dichiarazione di illegittimità</li>
                   <li>Nessun modello che giudica le norme</li>
-                  <li>Nessun voto, nessuna classifica</li>
+                  <li>Nessuna pubblicità, nessun tracciamento</li>
+                </ul>
+              </div>
+              <div>
+                <h2>Scrivere e sostenere</h2>
+                <ul>
+                  <li>
+                    <a href={`mailto:${EMAIL}`}>{EMAIL}</a>
+                  </li>
+                  <li>
+                    <a href={`${REPO_URL}/issues/new`}>Segnala un errore</a>
+                  </li>
+                  {/* Il progetto non ha pubblicità né abbonamenti: o lo sostiene
+                      chi lo usa, o lo paga il manutentore di tasca sua. Meglio
+                      dirlo che lasciarlo intuire. */}
+                  <li>
+                    <a href={SOSTIENI_URL}>Offri un caffè al progetto</a>
+                  </li>
                 </ul>
               </div>
             </div>

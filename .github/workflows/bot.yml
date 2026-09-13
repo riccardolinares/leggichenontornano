@@ -46,10 +46,12 @@ jobs:
           # senza dirlo.
           LCNT_SNAPSHOT: ${{ github.workspace }}/data/snapshot
           LCNT_SITE_URL: https://leggichenontornano.it
-          MASTODON_INSTANCE: ${{ secrets.MASTODON_INSTANCE }}
-          MASTODON_TOKEN: ${{ secrets.MASTODON_TOKEN }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHANNEL: ${{ secrets.TELEGRAM_CHANNEL }}
+          FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
+          FACEBOOK_PAGE_TOKEN: ${{ secrets.FACEBOOK_PAGE_TOKEN }}
+          LINKEDIN_ORG_URN: ${{ secrets.LINKEDIN_ORG_URN }}
+          LINKEDIN_TOKEN: ${{ secrets.LINKEDIN_TOKEN }}
         run: |
           node apps/bot/dist/cli.js pubblica \
             ${{ github.event.inputs.prova == 'false' && ' ' || '--prova' }}

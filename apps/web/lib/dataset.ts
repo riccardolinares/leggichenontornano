@@ -30,3 +30,15 @@ export const SITE_URL = (process.env['LCNT_SITE_URL'] ?? 'https://leggichenontor
 /** Repository pubblica: il pulsante «Non è un conflitto» apre una issue qui. */
 export const REPO_URL =
   process.env['LCNT_REPO_URL'] ?? 'https://github.com/riccardolinares/leggichenontornano';
+
+/** Indirizzo di contatto pubblico, unico per stampa, correzioni e sicurezza. */
+export const EMAIL = 'info@leggichenontornano.it';
+
+/**
+ * Dove si sostiene il progetto.
+ *
+ * Sta qui e non sparso nelle pagine perché è un indirizzo che cambia: il
+ * giorno che cambia deve cambiare in un posto solo, non in quattro.
+ */
+export const SOSTIENI_URL =
+  process.env['LCNT_SOSTIENI_URL'] ?? 'https://buymeacoffee.com/leggichenontornano';

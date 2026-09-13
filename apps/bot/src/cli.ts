@@ -102,7 +102,7 @@ async function main(): Promise<number> {
   const pubblicatori = flags.has('prova') ? [] : pubblicatoriAttivi();
 
   if (pubblicatori.length === 0) {
-    for (const piattaforma of ['mastodon', 'telegram', 'x'] as Piattaforma[]) {
+    for (const piattaforma of ['telegram', 'facebook', 'linkedin', 'x'] as Piattaforma[]) {
       const messaggio = componiMessaggio(anomalia, piattaforma, SITE);
       process.stdout.write(
         `--- ${piattaforma} (${messaggio.testo.length} caratteri) ---\n${messaggio.testo}\n\n`,

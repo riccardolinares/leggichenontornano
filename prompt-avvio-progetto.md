@@ -182,7 +182,7 @@ Carta grigio-fredda, inchiostro verdastro quasi nero, verderame come unico color
 
 ## Distribuzione
 
-- **Bot quotidiano** su Mastodon, Telegram e X, alimentato dalla pipeline via GitHub Action. Una segnalazione al giorno. La costanza batte il picco: un account che pubblica una cosa verificabile ogni giorno per sei mesi diventa una fonte che i giornalisti seguono.
+- **Bot quotidiano** su Telegram, Facebook, LinkedIn e X, alimentato dalla pipeline via GitHub Action. Una segnalazione al giorno. La costanza batte il picco: un account che pubblica una cosa verificabile ogni giorno per sei mesi diventa una fonte che i giornalisti seguono.
 - **Contatore nazionale** deterministico e crescente (es. giorni di ritardo accumulati dai decreti mai emanati), esposto con un referente concreto e non come indovinello.
 - **Pagina stampa**: dataset scaricabile, grafici incorporabili, contatti, frase citabile.
 - **Lancio**: non lanciare la piattaforma, lanciare un caso. Scegliere l'anomalia più indifendibile e pubblicarla singolarmente, con il sito dietro come prova che non è isolata.
