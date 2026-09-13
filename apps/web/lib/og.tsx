@@ -70,7 +70,20 @@ export interface Anteprima {
   titolo: string;
   /** La riga secondaria: il nome dell'atto, la fonte, la data. */
   nota?: string;
+  /**
+   * L'attribuzione in basso a destra.
+   *
+   * È un parametro e non una costante perché le fonti sono due: il corpus
+   * viene da Normattiva (CC BY 4.0), le decisioni dalla Corte costituzionale
+   * (CC BY-SA 3.0). Una riga fissa avrebbe attribuito a Normattiva anche le
+   * sentenze — un errore di licenza, non di stile, su un progetto che chiede
+   * agli altri di citare le fonti.
+   */
+  fonte?: string;
 }
+
+export const FONTE_NORMATTIVA = 'elaborazione su dati Normattiva · CC BY 4.0';
+export const FONTE_CONSULTA = 'dati Corte costituzionale · CC BY-SA 3.0';
 
 /**
  * La cornice condivisa da ogni anteprima.
@@ -86,6 +99,7 @@ export function cornice({
   unita,
   titolo,
   nota,
+  fonte = FONTE_NORMATTIVA,
 }: Anteprima): ReactElement {
   const colore = accento ?? OG.verderame;
   const corpoTitolo = cifra ? (titolo.length > 90 ? 38 : 44) : titolo.length > 120 ? 46 : 58;
@@ -194,7 +208,7 @@ export function cornice({
         <div style={{ display: 'flex', fontWeight: 600, color: OG.cartaTenue }}>
           leggichenontornano.it
         </div>
-        <div style={{ display: 'flex' }}>elaborazione su dati Normattiva · CC BY 4.0</div>
+        <div style={{ display: 'flex' }}>{fonte}</div>
       </div>
     </div>
   );
