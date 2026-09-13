@@ -1038,6 +1038,47 @@ test.describe('home', () => {
   });
 });
 
+test.describe('crediti', () => {
+  test('il piede dice chi fa il progetto, su ogni pagina', async ({ page }) => {
+    /*
+     * L'attribuzione sta nel piede e non in una pagina «chi siamo» perché è
+     * un'attribuzione, e le attribuzioni di questo sito stanno tutte lì — le
+     * fonti, le licenze, e chi lo fa.
+     *
+     * Il test controlla anche che negli indirizzi non rientri un parametro di
+     * tracciamento: i link erano stati dati con `?s=11`, che dice a X da quale
+     * app arriva chi clicca. Su un sito che dichiara di non tracciare nessuno,
+     * farlo fare a qualcun altro è la stessa cosa.
+     */
+    await page.goto('/');
+    const piede = page.locator('.piede');
+
+    for (const handle of ['riccardolinares', 'dom_gag_96', 'antoniodongu']) {
+      const collegamento = piede.locator(`a[href*="x.com/${handle}"]`);
+      await expect(collegamento, `manca il credito a @${handle}`).toHaveCount(1);
+      const href = await collegamento.getAttribute('href');
+      expect(href, `il link a @${handle} porta un parametro di tracciamento`).toBe(
+        `https://x.com/${handle}`,
+      );
+    }
+
+    const testo = (await piede.textContent()) ?? '';
+    expect(testo).toMatch(/fondatore/i);
+    expect(testo, 'l’idea non è attribuita').toMatch(/idea/i);
+  });
+
+  test('le anteprime dicono a X di chi sono', async ({ page }) => {
+    // Senza `twitter:site` e `twitter:creator` la scheda è corretta e anonima:
+    // il progetto circola e chi lo fa no.
+    await page.goto('/');
+    for (const nome of ['twitter:site', 'twitter:creator']) {
+      const tag = page.locator(`meta[name="${nome}"]`);
+      await expect(tag, `manca ${nome}`).toHaveCount(1);
+      await expect(tag).toHaveAttribute('content', /^@\w+/);
+    }
+  });
+});
+
 test.describe('robustezza', () => {
   test('un URL inesistente risponde con la pagina «non trovata», non con un errore', async ({
     page,
