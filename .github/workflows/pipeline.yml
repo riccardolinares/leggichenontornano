@@ -1,0 +1,144 @@
+name: Pipeline quotidiana
+
+# I progetti civici open source non muoiono per mancanza di stelle: muoiono
+# quando il dataset smette di aggiornarsi e nessuno se ne accorge per otto mesi.
+#
+# Questa Action riscarica il delta dalle collezioni di Normattiva, rigenera il
+# dataset, riesegue i controlli e **apre una pull request con il diff**. Il diff
+# è il punto: un aggiornamento che cambia trecento segnalazioni si vede, e
+# qualcuno lo guarda prima che vada in pagina.
+
+on:
+  schedule:
+    # Ogni giorno alle 04:30 UTC, quando le collezioni della notte sono pronte.
+    - cron: '30 4 * * *'
+  workflow_dispatch:
+    inputs:
+      collezioni:
+        description: 'Collezioni da riscaricare, separate da virgola'
+        required: false
+        default: 'Codici,Leggi costituzionali,Leggi contenenti deleghe'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  aggiorna:
+    name: Aggiorna corpus, dataset e segnalazioni
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: antinomia
+          POSTGRES_PASSWORD: antinomia
+          POSTGRES_DB: antinomia
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql://antinomia:antinomia@localhost:5432/antinomia
+      COLLEZIONI: ${{ github.event.inputs.collezioni || 'Codici,Leggi costituzionali,Leggi contenenti deleghe,Leggi di delegazione europea,DL proroghe,Regolamenti di delegificazione,DL e leggi di conversione' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @antinomia/corpus exec prisma db push
+      - run: pnpm run build
+
+      - name: Scarica le collezioni
+        run: |
+          IFS=',' read -ra NOMI <<< "$COLLEZIONI"
+          for nome in "${NOMI[@]}"; do
+            echo "::group::$nome"
+            # Il client serializza le richieste con un intervallo minimo: si usano
+            # le API di export previste dal portale, non si martella il servizio.
+            node packages/corpus/dist/cli.js fetch "$nome" --formato M || \
+              node packages/corpus/dist/cli.js fetch "$nome" --formato O
+            echo "::endgroup::"
+          done
+
+      - name: Ingerisci
+        run: |
+          for dir in data/corpus/*/; do
+            echo "::group::$dir"
+            node packages/corpus/dist/cli.js ingest "$dir" || true
+            echo "::endgroup::"
+          done
+          node packages/corpus/dist/cli.js stats
+
+      - name: Esegui i controlli
+        run: node packages/engine/dist/cli.js run
+
+      - name: Rigenera il dataset versionato
+        run: |
+          node packages/engine/dist/cli.js esporta \
+            --dest data/snapshot --solo-anomalie --campione 20 --max-articoli 2500
+          node packages/engine/dist/cli.js contatore > data/snapshot/contatore.json
+
+      - name: Riassumi il cambiamento
+        id: diff
+        run: |
+          {
+            echo 'sommario<<FINE'
+            node packages/engine/dist/cli.js metriche
+            echo ''
+            echo 'Righe cambiate nel dataset:'
+            git diff --stat -- data/snapshot || true
+            echo FINE
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Apri la pull request con il diff
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: pipeline/aggiornamento-dataset
+          title: 'Aggiornamento del dataset del ${{ github.run_id }}'
+          commit-message: 'Aggiorna il dataset derivato dalla pipeline quotidiana'
+          labels: pipeline, dataset
+          body: |
+            Aggiornamento automatico del dataset derivato.
+
+            **Guardate il diff prima di unire.** Un aggiornamento che cambia
+            molte segnalazioni di solito significa una di due cose: il corpus è
+            cresciuto, oppure una regola ha iniziato a comportarsi diversamente.
+            La seconda è il motivo per cui questa PR esiste invece di un push
+            diretto.
+
+            ```
+            ${{ steps.diff.outputs.sommario }}
+            ```
+
+      - name: Se la pipeline fallisce, apri una issue
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const titolo = 'La pipeline quotidiana è fallita';
+            const { data: aperte } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'pipeline',
+              state: 'open',
+            });
+            // Una issue aperta alla volta: mille issue identiche sono rumore, e
+            // il rumore è il modo in cui un progetto smette di accorgersi dei
+            // guasti.
+            if (aperte.some((i) => i.title === titolo)) return;
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: titolo,
+              labels: ['pipeline'],
+              body: `L'esecuzione ${context.runId} non è andata a buon fine.\n\nFinché non viene sistemata il dataset non si aggiorna, e il sito mostra dati vecchi senza dirlo.\n\nhttps://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+            });

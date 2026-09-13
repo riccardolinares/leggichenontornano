@@ -833,3 +833,38 @@ th {
     scroll-behavior: auto !important;
   }
 }
+
+/* ---------- Contatore nazionale ---------- */
+
+.contatore {
+  border: 1px solid var(--bordo-forte);
+  border-left: 4px solid var(--ossido);
+  background: var(--carta-alta);
+  padding: 1.4rem 1.6rem;
+  max-width: 46rem;
+}
+
+.contatore__numero {
+  font-family: var(--serif);
+  font-size: clamp(2.2rem, 1.6rem + 3vw, 3.6rem);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--ossido);
+  margin: 0 0 0.4rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.contatore__etichetta {
+  font-size: 1.02rem;
+  line-height: 1.45;
+  margin: 0 0 0.9rem;
+  max-width: 34rem;
+}
+
+.contatore__limite {
+  font-size: 0.85rem;
+  color: var(--inchiostro-tenue);
+  margin: 0;
+  max-width: 38rem;
+}

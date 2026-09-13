@@ -206,7 +206,7 @@ export async function runEngine(opts: RunOptions = {}): Promise<RunReport> {
     FONTE_SECONDARIA_SU_PRIMARIA,
   ];
   for (const check of graphChecks) {
-    const produced = check.run(view, ctx);
+    const produced = deduplica(check.run(view, ctx));
     byCheck[check.definition.id] = produced.length;
     findings.push(...produced);
     log(`${check.definition.id}: ${produced.length}`);
@@ -228,6 +228,13 @@ export async function runEngine(opts: RunOptions = {}): Promise<RunReport> {
   findings.push(...attuazione);
   log(`${ATTUAZIONE_MANCANTE.definition.id}: ${attuazione.length}`);
 
+  const uniche = deduplica(findings);
+  if (uniche.length !== findings.length) {
+    log(`${findings.length - uniche.length} segnalazioni duplicate accorpate`);
+  }
+  findings.length = 0;
+  findings.push(...uniche);
+
   const tallies = await loadReviewTallies();
   const decisions = CHECK_DEFINITIONS.map((d) => evaluateGate(d, tallies.get(d.id)));
   const decisionByCheck = new Map(decisions.map((d) => [d.checkId, d]));
@@ -247,6 +254,30 @@ export async function runEngine(opts: RunOptions = {}): Promise<RunReport> {
     byCheck,
     durationMs: Date.now() - startedAt,
   };
+}
+
+/**
+ * Accorpa le segnalazioni con lo stesso identificatore.
+ *
+ * Un controllo può arrivare allo stesso `id` da strade diverse — lo stesso
+ * rinvio dichiarato in più articoli dell'atto, per esempio. Senza accorpamento
+ * i conteggi mostrati nel log raccontano più segnalazioni di quante ne esistano,
+ * e un numero gonfiato in una riga di log è il primo passo verso un numero
+ * gonfiato in una pagina.
+ *
+ * Fra due duplicati vince quello con una prova testuale: la citazione del comma
+ * vale più di un rimando al grafo.
+ */
+function deduplica(findings: readonly AnomalyFinding[]): AnomalyFinding[] {
+  const perId = new Map<string, AnomalyFinding>();
+  const conTesto = (f: AnomalyFinding): boolean => f.evidence.some((e) => e.kind === 'testo');
+  for (const finding of findings) {
+    const presente = perId.get(finding.id);
+    if (!presente || (!conTesto(presente) && conTesto(finding))) {
+      perId.set(finding.id, finding);
+    }
+  }
+  return [...perId.values()];
 }
 
 /**

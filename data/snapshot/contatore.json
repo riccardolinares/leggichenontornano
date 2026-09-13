@@ -1,0 +1,9 @@
+{
+  "label": "Giorni di ritardo accumulati dai provvedimenti attuativi previsti e non ancora adottati",
+  "totalDaysLate": 7869669,
+  "mandates": 1512,
+  "acts": 86,
+  "verified": 0,
+  "computedAt": "2026-09-13",
+  "caveat": "Il conteggio riguarda i soli atti presenti nel corpus ingerito e i soli mandati con un termine espresso nel testo. È quindi una sottostima. L’assenza del provvedimento è verificata in Gazzetta Ufficiale solo per la quota indicata come verificata."
+}

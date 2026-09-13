@@ -74,7 +74,9 @@ test.describe('scheda anomalia', () => {
     expect(tecnico).toBeGreaterThan(risoluzione);
   });
 
-  test('la riga «possibile risoluzione» c’è sempre, con tutti e tre i criteri', async ({ page }) => {
+  test('la riga «possibile risoluzione» c’è sempre, con tutti e tre i criteri', async ({
+    page,
+  }) => {
     await page.goto(`/anomalia/${encodeURIComponent(anomalia!.id)}`);
     const risoluzioni = page.locator('.risoluzione');
     await expect(risoluzioni).not.toHaveCount(0);

@@ -3,6 +3,7 @@ import { THRESHOLD } from '@antinomia/engine';
 import { REPO_URL, dataset } from '@/lib/dataset';
 import { data, numero, percentuale } from '@/lib/testo';
 import { Tabella } from '@/components/tabella';
+import { ContatoreNazionale } from '@/components/contatore';
 
 export const dynamic = 'force-static';
 
@@ -18,6 +19,7 @@ export default function Dati() {
   const metriche = reader.data.metrics;
   const pubblicati = metriche.filter((m) => m.published);
   const fermi = metriche.filter((m) => !m.published);
+  const contatore = reader.counter();
 
   return (
     <div className="contenitore">
@@ -27,13 +29,22 @@ export default function Dati() {
         controlli non stiamo pubblicando. La parte interessante è l’ultima.
       </p>
 
+      {contatore ? (
+        <section className="sezione" aria-labelledby="contatore">
+          <h2 id="contatore" className="sezione__titolo">
+            Il contatore
+          </h2>
+          <ContatoreNazionale contatore={contatore} />
+        </section>
+      ) : null}
+
       <section className="sezione" aria-labelledby="corpus">
         <h2 id="corpus" className="sezione__titolo">
           Consistenza del corpus
         </h2>
         {manifest ? (
           <Tabella
-            didascalia={`Stato del dataset alla generazione del {data(manifest.generatedAt.slice(0, 10))}.`}
+            didascalia={`Stato del dataset alla generazione del ${data(manifest.generatedAt.slice(0, 10))}.`}
           >
             <tbody>
               <tr>

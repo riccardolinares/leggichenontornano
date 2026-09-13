@@ -17,6 +17,7 @@ export const SNAPSHOT_FILES = {
   anomalies: 'anomalies.jsonl',
   metrics: 'metrics.json',
   manifest: 'manifest.json',
+  counter: 'contatore.json',
 } as const;
 
 export function writeJsonl(path: string, rows: readonly unknown[]): void {

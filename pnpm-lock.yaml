@@ -21,6 +21,25 @@ importers:
         specifier: ^2.1.8
         version: 2.1.9(@types/node@22.20.2)
 
+  apps/bot:
+    dependencies:
+      '@antinomia/akn-parser':
+        specifier: workspace:*
+        version: link:../../packages/akn-parser
+      '@antinomia/corpus':
+        specifier: workspace:*
+        version: link:../../packages/corpus
+      '@antinomia/engine':
+        specifier: workspace:*
+        version: link:../../packages/engine
+    devDependencies:
+      typescript:
+        specifier: ^5.7.2
+        version: 5.9.3
+      vitest:
+        specifier: ^2.1.8
+        version: 2.1.9(@types/node@22.20.2)
+
   apps/web:
     dependencies:
       '@antinomia/akn-parser':

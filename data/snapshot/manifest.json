@@ -1,20 +1,20 @@
 {
   "formatVersion": 1,
-  "generatedAt": "2026-09-13T00:16:43.545Z",
-  "knownAt": "2026-09-13T00:16:43.545Z",
+  "generatedAt": "2026-09-13T00:36:16.052Z",
+  "knownAt": "2026-09-13T00:36:16.052Z",
   "counts": {
-    "acts": 140,
-    "versions": 482,
+    "acts": 136,
+    "versions": 474,
     "articles": 2500,
-    "relations": 3256,
-    "anomalies": 128,
+    "relations": 3065,
+    "anomalies": 125,
     "publishedAnomalies": 103
   },
   "sources": [
     {
       "name": "Normattiva open data",
       "licence": "CC BY 4.0",
-      "retrievedAt": "2026-09-13T00:16:43.545Z"
+      "retrievedAt": "2026-09-13T00:36:16.052Z"
     }
   ],
   "publicationThreshold": {

@@ -13,6 +13,7 @@ import type {
   SnapshotAnomaly,
   SnapshotArticle,
   SnapshotCheckMetric,
+  SnapshotCounter,
   SnapshotManifest,
   SnapshotRelation,
   SnapshotVersion,
@@ -26,6 +27,7 @@ export interface SnapshotData {
   anomalies: SnapshotAnomaly[];
   metrics: SnapshotCheckMetric[];
   manifest: SnapshotManifest | null;
+  counter?: SnapshotCounter | null;
 }
 
 export class SnapshotReader {
@@ -65,6 +67,7 @@ export class SnapshotReader {
       anomalies: readJsonl<SnapshotAnomaly>(snapshotPath(dir, 'anomalies')),
       metrics: readJson<SnapshotCheckMetric[]>(snapshotPath(dir, 'metrics'), []),
       manifest: readJson<SnapshotManifest | null>(snapshotPath(dir, 'manifest'), null),
+      counter: readJson<SnapshotCounter | null>(snapshotPath(dir, 'counter'), null),
     });
   }
 
@@ -166,6 +169,11 @@ export class SnapshotReader {
       if (act) nodes.push(act);
     }
     return { nodes, edges };
+  }
+
+  /** Il contatore nazionale, quando la pipeline lo ha generato. */
+  counter(): SnapshotCounter | null {
+    return this.data.counter ?? null;
   }
 
   metric(checkId: string): SnapshotCheckMetric | null {

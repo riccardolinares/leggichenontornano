@@ -1,0 +1,54 @@
+{
+  "vertical": "appalti",
+  "label": "Appalti e contratti pubblici",
+  "concepts": [
+    {
+      "id": "stazione-appaltante",
+      "label": "stazione appaltante",
+      "synonyms": ["amministrazione aggiudicatrice", "ente aggiudicatore", "soggetto aggiudicatore"],
+      "note": "Chi bandisce e aggiudica. Non coincide con «amministrazione» in generale: fuori dagli appalti quel termine comprende soggetti che qui non rilevano."
+    },
+    {
+      "id": "operatore-economico",
+      "label": "operatore economico",
+      "synonyms": ["concorrente", "impresa concorrente", "offerente", "aggiudicatario"],
+      "note": "«Impresa» da sola non basta: negli appalti indica il concorrente, nel fisco un soggetto passivo. È il caso che rende necessario questo vocabolario."
+    },
+    { "id": "subappaltatore", "label": "subappaltatore", "synonyms": ["impresa subappaltatrice"], "broader": "operatore-economico" },
+    { "id": "rup", "label": "responsabile unico del procedimento", "synonyms": ["RUP", "responsabile del progetto"] },
+    { "id": "commissione-giudicatrice", "label": "commissione giudicatrice", "synonyms": ["commissione di gara"] },
+
+    { "id": "contratto-pubblico", "label": "contratto pubblico", "synonyms": ["contratto"] },
+    { "id": "appalto", "label": "appalto", "synonyms": [], "broader": "contratto-pubblico" },
+    { "id": "appalto-lavori", "label": "appalto di lavori", "synonyms": ["lavori pubblici"], "broader": "appalto" },
+    { "id": "appalto-servizi", "label": "appalto di servizi", "synonyms": ["servizi"], "broader": "appalto" },
+    { "id": "appalto-forniture", "label": "appalto di forniture", "synonyms": ["forniture"], "broader": "appalto" },
+    { "id": "concessione", "label": "concessione", "synonyms": ["concessione di lavori", "concessione di servizi"], "broader": "contratto-pubblico" },
+    { "id": "accordo-quadro", "label": "accordo quadro", "synonyms": [], "broader": "contratto-pubblico" },
+
+    { "id": "procedura-aperta", "label": "procedura aperta", "synonyms": [] },
+    { "id": "procedura-negoziata", "label": "procedura negoziata", "synonyms": ["procedura negoziata senza bando"] },
+    { "id": "affidamento-diretto", "label": "affidamento diretto", "synonyms": [] },
+    { "id": "dialogo-competitivo", "label": "dialogo competitivo", "synonyms": [] },
+
+    { "id": "bando", "label": "bando di gara", "synonyms": ["bando"] },
+    { "id": "avviso-aggiudicazione", "label": "avviso di aggiudicazione", "synonyms": ["esito di gara"] },
+    { "id": "offerta", "label": "offerta", "synonyms": ["offerta economica", "offerta tecnica"] },
+    { "id": "offerta-anomala", "label": "offerta anomala", "synonyms": ["offerta anormalmente bassa"], "broader": "offerta" },
+    { "id": "aggiudicazione", "label": "aggiudicazione", "synonyms": [] },
+    { "id": "stipula", "label": "stipula del contratto", "synonyms": ["stipulazione"] },
+    { "id": "collaudo", "label": "collaudo", "synonyms": ["certificato di regolare esecuzione"] },
+    { "id": "varianti", "label": "variante in corso d'opera", "synonyms": ["varianti"] },
+
+    { "id": "requisiti-generali", "label": "requisiti di ordine generale", "synonyms": ["requisiti generali"] },
+    { "id": "cause-esclusione", "label": "cause di esclusione", "synonyms": ["motivi di esclusione"] },
+    { "id": "soglia-comunitaria", "label": "soglia di rilevanza europea", "synonyms": ["soglia comunitaria", "soglie europee"] },
+    { "id": "sotto-soglia", "label": "affidamento sotto soglia", "synonyms": ["sotto soglia"] },
+
+    { "id": "pubblicita", "label": "obblighi di pubblicità", "synonyms": ["pubblicazione del bando", "pubblicità legale"] },
+    { "id": "trasparenza", "label": "obblighi di trasparenza", "synonyms": ["amministrazione trasparente"] },
+    { "id": "tracciabilita", "label": "tracciabilità dei flussi finanziari", "synonyms": ["tracciabilità", "CIG"] },
+    { "id": "anticorruzione", "label": "misure anticorruzione", "synonyms": ["prevenzione della corruzione", "conflitto di interessi"] },
+    { "id": "anac", "label": "Autorità nazionale anticorruzione", "synonyms": ["ANAC", "Autorità"] }
+  ]
+}

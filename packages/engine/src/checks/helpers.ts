@@ -37,6 +37,36 @@ export function actLabel(act: ActView | null, urn: string): string {
   return base;
 }
 
+/**
+ * Genere grammaticale del tipo di atto, per concordare l'articolo.
+ *
+ * «Chi applica decreto legislativo 15 marzo 2010, n. 66» non è italiano, e una
+ * scheda che deve reggere la lettura di un giurista non può permettersi di
+ * suonare come una traduzione automatica. Sono due righe di codice e cambiano il
+ * tono di ogni segnalazione.
+ */
+function femminile(measureType: string): boolean {
+  return /^(legge|costituzione|deliberazione|circolare|ordinanza|direttiva)/.test(measureType);
+}
+
+/** «il decreto legislativo 15 marzo 2010, n. 66», «la legge 7 agosto 1990, n. 241». */
+export function actLabelConArticolo(act: ActView | null, urn: string): string {
+  const parsed = tryParseUrn(urn);
+  if (!parsed) return urn;
+  const nome = actLabel(act, urn);
+  const minuscolo = `${nome.charAt(0).toLowerCase()}${nome.slice(1)}`;
+  return `${femminile(parsed.measureType) ? 'la' : 'il'} ${minuscolo}`;
+}
+
+/** «al decreto legislativo …», «alla legge …»: la preposizione articolata. */
+export function actLabelPreposizioneA(act: ActView | null, urn: string): string {
+  const parsed = tryParseUrn(urn);
+  if (!parsed) return `a ${urn}`;
+  const nome = actLabel(act, urn);
+  const minuscolo = `${nome.charAt(0).toLowerCase()}${nome.slice(1)}`;
+  return `${femminile(parsed.measureType) ? 'alla' : 'al'} ${minuscolo}`;
+}
+
 /** Titolo breve dell'atto, troncato in modo leggibile. */
 export function actTitle(act: ActView | null, max = 120): string {
   const title = act?.title ?? '';

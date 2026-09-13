@@ -133,7 +133,7 @@ export default async function Home({ searchParams }: Props) {
                   per capire di cosa si tratta. */}
                 <p className="scheda__pratica">{a.plainLanguage}</p>
                 <p className="scheda__meta">
-                  <span className={classeGravita(a.severity)}>{a.severity}</span>
+                  <span className={classeGravita(a.severity)}>gravità {a.severity}</span>
                   <span>{livello(a.level)}</span>
                   {a.windowFrom ? <span>dal {data(a.windowFrom)}</span> : null}
                   {a.urns[0] ? (

@@ -16,6 +16,8 @@ import type { CorpusView } from '../../corpus-view.js';
 import { noResolution, resolutionsFor } from '../../resolution.js';
 import {
   actLabel,
+  actLabelConArticolo,
+  actLabelPreposizioneA,
   dateLabel,
   findingId,
   graphEvidence,
@@ -71,29 +73,39 @@ export const RINVIO_AD_ATTO_ABROGATO: Check<CorpusView> = {
       // «rinvia a l'intero atto di X» non è italiano: quando la relazione
       // riguarda l'atto nel suo insieme la frase cambia forma, non si incolla
       // un'etichetta dentro uno stampo che non la regge.
-      const bersaglio = ref.targetArticle
-        ? `${partitionLabel(ref.targetArticle, ref.targetParagraphs)} di ${targetName}`
-        : targetName;
-      const bersaglioBreve = ref.targetArticle
-        ? partitionLabel(ref.targetArticle, ref.targetParagraphs)
-        : 'un atto';
+      const bersaglioA = ref.targetArticle
+        ? `a ${partitionLabel(ref.targetArticle, ref.targetParagraphs)} di ${targetName}`
+        : actLabelPreposizioneA(target, ref.targetUrn);
 
-      const quoted = ref.targetArticle
-        ? view.articleAt(ref.sourceUrn, ref.sourceArticle ?? '', target.abrogatedFrom)
+      // Il testo originale che contiene il rinvio, quando sappiamo in quale
+      // articolo si trova: citare il comma intero è l'unico modo perché chi
+      // legge possa giudicare se il rinvio è recettizio o formale.
+      const quoted = ref.sourceArticle
+        ? view.articleAt(ref.sourceUrn, ref.sourceArticle, target.abrogatedFrom)
         : null;
 
       findings.push({
         id: findingId('rinvio-ad-atto-abrogato', ref.sourceUrn, ref.targetUrn, ref.targetArticle),
         checkId: 'rinvio-ad-atto-abrogato',
         level: 1 as const,
-        title: `${sourceName}, ancora in vigore, rinvia a ${bersaglioBreve} abrogato dal ${dateLabel(target.abrogatedFrom)}`,
+        // Il titolo nomina **entrambi** gli atti: «rinvia a un atto abrogato» si
+        // legge bene ma non dice niente, e chi riceve il link su un telefono
+        // vede solo quello.
+        title: `${sourceName} rinvia ancora ${bersaglioA}, abrogat${femminileDa(ref.targetUrn)} da ${quantoTempo(target.abrogatedFrom, ctx.today)}`,
+        // La spiegazione in lingua comune parte da cosa succede a chi la norma
+        // la deve applicare, non dalla ricostruzione dei fatti: quella viene
+        // dopo, ed è già nel titolo.
         plainLanguage: [
-          `${sourceName} è ancora in vigore e al suo interno rinvia a ${bersaglio}.`,
-          `Quell'atto è stato abrogato il ${dateLabel(target.abrogatedFrom)}${
-            abrogator ? ` da ${actLabel(abrogator, target.abrogatedBy!)}` : ''
-          }.`,
-          'Chi applica la prima norma viene mandato a un testo che non è più in vigore, e deve ricostruire da sé quale disciplina si applichi al suo posto.',
-        ].join(' '),
+          `Chi applica ${actLabelConArticolo(source, ref.sourceUrn)}${
+            ref.sourceArticle ? `, art. ${ref.sourceArticle},` : ''
+          } trova un richiamo ${bersaglioA}, che dal ${dateLabel(target.abrogatedFrom)} non è più in vigore: deve ricostruire da sé quale disciplina si applichi al suo posto.`,
+          abrogator
+            ? `L'abrogazione è stata disposta ${actLabelPreposizioneA(abrogator, target.abrogatedBy!).replace(/^al(la)?\b/, (m) => (m === 'alla' ? 'dalla' : 'dal'))}.`
+            : '',
+          `${actLabelConArticolo(source, ref.sourceUrn).replace(/^il\b/, 'Il').replace(/^la\b/, 'La')} è invece ancora in vigore.`,
+        ]
+          .filter(Boolean)
+          .join(' '),
         urns: [ref.sourceUrn, withPartition(ref.targetUrn, ref.targetArticle)],
         windowFrom: target.abrogatedFrom,
         windowTo: null,
@@ -101,8 +113,8 @@ export const RINVIO_AD_ATTO_ABROGATO: Check<CorpusView> = {
         evidence: [
           quoted
             ? textEvidence(
-                ref.sourceUrn,
-                `${sourceName}, art. ${ref.sourceArticle}`,
+                withPartition(ref.sourceUrn, ref.sourceArticle),
+                `${sourceName}, art. ${ref.sourceArticle} — testo che contiene il rinvio`,
                 quoted.text,
               )
             : graphEvidence(
@@ -135,3 +147,20 @@ export const RINVIO_AD_ATTO_ABROGATO: Check<CorpusView> = {
     return findings;
   },
 };
+
+/** Concordanza del participio: «abrogata la legge», «abrogato il decreto». */
+function femminileDa(urn: string): 'a' | 'o' {
+  return /:(legge|costituzione|legge\.costituzionale)[:.]/.test(urn) ? 'a' : 'o';
+}
+
+/** «tre anni», «otto mesi», «venti giorni»: serve al titolo, che deve dire quanto. */
+function quantoTempo(da: string, a: string): string {
+  const giorni = Math.round(
+    (Date.parse(`${a}T00:00:00Z`) - Date.parse(`${da}T00:00:00Z`)) / 86_400_000,
+  );
+  if (giorni < 60) return `${giorni} giorni`;
+  const mesi = Math.round(giorni / 30.44);
+  if (mesi < 24) return `${mesi} mesi`;
+  const anni = Math.round(mesi / 12);
+  return anni === 1 ? 'un anno' : `${anni} anni`;
+}

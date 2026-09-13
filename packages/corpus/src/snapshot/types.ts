@@ -125,6 +125,23 @@ export interface SnapshotManifest {
   disclaimer: string;
 }
 
+/**
+ * Il contatore nazionale.
+ *
+ * Deve essere deterministico, crescente e con un referente concreto: «giorni di
+ * ritardo accumulati dai provvedimenti attuativi previsti e mai adottati» è una
+ * frase che si può verificare, «indice di disfunzione normativa» non lo è.
+ */
+export interface SnapshotCounter {
+  label: string;
+  totalDaysLate: number;
+  mandates: number;
+  acts: number;
+  verified: number;
+  computedAt: string;
+  caveat: string;
+}
+
 export const DISCLAIMER =
   'La banca dati Normattiva non ha carattere di ufficialità. L\'unico testo ufficiale è quello pubblicato sulla Gazzetta Ufficiale della Repubblica Italiana, che prevale in caso di discordanza. Questo dataset è un\'elaborazione automatica e non costituisce consulenza legale.';
 

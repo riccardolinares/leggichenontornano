@@ -122,7 +122,9 @@ export function buildRelations(act: AknAct, opts: BuildRelationsOptions = {}): R
       push({
         type: 'RINVIA',
         sourceUrn,
-        sourceArticle: null,
+        // L'articolo che contiene il rinvio: e' quello che la scheda mostrera'
+        // come testo originale.
+        sourceArticle: ref.inArticle,
         sourceParagraph: null,
         targetUrn: target.urn,
         targetArticle: target.article,

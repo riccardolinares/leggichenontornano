@@ -106,6 +106,15 @@ export interface AknReference {
   inNote: boolean;
   /** `true` quando il rinvio si trova nel preambolo, fra i presupposti dell'atto. */
   inPreamble: boolean;
+  /**
+   * Numero dell'articolo che contiene il rinvio, quando c'è.
+   *
+   * Serve a mostrare nella scheda **la frase che contiene il rinvio**, non solo
+   * le quattro parole marcate come `<ref>`. «Il testo originale sta sempre sopra
+   * i campi estratti» non si rispetta citando un frammento: si rispetta citando
+   * il comma.
+   */
+  inArticle: string | null;
 }
 
 /** Un periodo del preambolo: «Visto l'articolo 17, comma 2, della legge 400/1988;». */
@@ -467,11 +476,19 @@ function cleanHref(href: string | undefined): string | null {
 
 function collectReferences(doc: XmlElement): AknReference[] {
   const out: AknReference[] = [];
-  const visit = (el: XmlElement, inNote: boolean, inPreamble: boolean): void => {
+  const visit = (el: XmlElement, inNote: boolean, inPreamble: boolean, article: string | null): void => {
     for (const child of el.children) {
       if (child.kind !== 'element') continue;
       const nowInNote = inNote || child.localName === 'authorialNote';
       const nowInPreamble = inPreamble || child.localName === 'preamble';
+      let nowArticle = article;
+      if (child.localName === 'article') {
+        const num = childNamed(child, 'num');
+        nowArticle = normalizeArticleNumber(num ? textContent(num) : null) ?? article;
+      } else if (child.localName === 'doc' && child.attrs['name']) {
+        const m = DOC_NAME_ARTICLE.exec(child.attrs['name'].trim());
+        if (m) nowArticle = normalizeArticleNumber(m[2]!) ?? article;
+      }
       if (child.localName === 'ref') {
         const href = child.attrs['href'];
         if (href) {
@@ -481,13 +498,14 @@ function collectReferences(doc: XmlElement): AknReference[] {
             text: textContent(child, { skipNotes: false }),
             inNote: nowInNote,
             inPreamble: nowInPreamble,
+            inArticle: nowArticle,
           });
         }
       }
-      visit(child, nowInNote, nowInPreamble);
+      visit(child, nowInNote, nowInPreamble, nowArticle);
     }
   };
-  visit(doc, false, false);
+  visit(doc, false, false, null);
   return out;
 }
 
@@ -505,6 +523,7 @@ function collectPreambleCitations(doc: XmlElement): AknCitation[] {
         text: textContent(r),
         inNote: false,
         inPreamble: true,
+        inArticle: null,
       })),
   }));
 }

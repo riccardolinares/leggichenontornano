@@ -1,0 +1,31 @@
+# PostgreSQL per la pipeline.
+#
+# Serve solo a ingerire il corpus ed eseguire i controlli: il sito e i test
+# girano senza, leggendo il dataset versionato in data/snapshot/. È voluto —
+# chiunque cloni il repository deve poter costruire il sito e verificare che
+# dica le stesse cose, senza montare un'infrastruttura.
+
+services:
+  db:
+    image: postgres:16
+    container_name: antinomia-db
+    environment:
+      POSTGRES_USER: antinomia
+      POSTGRES_PASSWORD: antinomia
+      POSTGRES_DB: antinomia
+      # Il dizionario italiano di PostgreSQL serve alla ricerca full-text ed è
+      # incluso nell'immagine: nessuna estensione da installare.
+      POSTGRES_INITDB_ARGS: '--locale=it_IT.UTF-8 --encoding=UTF8'
+      LANG: it_IT.utf8
+    ports:
+      - '5432:5432'
+    volumes:
+      - antinomia-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U antinomia']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  antinomia-db:

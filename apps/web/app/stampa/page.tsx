@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { REPO_URL, SITE_URL, dataset } from '@/lib/dataset';
 import { data, numero } from '@/lib/testo';
 import { Tabella } from '@/components/tabella';
+import { ContatoreNazionale } from '@/components/contatore';
 
 export const dynamic = 'force-static';
 
@@ -15,6 +16,7 @@ export default function Stampa() {
   const manifest = reader.data.manifest;
   const pubblicate = reader.publishedAnomalies();
   const inCoda = reader.data.anomalies.filter((a) => !a.published).length;
+  const contatore = reader.counter();
 
   return (
     <div className="contenitore stretto">
@@ -46,12 +48,21 @@ export default function Stampa() {
         </blockquote>
       </section>
 
+      {contatore ? (
+        <section className="sezione" aria-labelledby="contatore">
+          <h2 id="contatore" className="sezione__titolo">
+            Il numero da citare, con quello che va citato insieme
+          </h2>
+          <ContatoreNazionale contatore={contatore} />
+        </section>
+      ) : null}
+
       <section className="sezione" aria-labelledby="numeri">
         <h2 id="numeri" className="sezione__titolo">
           I numeri, con i loro limiti
         </h2>
         {manifest ? (
-          <Tabella didascalia={`Stato al {data(manifest.generatedAt.slice(0, 10))}.`}>
+          <Tabella didascalia={`Stato al ${data(manifest.generatedAt.slice(0, 10))}.`}>
             <tbody>
               <tr>
                 <th scope="row">Atti nel corpus</th>

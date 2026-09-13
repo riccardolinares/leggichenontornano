@@ -45,9 +45,21 @@ test('il contrasto regge anche in tema scuro', async ({ page }) => {
   await page.goto('/');
   const risultato = await new AxeBuilder({ page }).withTags(['wcag2aa']).analyze();
   const contrasto = risultato.violations.filter((v) => v.id === 'color-contrast');
-  expect(
-    contrasto.map((v) => v.nodes.map((n) => n.target.join(' ')).join(', ')).join('\n'),
-  ).toBe('');
+  expect(contrasto.map((v) => v.nodes.map((n) => n.target.join(' ')).join(', ')).join('\n')).toBe(
+    '',
+  );
+});
+
+test('il foglio di stile è davvero applicato', async ({ page }) => {
+  // Una pagina senza CSS supera quasi tutti i controlli di accessibilità e non
+  // assomiglia al sito: senza questa verifica una regressione nel caricamento
+  // degli stili passerebbe inosservata fino a uno screenshot.
+  await page.goto('/');
+  const sfondo = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+  expect(sfondo).not.toBe('rgba(0, 0, 0, 0)');
+  expect(sfondo).not.toBe('rgb(255, 255, 255)');
+  const carattere = await page.evaluate(() => getComputedStyle(document.body).fontFamily);
+  expect(carattere.toLowerCase()).toContain('archivo');
 });
 
 test('la pagina dichiara la lingua italiana', async ({ page }) => {
@@ -73,10 +85,9 @@ test('la gerarchia dei titoli non salta livelli', async ({ page }) => {
       nodi.map((n) => Number(n.tagName.slice(1))),
     );
     expect(livelli[0], `${percorso.url}: la pagina deve iniziare con un h1`).toBe(1);
-    expect(
-      livelli.filter((l) => l === 1).length,
-      `${percorso.url}: deve esserci un solo h1`,
-    ).toBe(1);
+    expect(livelli.filter((l) => l === 1).length, `${percorso.url}: deve esserci un solo h1`).toBe(
+      1,
+    );
     for (let i = 1; i < livelli.length; i++) {
       expect(
         livelli[i]! - livelli[i - 1]!,
@@ -102,9 +113,13 @@ test('ogni tabella ha una didascalia e intestazioni di riga o colonna', async ({
   }
 });
 
-test('ogni elemento interattivo è raggiungibile da tastiera e mostra il fuoco', async ({ page }) => {
+test('ogni elemento interattivo è raggiungibile da tastiera e mostra il fuoco', async ({
+  page,
+}) => {
   await page.goto('/come-funziona');
-  const interattivi = await page.locator('a[href], button, summary, [tabindex]:not([tabindex="-1"])').count();
+  const interattivi = await page
+    .locator('a[href], button, summary, [tabindex]:not([tabindex="-1"])')
+    .count();
   expect(interattivi).toBeGreaterThan(5);
 
   // Si percorre la pagina con Tab e si verifica che il fuoco sia sempre visibile.

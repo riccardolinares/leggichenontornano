@@ -88,10 +88,18 @@ export default async function SchedaAnomalia({ params }: Props) {
   const finestre: Finestra[] = anomalia.urns.slice(0, 2).map((urn, i) => {
     const atto = reader.act(urnAtto(urn));
     const versioni = reader.versions(urnAtto(urn));
+    // La finestra di un atto abrogato si chiude all'abrogazione. Prendere
+    // `inForceTo` dell'ultima versione non basta: quel campo è aperto a destra
+    // finché non arriva una versione successiva, e un atto abrogato non ne ha.
+    // Senza questa chiusura la barra mostrava «tuttora in vigore» proprio
+    // sull'atto che la segnalazione dichiara abrogato.
+    const chiusura = atto?.abrogated
+      ? (atto.abrogatedFrom ?? versioni.at(-1)?.inForceTo ?? null)
+      : (versioni.at(-1)?.inForceTo ?? null);
     return {
-      etichetta: `Norma ${i + 1}`,
+      etichetta: atto ? nomeNorma(urnAtto(urn)) : `Norma ${i + 1}`,
       da: versioni[0]?.inForceFrom ?? atto?.publicationDate ?? null,
-      a: versioni.at(-1)?.inForceTo ?? null,
+      a: chiusura,
     };
   });
 
@@ -119,7 +127,7 @@ export default async function SchedaAnomalia({ params }: Props) {
 
       <header className="anomalia__intestazione">
         <p className="scheda__meta" style={{ marginBottom: '0.8rem' }}>
-          <span className={classeGravita(anomalia.severity)}>{anomalia.severity}</span>
+          <span className={classeGravita(anomalia.severity)}>gravità {anomalia.severity}</span>
           <span>{livello(anomalia.level)}</span>
           <span className="mono">{anomalia.id}</span>
         </p>

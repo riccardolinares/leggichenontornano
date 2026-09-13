@@ -43,6 +43,7 @@ export type {
   SnapshotAnomaly,
   SnapshotArticle,
   SnapshotCheckMetric,
+  SnapshotCounter,
   SnapshotData,
   SnapshotManifest,
   SnapshotRelation,
