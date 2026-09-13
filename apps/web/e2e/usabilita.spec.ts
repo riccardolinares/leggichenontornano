@@ -712,6 +712,62 @@ test.describe('trovabilità', () => {
   });
 });
 
+test.describe('la mappa delle leggi', () => {
+  test('il disegno è sempre lo stesso: due caricamenti, stesse coordinate', async ({ page }) => {
+    // È la condizione che permette a questa pagina di esistere (ADR 0012): un
+    // grafo che cambia a ogni caricamento non si può citare.
+    const leggi = async () => {
+      await page.goto('/grafo');
+      await page.waitForSelector('.grafo__tela circle');
+      return page.locator('.grafo__tela circle').first().getAttribute('cx');
+    };
+    const prima = await leggi();
+    const dopo = await leggi();
+    expect(prima).not.toBeNull();
+    expect(dopo).toBe(prima);
+  });
+
+  test('i filtri finiscono nell’URL, e un link li riapre', async ({ page }) => {
+    await page.goto('/grafo');
+    await page.waitForSelector('.grafo__tela circle');
+    const tutti = await page.locator('.grafo__tela line').count();
+
+    await page.getByLabel(/solo i collegamenti a norme cancellate/i).check();
+    await expect(page).toHaveURL(/rotti=1/);
+    const soloRotti = await page.locator('.grafo__tela line').count();
+    expect(soloRotti).toBeLessThan(tutti);
+
+    // Il link condiviso deve riaprire esattamente quella vista.
+    await page.goto('/grafo?rotti=1');
+    await page.waitForSelector('.grafo__tela circle');
+    await expect(page.getByLabel(/solo i collegamenti a norme cancellate/i)).toBeChecked();
+    expect(await page.locator('.grafo__tela line').count()).toBe(soloRotti);
+  });
+
+  test('il disegno dice cosa mostra a chi non lo vede, e i numeri stanno anche in tabella', async ({
+    page,
+  }) => {
+    await page.goto('/grafo');
+    const tela = page.locator('.grafo__tela');
+    const etichetta = await tela.getAttribute('aria-label');
+    // Non «grafo a nodi»: l'etichetta deve contenere il dato.
+    expect(etichetta).toMatch(/\d+ norme/);
+    expect(etichetta).toMatch(/rosso/i);
+    // La stessa informazione, leggibile e citabile.
+    await expect(page.locator('table')).toBeVisible();
+  });
+
+  test('la pagina non è nel menù ma è nel piede', async ({ page }) => {
+    await page.goto('/');
+    await expect(
+      page.locator('.navigazione').getByRole('link', { name: /mappa delle leggi/i }),
+    ).toHaveCount(0);
+    await expect(
+      page.locator('.piede').getByRole('link', { name: /mappa delle leggi/i }),
+    ).toBeVisible();
+  });
+});
+
 test.describe('robustezza', () => {
   test('un URL inesistente risponde con la pagina «non trovata», non con un errore', async ({
     page,
