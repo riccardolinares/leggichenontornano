@@ -22,11 +22,24 @@ function misuraPng(dati: Buffer): { larghezza: number; altezza: number } | null 
   return { larghezza: dati.readUInt32BE(16), altezza: dati.readUInt32BE(20) };
 }
 
+/**
+ * Il contenuto di un `meta`, e `null` se quel `meta` non c'è.
+ *
+ * Si legge dal DOM già caricato invece che con `locator().getAttribute()`,
+ * che di fronte a un elemento assente **aspetta** — è pensato per una pagina
+ * che si sta ancora costruendo, e qui la pagina è ferma da un pezzo.
+ *
+ * La differenza si è vista in fabbrica: cinque pagine senza `og:image` hanno
+ * trasformato un guasto da dichiarare in tre quarti d'ora di attesa, due
+ * tentativi di riprova per pagina e nessuna riga che dicesse cosa mancava. Un
+ * controllo che non sa fallire in fretta si legge come un guasto degli
+ * strumenti, e manda a cercare nel posto sbagliato.
+ */
 async function contenuto(page: import('@playwright/test').Page, nome: string) {
-  return page
-    .locator(`meta[property="${nome}"], meta[name="${nome}"]`)
-    .first()
-    .getAttribute('content');
+  return page.evaluate((n) => {
+    const el = document.querySelector(`meta[property="${n}"], meta[name="${n}"]`);
+    return el?.getAttribute('content') ?? null;
+  }, nome);
 }
 
 test.describe('anteprime social', () => {
