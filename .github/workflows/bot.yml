@@ -41,7 +41,10 @@ jobs:
 
       - name: Pubblica la segnalazione del giorno
         env:
-          ANTINOMIA_SNAPSHOT: data/snapshot
+          # Assoluto, come in verifica.yml: un percorso relativo regge finché
+          # nessuno cambia la cartella di lavoro, e poi legge un dataset vuoto
+          # senza dirlo.
+          ANTINOMIA_SNAPSHOT: ${{ github.workspace }}/data/snapshot
           ANTINOMIA_SITE_URL: https://leleggichenontornano.it
           MASTODON_INSTANCE: ${{ secrets.MASTODON_INSTANCE }}
           MASTODON_TOKEN: ${{ secrets.MASTODON_TOKEN }}

@@ -15,6 +15,33 @@ import {
  * in asserzioni — perché un vincolo che nessuno verifica è un proposito.
  */
 
+/**
+ * Il dataset c'è davvero?
+ *
+ * Quasi tutti i test qui sotto si saltano da soli quando il dataset è vuoto,
+ * perché devono girare anche su un clone in cui la pipeline non è mai stata
+ * eseguita. È una comodità che una volta ha nascosto un guasto vero: in
+ * integrazione continua `ANTINOMIA_SNAPSHOT` era un percorso **relativo**, da
+ * `apps/web` puntava a una cartella inesistente, e il sito veniva costruito e
+ * verificato con zero atti. Trentotto test saltati, quarantasei passati, e il
+ * riepilogo che sembrava quasi verde.
+ *
+ * Questo test non si salta mai. Se il dataset è vuoto lo dice, invece di
+ * lasciare che l'assenza di segnale somigli a un successo — che è esattamente
+ * ciò che il progetto rimprovera a chi legge le sue segnalazioni.
+ */
+test.describe('il dataset da cui il sito è costruito', () => {
+  test('non è vuoto, e i test che dipendono dai dati stanno girando', () => {
+    const norma = primaNorma();
+    expect(
+      norma,
+      'Nessun atto nel dataset: il sito è stato costruito sul vuoto. ' +
+        'Controlla ANTINOMIA_SNAPSHOT — se è un percorso relativo, da apps/web non punta dove credi.',
+    ).not.toBeNull();
+    expect(primaAnomalia(), 'Nessuna segnalazione pubblicata nel dataset.').not.toBeNull();
+  });
+});
+
 test.describe('vincoli non negoziabili', () => {
   test('ogni pagina mostra l’attribuzione a Normattiva e il disclaimer, non in fondo in grigio chiaro', async ({
     page,

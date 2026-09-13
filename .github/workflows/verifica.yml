@@ -18,7 +18,13 @@ concurrency:
 env:
   # Il dataset versionato basta per costruire il sito e girare i test: nessun
   # passo di questa verifica scarica il corpus da Normattiva.
-  ANTINOMIA_SNAPSHOT: data/snapshot
+  #
+  # **Assoluto, non relativo.** Il sito e Playwright girano con la cartella di
+  # lavoro in `apps/web`, dove `data/snapshot` non esiste: con un percorso
+  # relativo la CI costruiva un sito con il dataset vuoto, e i test che
+  # dipendono dai dati si saltavano da soli invece di fallire. Trentotto test
+  # saltati e nessuno che se ne accorgesse.
+  ANTINOMIA_SNAPSHOT: ${{ github.workspace }}/data/snapshot
 
 jobs:
   pacchetti:
