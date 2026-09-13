@@ -22,8 +22,18 @@ export default function Stampa() {
     <div className="contenitore stretto">
       <h1>Per la stampa</h1>
       <p className="apertura">
-        Tutto quello che serve per scrivere di questo progetto senza doverci chiedere niente. Se poi
-        volete chiedercelo comunque, i contatti sono in fondo.
+        Qui ci sono i numeri, il metodo, i limiti dichiarati e i dati grezzi da cui vengono: potete
+        verificare ogni affermazione senza passare da noi. E poi scriveteci comunque. Una domanda
+        che ci obbliga a spiegarci meglio — o a correggere qualcosa — è la cosa più utile che
+        possiate farci.
+      </p>
+      <p className="azioni">
+        <a className="bottone" href={REPO_URL}>
+          Il progetto su GitHub
+        </a>
+        <a className="bottone" href={`${REPO_URL}/releases`}>
+          Scarica il dataset
+        </a>
       </p>
 
       <section className="sezione" aria-labelledby="frase">
@@ -151,15 +161,22 @@ export default function Stampa() {
           Contatti
         </h2>
         <p>
-          Il modo più rapido è aprire una issue sul repository: è pubblica e la vede chiunque lavori
-          al progetto.
+          Il modo più rapido è aprire una issue su GitHub: è pubblica, la vede chiunque lavori al
+          progetto, e resta come traccia di cosa vi abbiamo risposto. Non serve registrarsi per
+          leggerla.
+        </p>
+        <p>
+          Se la domanda riguarda una singola segnalazione, il pulsante{' '}
+          <strong>«Non è un conflitto»</strong> sulla scheda apre una issue con i riferimenti già
+          dentro. Se pensate che un numero di questa pagina sia sbagliato, ditecelo: le risposte
+          cambiano la precisione misurata, e possono togliere un controllo dal sito.
         </p>
         <p className="azioni">
           <a className="bottone bottone--primario" href={`${REPO_URL}/issues/new`}>
             Apri una issue
           </a>
           <a className="bottone" href={REPO_URL}>
-            Codice sorgente
+            Il progetto su GitHub
           </a>
         </p>
       </section>
