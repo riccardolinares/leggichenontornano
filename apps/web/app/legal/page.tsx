@@ -17,7 +17,7 @@ export const dynamic = 'force-static';
 export const metadata = metadatiPagina({
   titolo: 'Pagine legali',
   descrizione:
-    'Informativa privacy, termini di servizio, cookie e limitazione di responsabilità: cosa il sito riceve, cosa potete farci e quanto vale quello che leggete.',
+    'Informativa privacy, termini di servizio, cookie e limitazione di responsabilità: cosa il sito riceve, cosa puoi farci e quanto vale quello che leggi.',
   percorso: '/legal',
 });
 
@@ -39,8 +39,8 @@ export default function Legale() {
       <h1>Pagine legali</h1>
       <p className="apertura">
         Quattro pagine, scritte sui fatti di questo sito e non su un modello: quello che il sito
-        riceve davvero, dove finisce, cosa potete fare con i dati che pubblica e quanto vale quello
-        che ci leggete. Ognuna porta in cima la data in cui è stata rivista.
+        riceve davvero, dove finisce, cosa puoi fare con i dati che pubblica e quanto vale quello
+        che ci leggi. Ognuna porta in cima la data in cui è stata rivista.
       </p>
 
       <ul className="legale-indice">
@@ -60,10 +60,10 @@ export default function Legale() {
         <ul>
           <li>
             Le pagine sono costruite in anticipo e servite uguali a chiunque: il sito funziona senza
-            sapere chi siete, e <strong>non pone nessun cookie</strong>.
+            sapere chi sei, e <strong>non pone nessun cookie</strong>.
           </li>
           <li>
-            L’unico dato che può ricevere è quello che scrivete voi nel modulo{' '}
+            L’unico dato che può ricevere è quello che scrivi tu nel modulo{' '}
             <Link href="/segnala">«Qualcosa non torna?»</Link>, e quel testo{' '}
             <strong>diventa una segnalazione pubblica su GitHub</strong>.
           </li>
@@ -72,7 +72,7 @@ export default function Legale() {
             resta nell’Unione europea.
           </li>
           <li>
-            Il software è EUPL 1.2, il dataset derivato CC BY 4.0: potete rifare tutto da soli, con
+            Il software è EUPL 1.2, il dataset derivato CC BY 4.0: puoi rifare tutto da solo, con
             l’attribuzione come unica condizione.
           </li>
         </ul>

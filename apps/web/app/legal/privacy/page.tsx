@@ -50,8 +50,8 @@ export default function Privacy() {
       <IntestazioneLegale percorso={PERCORSO} />
 
       <p className="apertura">
-        Questo sito pubblica testi di legge, e per farlo non ha bisogno di sapere chi siete. L’unico
-        momento in cui può ricevere un vostro dato è quando lo scrivete voi, nel modulo{' '}
+        Questo sito pubblica testi di legge, e per farlo non ha bisogno di sapere chi sei. L’unico
+        momento in cui può ricevere un tuo dato è quando lo scrivi tu, nel modulo{' '}
         <Link href="/segnala">«Qualcosa non torna?»</Link>. Questa pagina dice cosa succede a quel
         dato, passaggio per passaggio.
       </p>
@@ -60,12 +60,12 @@ export default function Privacy() {
           il resto: chi scrive nel modulo deve saperlo *mentre decide se
           scrivere*, non in fondo a una pagina che aprirà dopo. */}
       <div className="niente-segnale">
-        <h2 style={{ marginTop: 0 }}>Quello che scrivete nel modulo diventa pubblico</h2>
+        <h2 style={{ marginTop: 0 }}>Quello che scrivi nel modulo diventa pubblico</h2>
         <p style={{ marginBottom: 0 }}>
           La segnalazione diventa una <strong>issue pubblica</strong> nella repository del progetto
-          su GitHub: il testo che avete scritto, la pagina da cui siete partiti e, se lo lasciate,
-          il contatto. Chiunque può leggerla senza registrarsi, i motori di ricerca la indicizzano,
-          e resta lì. Se la cosa è delicata, scrivetela a <a href={`mailto:${EMAIL}`}>{EMAIL}</a>:
+          su GitHub: il testo che hai scritto, la pagina da cui sei partito e, se lo lasci, il
+          contatto. Chiunque può leggerla senza registrarsi, i motori di ricerca la indicizzano, e
+          resta lì. Se la cosa è delicata, scrivila a <a href={`mailto:${EMAIL}`}>{EMAIL}</a>:
           quella strada resta privata.
         </p>
       </div>
@@ -76,8 +76,8 @@ export default function Privacy() {
         </h2>
         <p>
           Titolare del trattamento: <strong>{TITOLARE}</strong>, {INDIRIZZO_TITOLARE}. Per qualunque
-          cosa riguardi i vostri dati — una domanda, una correzione, una richiesta di cancellazione
-          — l’indirizzo è <a href={`mailto:${EMAIL}`}>{EMAIL}</a>, ed è lo stesso da cui passano la
+          cosa riguardi i tuoi dati — una domanda, una correzione, una richiesta di cancellazione —
+          l’indirizzo è <a href={`mailto:${EMAIL}`}>{EMAIL}</a>, ed è lo stesso da cui passano la
           stampa e le segnalazioni riservate.
         </p>
       </section>
@@ -98,24 +98,24 @@ export default function Privacy() {
           <tbody>
             <tr>
               <th scope="row">Il testo della segnalazione</th>
-              <td>quando premete «Manda la segnalazione»</td>
+              <td>quando premi «Manda la segnalazione»</td>
               <td>diventa il corpo della issue pubblica, ed è quello su cui lavoriamo</td>
-              <td>finché la repository è pubblica, salvo vostra richiesta di cancellazione</td>
+              <td>finché la repository è pubblica, salvo tua richiesta di cancellazione</td>
             </tr>
             <tr>
-              <th scope="row">Un contatto, se lo lasciate</th>
+              <th scope="row">Un contatto, se lo lasci</th>
               <td>stesso momento, ed è un campo facoltativo</td>
-              <td>a rispondervi: senza, la segnalazione vale uguale e non vi risponde nessuno</td>
+              <td>a risponderti: senza, la segnalazione vale uguale e non ti risponde nessuno</td>
               <td>finisce nella issue pubblica insieme al resto</td>
             </tr>
             <tr>
-              <th scope="row">La pagina da cui scrivete e il tipo di problema</th>
+              <th scope="row">La pagina da cui scrivi e il tipo di problema</th>
               <td>stesso momento, li mette il modulo</td>
               <td>a capire dove guardare</td>
               <td>finiscono nel titolo e nel corpo della issue</td>
             </tr>
             <tr>
-              <th scope="row">Il vostro indirizzo IP</th>
+              <th scope="row">Il tuo indirizzo IP</th>
               <td>a ogni invio del modulo</td>
               <td>
                 a fermare chi rimanda lo stesso modulo dieci volte: tre invii ogni dieci minuti
@@ -142,30 +142,30 @@ export default function Privacy() {
           pubblico. È una cosa che si controlla invece di crederci —{' '}
           <a href={REPO_URL}>il codice è pubblico</a>, la sola rotta che riceve qualcosa è{' '}
           <code>/api/segnalazione</code>, e la <Link href="/legal/cookie">pagina sui cookie</Link>{' '}
-          porta il test che verifica che dopo una visita il vostro browser non abbia niente addosso.
+          porta il test che verifica che dopo una visita il tuo browser non abbia niente addosso.
         </p>
       </section>
 
       <section className="sezione" aria-labelledby="dove-finisce">
         <h2 id="dove-finisce" className="sezione__titolo">
-          Dove finisce quello che scrivete
+          Dove finisce quello che scrivi
         </h2>
         <p>
           Il modulo esiste perché segnalare un errore non richieda un account GitHub: la issue la
           apriamo noi, con un token che sta sul server e sa fare solo quello. Il risultato però è lo
-          stesso di una issue aperta da voi — <strong>è pubblica</strong> — e nasce con l’etichetta{' '}
+          stesso di una issue aperta da te — <strong>è pubblica</strong> — e nasce con l’etichetta{' '}
           <code>da-triage</code>.
         </p>
         <p>
           Da lì in poi vale quello che vale per qualunque pagina pubblica di internet: può essere
           copiata, citata, archiviata o duplicata in un fork da chiunque, e quelle copie non
           spariscono quando cancelliamo la nostra. È il motivo per cui il modulo, prima del
-          pulsante, vi chiede di non metterci dati personali che non volete pubblici — vostri o di
+          pulsante, ti chiede di non metterci dati personali che non vuoi pubblici — tuoi o di
           altri.
         </p>
         <p>
-          Se l’apertura automatica non è attiva, il modulo non finge: vi porta su GitHub con il
-          testo già dentro, e la pubblicate voi con il vostro account. In quel caso il dato passa da
+          Se l’apertura automatica non è attiva, il modulo non finge: ti porta su GitHub con il
+          testo già dentro, e la pubblichi tu con il tuo account. In quel caso il dato passa da
           GitHub e non da questo sito.
         </p>
       </section>
@@ -176,10 +176,10 @@ export default function Privacy() {
         </h2>
         <ul>
           <li>
-            <strong>Il testo della segnalazione e il contatto</strong>: li mandate voi perché
-            vengano pubblicati, ed è il vostro consenso a reggere il trattamento (art. 6, paragrafo
-            1, lettera a, del Regolamento). Potete ritirarlo: significa chiederci di chiudere e
-            cancellare la issue, e lo facciamo.
+            <strong>Il testo della segnalazione e il contatto</strong>: li mandi tu perché vengano
+            pubblicati, ed è il tuo consenso a reggere il trattamento (art. 6, paragrafo 1, lettera
+            a, del Regolamento). Puoi ritirarlo: significa chiederci di chiudere e cancellare la
+            issue, e lo facciamo.
           </li>
           <li>
             <strong>L’indirizzo IP letto dal freno anti-abuso e i log dell’hosting</strong>:
@@ -216,7 +216,7 @@ export default function Privacy() {
           </li>
           <li>
             <strong>GitHub, Inc.</strong> — dove vive la issue, che è pubblica per scelta. Quello
-            che ci scrivete lo trattano loro secondo le loro condizioni, e lo vede chiunque.
+            che ci scrivi lo trattano loro secondo le loro condizioni, e lo vede chiunque.
           </li>
         </ul>
         <p>
@@ -233,15 +233,15 @@ export default function Privacy() {
 
       <section className="sezione" aria-labelledby="diritti">
         <h2 id="diritti" className="sezione__titolo">
-          Cosa potete chiedere, e come
+          Cosa puoi chiedere, e come
         </h2>
         <p>
-          Gli articoli dal 15 al 22 del Regolamento vi danno una serie di diritti. Tradotti in cosa
-          potete scrivere in una mail:
+          Gli articoli dal 15 al 22 del Regolamento ti danno una serie di diritti. Tradotti in cosa
+          puoi scrivere in una mail:
         </p>
         <ul>
           <li>
-            <strong>«Cosa avete di mio?»</strong> — ve lo diciamo, e ve ne diamo copia (art. 15).
+            <strong>«Cosa avete di mio?»</strong> — te lo diciamo, e te ne diamo copia (art. 15).
           </li>
           <li>
             <strong>«Questo dato è sbagliato, correggetelo»</strong> (art. 16).
@@ -257,8 +257,8 @@ export default function Privacy() {
             l’esattezza di un dato o il nostro legittimo interesse.
           </li>
           <li>
-            <strong>«Datemelo in un formato che posso riusare»</strong> (art. 20): quello che ci
-            avete mandato ve lo ridiamo in un file leggibile da una macchina.
+            <strong>«Datemelo in un formato che posso riusare»</strong> (art. 20): quello che ci hai
+            mandato te lo ridiamo in un file leggibile da una macchina.
           </li>
           <li>
             <strong>«Non voglio»</strong> (art. 21), per i trattamenti che stanno sul legittimo
@@ -268,13 +268,13 @@ export default function Privacy() {
         <p>
           Si scrive a <a href={`mailto:${EMAIL}`}>{EMAIL}</a> e si risponde entro un mese, che è il
           termine dell’art. 12. Non chiediamo di compilare moduli: basta dire quale segnalazione e
-          cosa volete che ne facciamo.
+          cosa vuoi che ne facciamo.
         </p>
         <p>
-          Se la risposta non vi soddisfa potete rivolgervi al{' '}
+          Se la risposta non ti soddisfa puoi rivolgerti al{' '}
           <a href="https://www.garanteprivacy.it">Garante per la protezione dei dati personali</a>{' '}
-          con un reclamo (art. 77), oppure al giudice. Sono strade vostre e questa pagina non ne
-          chiude nessuna.
+          con un reclamo (art. 77), oppure al giudice. Sono strade tue e questa pagina non ne chiude
+          nessuna.
         </p>
       </section>
 
