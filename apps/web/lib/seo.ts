@@ -123,3 +123,39 @@ export function datiStrutturatiSegnalazione(opzioni: {
     license: 'https://creativecommons.org/licenses/by/4.0/',
   });
 }
+
+/**
+ * I dati strutturati di un approfondimento del blog.
+ *
+ * `BlogPosting`, e quando le parole le ha scritte un modello l'autore è
+ * dichiarato come tale. Mettere il nome del progetto come autore di un testo
+ * generato sarebbe comodo per il posizionamento e falso: `author` è un campo
+ * che dice chi risponde di quelle frasi.
+ */
+export function datiStrutturatiArticolo(opzioni: {
+  titolo: string;
+  descrizione: string;
+  percorso: string;
+  pubblicatoIl: string;
+  /** Identificatore del modello, quando l'articolo è generato. */
+  autoreMacchina?: string;
+}): string {
+  const url = `${SITE_URL}${opzioni.percorso}`;
+  return JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: opzioni.titolo,
+    description: opzioni.descrizione,
+    url,
+    mainEntityOfPage: url,
+    datePublished: opzioni.pubblicatoIl.slice(0, 10),
+    dateModified: opzioni.pubblicatoIl.slice(0, 10),
+    inLanguage: 'it-IT',
+    isAccessibleForFree: true,
+    license: 'https://creativecommons.org/licenses/by/4.0/',
+    author: opzioni.autoreMacchina
+      ? { '@type': 'SoftwareApplication', name: opzioni.autoreMacchina }
+      : { '@type': 'Organization', name: NOME_SITO, url: SITE_URL },
+    publisher: { '@type': 'Organization', name: NOME_SITO, url: SITE_URL },
+  });
+}

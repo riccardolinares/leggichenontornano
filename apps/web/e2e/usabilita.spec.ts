@@ -5,6 +5,7 @@ import {
   percorsiDaVerificare,
   primaAnomalia,
   primaNorma,
+  primoApprofondimento,
 } from './percorsi';
 
 /**
@@ -450,6 +451,40 @@ test.describe('pronunce della Corte costituzionale', () => {
     const testo = (await page.locator('main').textContent()) ?? '';
     expect(testo).toMatch(/Corte costituzionale/);
     expect(testo).toMatch(/CC BY-SA 3\.0/);
+  });
+});
+
+test.describe('approfondimenti', () => {
+  const slug = primoApprofondimento();
+
+  test.skip(!slug, 'nessun articolo nel blog: niente da verificare');
+
+  test('la firma dice chi ha scritto le parole, e sta prima del testo', async ({ page }) => {
+    await page.goto(`/blog/${slug}`);
+    const firma = page.locator('.firma');
+    await expect(firma).toBeVisible();
+
+    // Prima del testo, non in fondo: chi legge deve saperlo *prima* di essersi
+    // fatto un'idea. Si confronta la posizione verticale con la prima sezione.
+    const yFirma = (await firma.boundingBox())!.y;
+    const ySezione = (await page.locator('.sezione').first().boundingBox())!.y;
+    expect(yFirma).toBeLessThan(ySezione);
+  });
+
+  test('sotto la prosa c’è il dossier, che non scrive nessuno', async ({ page }) => {
+    await page.goto(`/blog/${slug}`);
+    const dossier = page.locator('.dossier');
+    await expect(dossier).toBeVisible();
+    // La query in chiaro e il collegamento alla scheda: senza questi due, il
+    // dossier è una decorazione.
+    await expect(dossier.locator('.regola')).toContainText(/SELECT|FROM|WHERE/);
+    await expect(dossier.getByRole('link', { name: /scheda completa/i })).toBeVisible();
+  });
+
+  test('ogni articolo nasce da una segnalazione e la cita', async ({ page }) => {
+    await page.goto('/blog');
+    const primo = page.locator('.scheda').first();
+    await expect(primo.getByRole('link', { name: /segnalazione da cui nasce/i })).toBeVisible();
   });
 });
 

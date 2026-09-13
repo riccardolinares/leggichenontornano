@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { CHECK_DEFINITIONS } from '@leggichenontornano/engine';
 import { SITE_URL, dataset } from '@/lib/dataset';
+import { articoli } from '@/lib/blog';
 
 export const dynamic = 'force-static';
 
@@ -16,14 +17,21 @@ export const dynamic = 'force-static';
 export default function sitemap(): MetadataRoute.Sitemap {
   const reader = dataset();
   const ora = new Date();
-  const fisse = ['', '/numeri', '/norme', '/corte', '/come-funziona', '/dati', '/stampa'].map(
-    (p) => ({
-      url: `${SITE_URL}${p}`,
-      lastModified: ora,
-      changeFrequency: 'daily' as const,
-      priority: p === '' ? 1 : 0.7,
-    }),
-  );
+  const fisse = [
+    '',
+    '/blog',
+    '/numeri',
+    '/norme',
+    '/corte',
+    '/come-funziona',
+    '/dati',
+    '/stampa',
+  ].map((p) => ({
+    url: `${SITE_URL}${p}`,
+    lastModified: ora,
+    changeFrequency: 'daily' as const,
+    priority: p === '' ? 1 : 0.7,
+  }));
 
   const anomalie = reader.publishedAnomalies().map((a) => ({
     url: `${SITE_URL}/anomalia/${encodeURIComponent(a.id)}`,
@@ -69,5 +77,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.5,
   }));
 
-  return [...fisse, ...anomalie, ...controlli, ...pronunce, ...norme];
+  /* Gli approfondimenti: sono pochi, crescono di uno al giorno, e sono
+     esattamente il tipo di pagina che qualcuno cerca per parole sue («codice
+     appalti abrogato rinvio») invece che per numero di legge. */
+  const approfondimenti = articoli().map((a) => ({
+    url: `${SITE_URL}/blog/${a.slug}`,
+    lastModified: new Date(`${a.data}T00:00:00Z`),
+    changeFrequency: 'monthly' as const,
+    priority: 0.8,
+  }));
+
+  return [...fisse, ...approfondimenti, ...anomalie, ...controlli, ...pronunce, ...norme];
 }

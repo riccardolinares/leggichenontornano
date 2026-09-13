@@ -1,0 +1,34 @@
+{
+  "slug": "2026-09-13-una-legge-del-2019-rimanda-a-un-codice-degli",
+  "data": "2026-09-13",
+  "anomaliaId": "rinvio-ad-atto-abrogato.47b237113fb765a02f25",
+  "titolo": "Una legge del 2019 rimanda a un codice degli appalti che dal 2023 non esiste più",
+  "sommario": "Il decreto legge 30 dicembre 2019, n. 162 è ancora in vigore e contiene un richiamo al decreto legislativo 18 aprile 2016, n. 50, abrogato dal 31 marzo 2023. Chi applica quella disposizione oggi deve capire da solo quale disciplina si sia messa al posto di quella richiamata.",
+  "sezioni": [
+    {
+      "titolo": "cosa succede a chi deve applicarla",
+      "paragrafi": [
+        "Un decreto legge di fine anno è, di solito, un elenco di proroghe: si sposta in avanti una scadenza, si allunga un termine, si rinvia un adempimento. Il decreto legge 30 dicembre 2019, n. 162 fa esattamente questo, ed è tuttora in vigore.",
+        "Dentro, però, c’è un richiamo al decreto legislativo 18 aprile 2016, n. 50 — il codice dei contratti pubblici di allora — che dal 31 marzo 2023 non è più in vigore, abrogato dal decreto legislativo 31 marzo 2023, n. 36. Chi arriva a quella disposizione trova un rimando a un testo che nell’ordinamento non c’è più, e deve ricostruire per conto suo quale disciplina si applichi al suo posto.",
+        "Sono tre anni che il rimando è lì. Non è un caso limite: è una stazione appaltante o un ufficio che, per rispondere a una domanda semplice, deve fare un lavoro che la legge avrebbe dovuto fargli risparmiare."
+      ]
+    },
+    {
+      "titolo": "cosa dice il dataset, e cosa non dice",
+      "paragrafi": [
+        "Questo caso non arriva da una lettura interpretativa: arriva da un confronto di date. Il rinvio esiste nel grafo delle relazioni fra norme, l’atto richiamato risulta abrogato, e la norma che rinvia risulta ancora in vigore. Sono tre fatti registrati, non tre opinioni.",
+        "Quello che il confronto non sa dire è se il rimando crei davvero un problema applicativo. Un rinvio può essere recettizio: può cioè aver incorporato una volta per tutte il testo richiamato, e in quel caso l’abrogazione successiva non lo svuota. È una distinzione che non si ricava dai metadati e che va verificata leggendo la norma."
+      ]
+    },
+    {
+      "titolo": "come si potrebbe sciogliere",
+      "paragrafi": [
+        "I criteri che l’ordinamento mette a disposizione, qui, dicono poco. Il criterio cronologico è astrattamente invocabile, perché la norma che rinvia è posteriore a quella richiamata. Il criterio gerarchico non distingue: le due fonti hanno lo stesso rango. La specialità dipende dal rapporto fra le fattispecie disciplinate, e va valutata leggendo le due norme.",
+        "Il risultato è che il lavoro resta a chi applica. Ed è la ragione per cui questo sito raccoglie casi come questo uno per uno, con i testi originali accanto: perché siano contestabili da chi ne sa più di noi."
+      ]
+    }
+  ],
+  "modello": null,
+  "promptVersione": null,
+  "generatoIl": "2026-09-13T09:17:58.765Z"
+}
