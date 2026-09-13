@@ -1,6 +1,8 @@
-# Prompt di avvio progetto — "Le leggi che non tornano"
+# Documento di avvio — "Le leggi che non tornano"
 
-> Da usare come prompt iniziale in Claude Code (o equivalente) per creare la repository e impostare il progetto. Contiene contesto, vincoli, architettura, fonti dati verificate e ordine di lavoro.
+> La specifica da cui il repository è stato costruito: contesto, vincoli, architettura, fonti dati verificate e ordine di lavoro.
+>
+> Resta qui come riferimento contro cui misurare quello che c'è. Dove l'implementazione si è discostata, la ragione è scritta in una [ADR](docs/adr) — non nel silenzio.
 
 ---
 
