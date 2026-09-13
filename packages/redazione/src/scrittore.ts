@@ -11,6 +11,11 @@
  * la stessa ragione: se il modello sbaglia, deve sbagliare in un modo che si
  * possa misurare e intercettare, non in un modo che si debba subire.
  */
+import {
+  clienteModello,
+  credenzialiPresenti,
+  type ClienteModello,
+} from '@leggichenontornano/consumi';
 import type { Fatti } from './fatti.js';
 import { fattiInTesto } from './fatti.js';
 import type { Articolo, Sezione } from './articolo.js';
@@ -90,20 +95,14 @@ const STRUMENTO = {
   strict: true,
 };
 
-export interface ClienteModello {
-  messages: {
-    create(params: Record<string, unknown>): Promise<{
-      content: Array<{ type: string; name?: string; input?: unknown }>;
-    }>;
-  };
-}
-
 export interface OpzioniScrittore {
   modello?: string;
   apiKey?: string;
   /** Iniettabile nei test, per non toccare la rete. */
   cliente?: ClienteModello;
 }
+
+export type { ClienteModello };
 
 interface Grezzo {
   titolo: string;
@@ -113,23 +112,29 @@ interface Grezzo {
 
 export class Scrittore {
   private readonly modello: string;
-  private readonly apiKey: string | undefined;
-  private cliente: ClienteModello | null;
+  /**
+   * Il client passa dal registro dei consumi, e non è una scelta di questo
+   * file: è l'unico modo di parlare con il modello che il progetto abbia. La
+   * riga che segue è tutto quello che serve perché ogni articolo scritto qui
+   * finisca contato nella pagina dei costi.
+   */
+  private readonly cliente: ClienteModello;
 
   constructor(opts: OpzioniScrittore = {}) {
     this.modello = opts.modello ?? MODELLO_PREDEFINITO;
-    this.apiKey = opts.apiKey ?? process.env['ANTHROPIC_API_KEY'];
-    this.cliente = opts.cliente ?? null;
+    this.cliente = clienteModello({
+      uso: 'blog',
+      ...(opts.apiKey ? { apiKey: opts.apiKey } : {}),
+      ...(opts.cliente ? { sottostante: opts.cliente } : {}),
+    });
   }
 
   static disponibile(): boolean {
-    return Boolean(process.env['ANTHROPIC_API_KEY'] ?? process.env['ANTHROPIC_AUTH_TOKEN']);
+    return credenzialiPresenti();
   }
 
   async scrivi(fatti: Fatti, giorno: string, nota?: string): Promise<Articolo> {
-    const cliente = await this.ottieniCliente();
-
-    const risposta = await cliente.messages.create({
+    const risposta = await this.cliente.messages.create({
       model: this.modello,
       max_tokens: 4096,
       thinking: { type: 'adaptive' },
@@ -171,21 +176,6 @@ export class Scrittore {
       promptVersione: PROMPT_VERSIONE,
       generatoIl: new Date().toISOString(),
     };
-  }
-
-  private async ottieniCliente(): Promise<ClienteModello> {
-    if (this.cliente) return this.cliente;
-    if (!this.apiKey && !process.env['ANTHROPIC_AUTH_TOKEN']) {
-      throw new Error(
-        'Redazione non configurata: manca ANTHROPIC_API_KEY. Senza, il blog non pubblica e non è un errore.',
-      );
-    }
-    const mod = (await import('@anthropic-ai/sdk')) as unknown as {
-      default: new (opts: { apiKey?: string }) => ClienteModello;
-    };
-    const Ctor = mod.default;
-    this.cliente = this.apiKey ? new Ctor({ apiKey: this.apiKey }) : new Ctor({});
-    return this.cliente;
   }
 }
 

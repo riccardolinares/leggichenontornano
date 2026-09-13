@@ -15,6 +15,11 @@
  * L'estrattore è **opzionale**. Senza `ANTHROPIC_API_KEY` il motore usa
  * `RuleBasedExtractor` e funziona lo stesso, con recall più basso e dichiarato.
  */
+import {
+  clienteModello,
+  credenzialiPresenti,
+  type ClienteModello,
+} from '@leggichenontornano/consumi';
 import type {
   DeonticExtractor,
   DeonticMode,
@@ -142,46 +147,46 @@ export interface LlmExtractorOptions {
 }
 
 /**
- * La parte di SDK che usiamo, dichiarata come interfaccia.
+ * La parte di SDK che usiamo.
  *
- * Serve a poter iniettare un finto client nei test senza chiamare il servizio,
- * e a rendere visibile in una schermata quanto poco di un SDK molto grande
- * questo progetto usa davvero.
+ * Il tipo vive in `@leggichenontornano/consumi` insieme al client che lo
+ * costruisce: è lì che il progetto decide come si parla con un modello, e
+ * ridichiararlo qui significherebbe che due file possono divergere su cosa sia
+ * una risposta. Il nome storico resta, perché è quello esportato dal pacchetto
+ * e usato dai test.
  */
-export interface AnthropicLike {
-  messages: {
-    create(params: Record<string, unknown>): Promise<{
-      content: Array<{ type: string; name?: string; input?: unknown }>;
-      stop_reason?: string | null;
-    }>;
-  };
-}
+export type AnthropicLike = ClienteModello;
 
 export class LlmExtractor implements DeonticExtractor {
   readonly name: string;
   private readonly model: string;
   private readonly maxTokens: number;
-  private client: AnthropicLike | null;
-  private readonly apiKey: string | undefined;
+  /**
+   * Il client passa dal registro dei consumi: ogni comma estratto costa, e
+   * finché non si contava non si sapeva quanto. Una riga, e la misura c'è.
+   */
+  private readonly client: AnthropicLike;
 
   constructor(opts: LlmExtractorOptions = {}) {
     this.model = opts.model ?? DEFAULT_MODEL;
     this.maxTokens = opts.maxTokens ?? 4096;
-    this.client = opts.client ?? null;
-    this.apiKey = opts.apiKey ?? process.env['ANTHROPIC_API_KEY'];
+    this.client = clienteModello({
+      uso: 'estrazione-deontica',
+      ...(opts.apiKey ? { apiKey: opts.apiKey } : {}),
+      ...(opts.client ? { sottostante: opts.client } : {}),
+    });
     this.name = `${this.model}/${PROMPT_VERSION}`;
   }
 
   /** `true` quando l'estrattore è utilizzabile: senza credenziali si usa quello a regole. */
   static isAvailable(): boolean {
-    return Boolean(process.env['ANTHROPIC_API_KEY'] ?? process.env['ANTHROPIC_AUTH_TOKEN']);
+    return credenzialiPresenti();
   }
 
   async extract(input: ExtractionInput): Promise<DeonticProposition[]> {
-    const client = await this.getClient();
     const index = new VocabularyIndex(input.vocabulary);
 
-    const response = await client.messages.create({
+    const response = await this.client.messages.create({
       model: this.model,
       max_tokens: this.maxTokens,
       thinking: { type: 'adaptive' },
@@ -234,21 +239,6 @@ export class LlmExtractor implements DeonticExtractor {
         quote: p.citazione,
       } satisfies DeonticProposition;
     });
-  }
-
-  private async getClient(): Promise<AnthropicLike> {
-    if (this.client) return this.client;
-    if (!this.apiKey && !process.env['ANTHROPIC_AUTH_TOKEN']) {
-      throw new Error(
-        'Estrattore LLM non configurato: manca ANTHROPIC_API_KEY. Il motore usa RuleBasedExtractor quando le credenziali non ci sono.',
-      );
-    }
-    const mod = (await import('@anthropic-ai/sdk')) as unknown as {
-      default: new (opts: { apiKey?: string }) => AnthropicLike;
-    };
-    const Ctor = mod.default;
-    this.client = this.apiKey ? new Ctor({ apiKey: this.apiKey }) : new Ctor({});
-    return this.client;
   }
 }
 

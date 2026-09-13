@@ -9,6 +9,7 @@ import {
   primoControlloConEsito,
   primaPronuncia,
   tuttePronunce,
+  registroConsumiVuoto,
 } from './percorsi';
 import { percorsoPronuncia } from '../lib/testo';
 
@@ -1209,5 +1210,201 @@ test.describe('grafici', () => {
     }
 
     await contesto.close();
+  });
+});
+
+test.describe('costi e contributori', () => {
+  /*
+   * La pagina che pubblica i conti del progetto ha un modo di fallire che non
+   * somiglia a un guasto: mostrare zeri. Un registro vuoto e una spesa di zero
+   * dollari si disegnano nello stesso identico modo, e la seconda è una bugia —
+   * la stessa di cui il sito accusa chi pubblica una cifra senza dire come
+   * l'ha ottenuta. Questi test verificano la faccia che la build ha davvero
+   * prodotto, leggendo il registro invece di chiederlo alla pagina: chiederlo
+   * alla pagina significherebbe farsi raccontare dall'imputato com'è andata.
+   */
+
+  test('la pagina c’è, e dice le tre cose per cui esiste', async ({ page }) => {
+    const risposta = await page.goto('/costi');
+    expect(risposta?.status()).toBe(200);
+    await expect(page.locator('h1')).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: /quanto costa questo progetto/i }),
+    ).toBeVisible();
+    await expect(page.getByRole('heading', { name: /chi ha contribuito/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /come contribuire/i })).toBeVisible();
+  });
+
+  test('se il registro è vuoto la pagina lo dice, invece di mostrare zeri', async ({ page }) => {
+    test.skip(
+      !registroConsumiVuoto(),
+      'il registro ha già delle righe: si verifica l’altra faccia',
+    );
+    await page.goto('/costi');
+    const sezione = page.getByRole('region', { name: /quanto costa questo progetto/i });
+    await expect(sezione.getByText(/registro dei consumi è appena nato/i)).toBeVisible();
+
+    // Nessuna cifra di spesa: uno «0,00 USD» qui verrebbe letto come «non costa
+    // niente», che è l'unica cosa falsa che questa pagina può dire.
+    const testo = (await sezione.textContent()) ?? '';
+    expect(testo, 'la pagina mostra un totale in valuta su un registro vuoto').not.toMatch(
+      /\d+,\d+\s*(USD|\$)/,
+    );
+    // E nessun grafico: un disegno senza dati è una cornice vuota che promette
+    // una misura che non c'è.
+    expect(await sezione.locator('.grafico').count()).toBe(0);
+  });
+
+  test('se il registro ha righe, i numeri ci sono e sono all’italiana', async ({ page }) => {
+    test.skip(registroConsumiVuoto(), 'registro vuoto: si verifica l’altra faccia');
+    await page.goto('/costi');
+    const sezione = page.getByRole('region', { name: /quanto costa questo progetto/i });
+    const testo = (await sezione.textContent()) ?? '';
+
+    // Virgola decimale e valuta dichiarata: «12.35 USD» in una pagina italiana
+    // non si legge come un decimale, si legge come un refuso.
+    expect(testo).toMatch(/\d+,\d+\s*USD/);
+    expect(testo, 'un costo è scritto con il punto decimale').not.toMatch(/\d+\.\d{2}\s*USD/);
+
+    // Il grafico della distribuzione, con la sua alternativa testuale.
+    const grafico = sezione.locator('.grafico [role="img"][aria-label]').first();
+    await expect(grafico).toBeVisible();
+    const etichetta = (await grafico.getAttribute('aria-label')) ?? '';
+    expect(etichetta, 'l’etichetta del grafico non contiene nessuna cifra').toMatch(/\d/);
+    expect(etichetta).not.toMatch(/grafico|istogramma|diagramma/i);
+    expect(await grafico.locator('svg rect').count()).toBeGreaterThan(0);
+    await expect(
+      page.getByRole('region', { name: /spesa stimata per ciascun uso/i }),
+    ).toBeVisible();
+  });
+
+  test('la spesa è dichiarata come stima, non come fattura', async ({ page }) => {
+    await page.goto('/costi');
+    const testo = (await page.locator('main').textContent()) ?? '';
+    // Il costo è token per listino: scriverlo come «speso» senza dire
+    // «stimato» sarebbe la stessa sicurezza di troppo che il sito rimprovera
+    // a chi cita il contatore come provvedimenti mai adottati.
+    expect(testo).toMatch(/stimat/i);
+    expect(testo).toMatch(/listino/i);
+    // E quello che il conto non comprende va detto sul posto, non in una nota.
+    expect(testo).toMatch(/tempo delle persone/i);
+  });
+
+  test('la classifica dice cosa misura, senza girarci intorno', async ({ page }) => {
+    await page.goto('/costi');
+    const sezione = page.getByRole('region', { name: /chi ha contribuito/i });
+    await expect(
+      sezione.getByText(/numero di commit non è il valore di un contributo/i),
+    ).toBeVisible();
+  });
+
+  test('senza l’elenco da GitHub la pagina si costruisce lo stesso e spiega perché', async ({
+    page,
+  }) => {
+    await page.goto('/costi');
+    const sezione = page.getByRole('region', { name: /chi ha contribuito/i });
+    await expect(sezione).toBeVisible();
+    // O c'è la tabella dei contributori, o c'è la riga che dice perché non c'è.
+    // Quello che non è ammesso è una sezione muta: una pagina che mostra un
+    // vuoto senza spiegarlo lascia credere che non abbia contribuito nessuno.
+    if ((await sezione.locator('table').count()) === 0) {
+      const testo = (await sezione.textContent()) ?? '';
+      expect(testo).toMatch(/github/i);
+      expect(testo).toMatch(/costruit|raggiungibil|risposto|non risulta/i);
+    }
+  });
+
+  test('le tre strade per contribuire hanno lo stesso peso', async ({ page }) => {
+    await page.goto('/costi');
+    await expect(page.locator('.strada')).toHaveCount(3);
+    await expect(page.getByRole('heading', { name: /competenze tecniche/i })).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: /competenze legali o giuridiche/i }),
+    ).toBeVisible();
+    await expect(page.getByRole('heading', { name: /economicamente/i })).toBeVisible();
+
+    // La strada giuridica porta la soglia: è la parte che spiega perché quel
+    // contributo cambia davvero qualcosa invece di finire in un cassetto.
+    const giuridica = page.getByRole('region', { name: /competenze legali o giuridiche/i });
+    await expect(giuridica.getByText(/85%/)).toBeVisible();
+    await expect(giuridica.getByText(/30 revisioni/)).toBeVisible();
+    await expect(giuridica.getByText(/recettizio/i)).toBeVisible();
+
+    // E quella economica dice per cosa sono i soldi, e cosa il sito non ha.
+    const economica = page.getByRole('region', { name: /economicamente/i });
+    await expect(economica.getByRole('link', { name: /caffè/i })).toHaveAttribute(
+      'href',
+      /buymeacoffee\.com/,
+    );
+    await expect(economica.getByText(/pubblicità/i)).toBeVisible();
+  });
+
+  test('la pagina è raggiungibile dal piede, dalla mappa, dalla sitemap e da llms.txt', async ({
+    page,
+    request,
+    baseURL,
+  }) => {
+    await page.goto('/');
+    // Nome esatto, non una sottostringa: nel piede c'è già «Fonte: Corte
+    // costituzionale», e `/costi/i` prenderebbe anche quello.
+    await expect(
+      page.locator('.piede').getByRole('link', { name: 'Costi e contributori' }),
+    ).toBeVisible();
+
+    await page.goto('/mappa');
+    await expect(
+      page.locator('.mappa').getByRole('link', { name: 'Costi e contributori' }),
+    ).toBeVisible();
+
+    expect(await (await request.get(`${baseURL}/sitemap.xml`)).text()).toContain('/costi');
+    expect(await (await request.get(`${baseURL}/llms.txt`)).text()).toContain('/costi');
+  });
+
+  test('regge senza JavaScript e in un telefono da 400 px', async ({ browser }) => {
+    const contesto = await browser.newContext({
+      javaScriptEnabled: false,
+      viewport: { width: 400, height: 800 },
+    });
+    const pagina = await contesto.newPage();
+    await pagina.goto('/costi');
+
+    await expect(pagina.locator('h1')).toBeVisible();
+    await expect(pagina.getByRole('heading', { name: /come contribuire/i })).toBeVisible();
+    // Le tre strade si impilano: nessuna sparisce quando la riga non ci sta.
+    await expect(pagina.locator('.strada')).toHaveCount(3);
+    await expect(pagina.locator('.strada').last()).toBeVisible();
+
+    const straripa = await pagina.evaluate(
+      () => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
+    );
+    expect(straripa, '/costi scorre orizzontalmente a 400px').toBe(false);
+
+    await contesto.close();
+  });
+
+  test('l’anteprima social esiste davvero ed è un PNG 1200×630', async ({ page, request }) => {
+    await page.goto('/costi');
+    const indirizzo = await page.locator('meta[property="og:image"]').getAttribute('content');
+    expect(indirizzo).toBeTruthy();
+
+    const risposta = await request.get(localmente(indirizzo!, page.url()));
+    expect(risposta.status()).toBe(200);
+    const byte = await risposta.body();
+    expect([...byte.subarray(0, 4)]).toEqual([0x89, 0x50, 0x4e, 0x47]);
+    expect(byte.readUInt32BE(16)).toBe(1200);
+    expect(byte.readUInt32BE(20)).toBe(630);
+  });
+
+  test('dichiara i propri dati strutturati, come le altre pagine', async ({ page }) => {
+    await page.goto('/costi');
+    const blocchi = await page.locator('script[type="application/ld+json"]').allTextContents();
+    const tipi = blocchi.flatMap((b) => {
+      const letto: unknown = JSON.parse(b);
+      const voci = Array.isArray(letto) ? letto : [letto];
+      return voci.map((v) => String((v as Record<string, unknown>)['@type']));
+    });
+    expect(tipi).toContain('WebSite');
+    expect(tipi).toContain('Dataset');
+    expect(tipi).toContain('Article');
   });
 });

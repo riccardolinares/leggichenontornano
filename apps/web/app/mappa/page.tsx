@@ -79,6 +79,10 @@ export default function Mappa() {
               <Link href="/dati">Dati e precisione</Link> — cosa copre il dataset e quanto è precisa
               ogni regola
             </li>
+            <li>
+              <Link href="/costi">Costi e contributori</Link> — quanto costa far girare il progetto,
+              chi ci ha lavorato, e le tre strade per dare una mano
+            </li>
           </ul>
         </section>
 
