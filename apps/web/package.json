@@ -21,6 +21,7 @@
     "@leggichenontornano/engine": "workspace:*",
     "@leggichenontornano/redazione": "workspace:*",
     "@radix-ui/react-dropdown-menu": "^2.1.24",
+    "force-graph": "1.51.4",
     "lucide-react": "^1.45.0",
     "next": "^15.5.4",
     "next-themes": "^0.4.6",

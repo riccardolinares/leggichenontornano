@@ -77,6 +77,10 @@ export default function Mappa() {
               decisioni che hanno colpito norme del corpus
             </li>
             <li>
+              <Link href="/grafo/vivo">La mappa viva</Link> — lo stesso grafo delle leggi con la
+              simulazione accesa nel browser: si trascina, e cambia a ogni caricamento
+            </li>
+            <li>
               <Link href="/dati">Dati e precisione</Link> — cosa copre il dataset e quanto è precisa
               ogni regola
             </li>

@@ -153,6 +153,7 @@ export function percorsiDaVerificare(): Percorso[] {
     { nome: 'indice del blog', url: '/blog' },
     { nome: 'numeri', url: '/numeri' },
     { nome: 'grafo delle leggi', url: '/grafo' },
+    { nome: 'mappa viva delle leggi', url: '/grafo/vivo' },
     { nome: 'elenco delle norme', url: '/norme' },
     { nome: 'elenco delle pronunce', url: '/corte' },
     { nome: 'mcp', url: '/mcp' },

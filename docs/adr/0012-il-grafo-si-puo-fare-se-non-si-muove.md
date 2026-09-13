@@ -3,6 +3,10 @@
 - **Stato:** Accettata
 - **Data:** 2026-09-13
 - **Modifica:** [ADR 0003](0003-niente-grafo-force-directed.md)
+- **Modificata in parte da:** [ADR 0018](0018-il-grafo-si-puo-muovere-se-si-rinuncia-a-citarlo.md),
+  che ammette una simulazione nel browser a `/grafo/vivo`. Quanto segue **resta
+  valido per `/grafo`**, che non cambia: lì il layout è calcolato sul server e
+  il disegno è sempre lo stesso.
 
 ## Contesto
 

@@ -27,6 +27,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/numeri',
     '/norme',
     '/corte',
+    '/grafo/vivo',
     '/come-funziona',
     '/dati',
     '/mcp',
