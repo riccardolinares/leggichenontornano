@@ -17,7 +17,7 @@ body:
     id: cosa
     attributes:
       label: Cosa succede
-      description: Il dato com'è pubblicato. Se potete, incollate il frammento esatto.
+      description: Il dato com'è pubblicato. Se puoi, incolla il frammento esatto.
     validations:
       required: true
 

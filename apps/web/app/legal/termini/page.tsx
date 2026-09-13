@@ -22,7 +22,7 @@ export const dynamic = 'force-static';
 export const metadata = metadatiPagina({
   titolo: 'Termini di servizio',
   descrizione:
-    'Cosa potete fare con questo sito e con i suoi dati, con quale attribuzione, e cosa vi garantiamo.',
+    'Cosa puoi fare con questo sito e con i suoi dati, con quale attribuzione, e cosa ti garantiamo.',
   percorso: PERCORSO,
 });
 
@@ -35,8 +35,7 @@ export default function Termini() {
         {...bloccoDatiStrutturati(
           datiStrutturatiDocumento({
             titolo: 'Termini di servizio',
-            descrizione:
-              'Cosa potete fare con questo sito e con i suoi dati, e a quali condizioni.',
+            descrizione: 'Cosa puoi fare con questo sito e con i suoi dati, e a quali condizioni.',
             percorso: PERCORSO,
             dataPubblicazione: pagina.aggiornataIl,
           }),
@@ -47,13 +46,13 @@ export default function Termini() {
 
       <p className="apertura">
         Il sito è gratuito, non chiede registrazione e non vende niente. Queste sono le condizioni
-        con cui potete usarlo: siccome quasi tutto è permesso, la parte che vale la pena leggere è
-        quella sulle licenze — dice cosa scrivere sotto quando riusate i nostri dati.
+        con cui puoi usarlo: siccome quasi tutto è permesso, la parte che vale la pena leggere è
+        quella sulle licenze — dice cosa scrivere sotto quando riusi i nostri dati.
       </p>
 
-      <section className="sezione" aria-labelledby="potete">
-        <h2 id="potete" className="sezione__titolo">
-          Cosa potete fare
+      <section className="sezione" aria-labelledby="puoi">
+        <h2 id="puoi" className="sezione__titolo">
+          Cosa puoi fare
         </h2>
         <ul>
           <li>
@@ -63,12 +62,12 @@ export default function Termini() {
           </li>
           <li>
             <strong>Scaricare tutto il dataset</strong> e rifare le nostre interrogazioni. Se
-            ottenete conclusioni diverse dalle nostre, pubblicatele: è il motivo per cui il dataset
-            è scaricabile.
+            ottieni conclusioni diverse dalle nostre, pubblicale: è il motivo per cui il dataset è
+            scaricabile.
           </li>
           <li>
             <strong>Usare l’API pubblica e il server MCP</strong>, senza account e senza chiave, per
-            interrogare il corpus da un vostro programma o da dentro un assistente.
+            interrogare il corpus da un tuo programma o da dentro un assistente.
           </li>
           <li>
             <strong>Rifare il sito da zero.</strong> Il codice è aperto: si clona, si esegue la
@@ -82,10 +81,10 @@ export default function Termini() {
           </li>
         </ul>
         <p>
-          Una sola cosa vi chiediamo di non fare: interrogare il sito con una frequenza che lo
-          metterebbe in ginocchio per tutti gli altri. Se vi serve tutto il corpus,{' '}
-          <Link href="/dati">scaricate il dataset</Link> — è più veloce per voi e non toglie il sito
-          a nessuno.
+          Una sola cosa ti chiediamo di non fare: interrogare il sito con una frequenza che lo
+          metterebbe in ginocchio per tutti gli altri. Se ti serve tutto il corpus,{' '}
+          <Link href="/dati">scarica il dataset</Link> — è più veloce per te e non toglie il sito a
+          nessuno.
         </p>
       </section>
 
@@ -98,7 +97,7 @@ export default function Termini() {
             <tr>
               <th scope="col">Cosa</th>
               <th scope="col">Licenza</th>
-              <th scope="col">Cosa dovete fare</th>
+              <th scope="col">Cosa devi fare</th>
             </tr>
           </thead>
           <tbody>
@@ -108,8 +107,8 @@ export default function Termini() {
                 <a href={`${REPO_URL}/blob/main/LICENSE`}>EUPL 1.2</a>
               </td>
               <td>
-                se lo modificate e lo distribuite — anche solo offrendolo come servizio in rete —
-                distribuite il sorgente con la stessa licenza o con una di quelle che la EUPL
+                se lo modifichi e lo distribuisci — anche solo offrendolo come servizio in rete —
+                distribuisci il sorgente con la stessa licenza o con una di quelle che la EUPL
                 dichiara compatibili
               </td>
             </tr>
@@ -119,8 +118,8 @@ export default function Termini() {
                 <a href="https://creativecommons.org/licenses/by/4.0/deed.it">CC BY 4.0</a>
               </td>
               <td>
-                citate «Le leggi che non tornano» con il collegamento alla pagina da cui viene il
-                dato; per il resto fatene quello che volete, anche a scopo commerciale
+                cita «Le leggi che non tornano» con il collegamento alla pagina da cui viene il
+                dato; per il resto fanne quello che vuoi, anche a scopo commerciale
               </td>
             </tr>
             <tr>
@@ -129,7 +128,7 @@ export default function Termini() {
                 <a href="https://dati.normattiva.it">Normattiva</a>, CC BY 4.0
               </td>
               <td>
-                citate Normattiva come fonte: sono testi loro, qui riportati alla lettera e con la
+                cita Normattiva come fonte: sono testi loro, qui riportati alla lettera e con la
                 data di vigenza
               </td>
             </tr>
@@ -139,7 +138,7 @@ export default function Termini() {
                 <a href="https://creativecommons.org/licenses/by-sa/3.0/it/">CC BY-SA 3.0</a>
               </td>
               <td>
-                citate la Corte e, se pubblicate un’opera derivata da quei testi, usate la stessa
+                cita la Corte e, se pubblichi un’opera derivata da quei testi, usa la stessa
                 licenza: è la condizione in più che la BY-SA porta con sé
               </td>
             </tr>
@@ -155,24 +154,24 @@ export default function Termini() {
 
       <section className="sezione" aria-labelledby="modulo">
         <h2 id="modulo" className="sezione__titolo">
-          Se usate il modulo delle segnalazioni
+          Se usi il modulo delle segnalazioni
         </h2>
         <p>
-          Quello che scrivete diventa una <strong>issue pubblica</strong> su GitHub: prima di
-          premere il pulsante vale la pena leggere{' '}
-          <Link href="/legal/privacy">come la trattiamo</Link>. Da qui discendono tre cose.
+          Quello che scrivi diventa una <strong>issue pubblica</strong> su GitHub: prima di premere
+          il pulsante vale la pena leggere <Link href="/legal/privacy">come la trattiamo</Link>. Da
+          qui discendono tre cose.
         </p>
         <ul>
           <li>
-            <strong>Scrivete del problema, non delle persone.</strong> Serve la pagina, il numero,
-            cosa vi aspettavate di trovare. Non servono i dati personali di nessuno, né documenti
+            <strong>Scrivi del problema, non delle persone.</strong> Serve la pagina, il numero,
+            cosa ti aspettavi di trovare. Non servono i dati personali di nessuno, né documenti
             coperti da segreto o da riservatezza: quel materiale in una pagina pubblica non ci deve
             stare.
           </li>
           <li>
-            <strong>Il testo resta vostro</strong>, e mandandolo ci date il permesso di pubblicarlo
-            nella repository e di citarlo nel sito e nel dataset con la licenza CC BY 4.0. Se
-            cambiate idea, ce lo dite e lo cancelliamo.
+            <strong>Il testo resta tuo</strong>, e mandandolo ci dai il permesso di pubblicarlo
+            nella repository e di citarlo nel sito e nel dataset con la licenza CC BY 4.0. Se cambi
+            idea, ce lo dici e lo cancelliamo.
           </li>
           <li>
             <strong>Possiamo chiudere o cancellare una issue</strong> quando contiene dati personali
@@ -183,14 +182,14 @@ export default function Termini() {
           </li>
         </ul>
         <p>
-          Se la cosa è delicata e non volete lasciarla pubblica, l’indirizzo è{' '}
+          Se la cosa è delicata e non vuoi lasciarla pubblica, l’indirizzo è{' '}
           <a href={`mailto:${EMAIL}`}>{EMAIL}</a>.
         </p>
       </section>
 
       <section className="sezione" aria-labelledby="garanzie">
         <h2 id="garanzie" className="sezione__titolo">
-          Cosa vi garantiamo
+          Cosa ti garantiamo
         </h2>
         <ul>
           <li>
@@ -212,10 +211,9 @@ export default function Termini() {
         <p>
           Quello che non possiamo garantire è la continuità: è un progetto civico senza contratto di
           servizio, e può stare fermo per manutenzione o per un guasto di chi lo ospita. E quello
-          che leggete qui resta un punto di partenza documentato, non un parere: cosa questo
-          comporta è scritto nella{' '}
-          <Link href="/legal/disclaimer">limitazione di responsabilità</Link>, che è la pagina da
-          leggere prima di usare una segnalazione per decidere qualcosa.
+          che leggi qui resta un punto di partenza documentato, non un parere: cosa questo comporta
+          è scritto nella <Link href="/legal/disclaimer">limitazione di responsabilità</Link>, che è
+          la pagina da leggere prima di usare una segnalazione per decidere qualcosa.
         </p>
         <p>
           Del danno che derivasse da un errore del sito rispondiamo nei limiti in cui la legge non
@@ -231,9 +229,9 @@ export default function Termini() {
           Legge applicabile
         </h2>
         <p>
-          Si applica la legge italiana. Se usate il sito come consumatore, resta competente il
-          giudice del luogo in cui risiedete o avete il domicilio: è una tutela che la legge vi dà e
-          che questa pagina non tocca.
+          Si applica la legge italiana. Se usi il sito come consumatore, resta competente il giudice
+          del luogo in cui risiedi o hai il domicilio: è una tutela che la legge ti dà e che questa
+          pagina non tocca.
         </p>
         <p>
           La data in cima dice quando queste condizioni sono state riviste l’ultima volta. Ogni

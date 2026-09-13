@@ -12,7 +12,7 @@ export default function Image() {
       accento: OG.ocra,
       titolo:
         'Il dataset è scaricabile, le query sono pubbliche, e ogni cifra si può rifare da soli.',
-      nota: 'Scriveteci: rispondiamo anche quando la risposta è «non lo sappiamo».',
+      nota: 'Scrivici: rispondiamo anche quando la risposta è «non lo sappiamo».',
     }),
     size,
   );

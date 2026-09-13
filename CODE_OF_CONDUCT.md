@@ -29,7 +29,7 @@ Ci si comporta bene. In concreto:
 
 ## Se qualcosa va storto
 
-Scrivete a **info@leggichenontornano.it**. Le segnalazioni sono trattate con
+Scrivi a **info@leggichenontornano.it**. Le segnalazioni sono trattate con
 riservatezza.
 
 Chi mantiene il progetto può, in ordine di gravità: chiedere di cambiare

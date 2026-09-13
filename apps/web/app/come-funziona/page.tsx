@@ -24,7 +24,7 @@ export default function ComeFunziona() {
           la seconda dice anche a cosa serve. Un elenco di divieti in apertura
           insegna al lettore a diffidare prima ancora di aver letto qualcosa. */}
       <section aria-labelledby="non-fa">
-        <h2 id="non-fa">Su cosa potete contare</h2>
+        <h2 id="non-fa">Su cosa puoi contare</h2>
         <ul>
           <li>
             <strong>Ogni segnalazione è un punto di partenza documentato</strong>, con i testi e le
@@ -33,7 +33,7 @@ export default function ComeFunziona() {
             darlo, e con questi elementi lo dà meglio.
           </li>
           <li>
-            <strong>Quando la Corte costituzionale si è già pronunciata, lo trovate scritto</strong>{' '}
+            <strong>Quando la Corte costituzionale si è già pronunciata, lo trovi scritto</strong>{' '}
             con le sue parole e il collegamento al testo integrale. Dichiarare illegittima una norma
             spetta a lei; raccogliere e collegare le sue decisioni al testo che colpiscono è quello
             che facciamo noi, e che altrove è sorprendentemente difficile.
@@ -204,7 +204,7 @@ export default function ComeFunziona() {
         </p>
         <p>
           <a className="bottone" href={REPO_URL}>
-            Il codice è pubblico: verificate anche noi
+            Il codice è pubblico: verifica anche noi
           </a>
         </p>
       </section>

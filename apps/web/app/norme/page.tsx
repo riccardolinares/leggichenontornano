@@ -80,8 +80,8 @@ export default function Norme() {
       <p className="riga-corpus">
         <strong>Questo è il corpus su cui lavoriamo oggi</strong>, e si allarga a ogni ingestione:
         ogni atto che entra porta con sé le sue relazioni, e fa scattare i controlli anche sugli
-        atti che c’erano già. Se cercate una norma che qui non c’è,{' '}
-        <Link href="/segnala">ditecelo</Link> — è il modo più rapido per farla entrare.{' '}
+        atti che c’erano già. Se cerchi una norma che qui non c’è,{' '}
+        <Link href="/segnala">diccelo</Link> — è il modo più rapido per farla entrare.{' '}
         <Link href="/dati">Cosa copre il dataset</Link>.
       </p>
 

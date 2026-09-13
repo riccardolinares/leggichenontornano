@@ -349,13 +349,13 @@ export default function Numeri() {
 
       <section className="sezione" aria-labelledby="rifare">
         <h2 id="rifare" className="sezione__titolo">
-          Rifate i conti
+          Rifai i conti
         </h2>
         <p>
           Nessuna di queste cifre chiede di fidarsi di noi. Il dataset è scaricabile e le
           interrogazioni sono le stesse che gira il sito: si prende lo snapshot, si esegue la query,
-          si confronta il numero. Se non torna, <Link href="/stampa">scriveteci</Link> — e se
-          abbiamo sbagliato, lo correggiamo scrivendolo.
+          si confronta il numero. Se non torna, <Link href="/stampa">scrivici</Link> — e se abbiamo
+          sbagliato, lo correggiamo scrivendolo.
         </p>
         <Condivisione url={`${SITE_URL}/numeri`} titolo="I numeri delle leggi che non tornano" />
       </section>

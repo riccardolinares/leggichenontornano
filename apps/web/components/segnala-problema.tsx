@@ -59,7 +59,7 @@ export function SegnalaProblema({
     if (messaggio.trim().length < 30) {
       setStato({
         tipo: 'errore',
-        messaggio: 'Servono almeno trenta caratteri: cosa avete visto, e dove.',
+        messaggio: 'Servono almeno trenta caratteri: cosa hai visto, e dove.',
       });
       return;
     }
@@ -86,7 +86,7 @@ export function SegnalaProblema({
         setStato({ tipo: 'ripiego', url: urlDiRipiego() });
         return;
       }
-      setStato({ tipo: 'errore', messaggio: dati.errore ?? 'Non è andata: riprovate fra poco.' });
+      setStato({ tipo: 'errore', messaggio: dati.errore ?? 'Non è andata: riprova fra poco.' });
     } catch {
       // La rete può non esserci. Meglio offrire la strada alternativa che
       // lasciare chi segnala davanti a un modulo che non risponde.
@@ -126,10 +126,10 @@ export function SegnalaProblema({
       </div>
 
       <div className="segnala__campo">
-        <label htmlFor="segnala-messaggio">Che cosa avete visto</label>
+        <label htmlFor="segnala-messaggio">Che cosa hai visto</label>
         <p id="segnala-aiuto" className="segnala__aiuto">
-          Più è concreto, più è utile: quale pagina, quale numero, cosa vi aspettavate di trovare.
-          Non serve essere gentili né tecnici.
+          Più è concreto, più è utile: quale pagina, quale numero, cosa ti aspettavi di trovare. Non
+          serve essere gentili né tecnici.
         </p>
         {/* Niente `minLength`: il controllo nativo blocca l'invio con un
             fumetto del browser, che gli screen reader annunciano in modo
@@ -148,10 +148,10 @@ export function SegnalaProblema({
 
       <div className="segnala__campo">
         <label htmlFor="segnala-contatto">
-          Dove rispondervi <span className="segnala__facoltativo">(facoltativo)</span>
+          Dove risponderti <span className="segnala__facoltativo">(facoltativo)</span>
         </label>
         <p id="segnala-contatto-aiuto" className="segnala__aiuto">
-          Una mail, se volete sapere com’è finita. Senza, la segnalazione vale uguale.
+          Una mail, se vuoi sapere com’è finita. Senza, la segnalazione vale uguale.
         </p>
         <input
           id="segnala-contatto"
@@ -178,9 +178,9 @@ export function SegnalaProblema({
       </div>
 
       <p className="segnala__nota">
-        La segnalazione diventa una <strong>issue pubblica</strong> su GitHub, con quello che avete
-        scritto. Non metteteci dati personali che non volete pubblici.{' '}
-        <Link href="/legal/privacy">Che fine fa quello che scrivete</Link>.
+        La segnalazione diventa una <strong>issue pubblica</strong> su GitHub, con quello che hai
+        scritto. Non metterci dati personali che non vuoi pubblici.{' '}
+        <Link href="/legal/privacy">Che fine fa quello che scrivi</Link>.
       </p>
 
       <div className="azioni">
@@ -202,9 +202,9 @@ export function SegnalaProblema({
           <>
             L’apertura automatica non è attiva su questo sito.{' '}
             <a href={stato.url} rel="noopener">
-              Aprite la segnalazione su GitHub
+              Apri la segnalazione su GitHub
             </a>
-            : il testo che avete scritto è già dentro.
+            : il testo che hai scritto è già dentro.
           </>
         ) : null}
       </p>

@@ -18,7 +18,7 @@ lì: [le segnalazioni](https://leggichenontornano.it),
 controllo — compresi quelli che non pubblichiamo.
 
 > **Le segnalazioni si controllano in pubblico.** Nessun comitato di esperti
-> decide cosa è vero prima di voi: ogni scheda mostra i testi originali, la
+> decide cosa è vero prima di te: ogni scheda mostra i testi originali, la
 > query che l'ha prodotta e i criteri di risoluzione, e ha un pulsante «Non è un
 > conflitto» che apre una issue senza bisogno di account. Un controllo pubblica
 > solo quando le revisioni registrate lo portano sopra la soglia, e la pagina
@@ -52,7 +52,7 @@ Prima di tutto il resto, perché è la parte che qualifica tutto il resto.
   una query su date e relazioni; al livello 4 lo fa un modello, e la scheda lo
   dice con un blocco che si distingue senza doverlo leggere
   ([ADR 0011](docs/adr/0011-il-modello-confronta-dove-la-query-non-arriva.md)).
-- **Quando la Corte costituzionale si è pronunciata, lo trovate scritto**, con
+- **Quando la Corte costituzionale si è pronunciata, lo trovi scritto**, con
   le sue parole e il collegamento al testo integrale. Dichiarare illegittima una
   norma spetta a lei; collegare le sue decisioni al testo che colpiscono è
   quello che facciamo noi.
@@ -68,7 +68,7 @@ Prima di tutto il resto, perché è la parte che qualifica tutto il resto.
   quali controlli girano, su quanti atti e con quale precisione; il dataset
   porta con sé gli elenchi, e si possono contare.
 
-Quello che trovate qui serve a farsi un'opinione documentata in fretta e con i
+Quello che trovi qui serve a farsi un'opinione documentata in fretta e con i
 testi davanti: questo sito non fornisce consulenza legale.
 
 ## La soglia di pubblicazione
@@ -306,7 +306,7 @@ documentate in
 [docs/qualita-fonti.md](docs/qualita-fonti.md), con cosa producevano e cosa
 facciamo adesso.
 
-Vale la pena leggerlo anche se non vi interessa questo progetto: è la parte
+Vale la pena leggerlo anche se non ti interessa questo progetto: è la parte
 dell'ingegneria che sta fra un dataset pubblico e un'affermazione pubblica.
 
 ---
