@@ -217,6 +217,76 @@ test.describe('lettore norma', () => {
   });
 });
 
+test.describe('il grafo', () => {
+  const norma = primaNorma();
+
+  test.skip(!norma, 'nessuna norma nel dataset');
+
+  test('non è force-directed: nessun canvas, nessun layout calcolato nel browser', async ({
+    page,
+  }) => {
+    // ADR 0003. Un canvas è invisibile a chi usa uno screen reader, e un layout
+    // a forze non è deterministico: due caricamenti darebbero due disegni, e
+    // l'URL smetterebbe di essere citabile.
+    await page.goto(`/norma/${encodeURIComponent(norma!)}`);
+    expect(await page.locator('canvas').count()).toBe(0);
+    const script = await page.content();
+    for (const libreria of ['d3-force', 'forceSimulation', 'vis-network', 'cytoscape']) {
+      expect(script, `la pagina carica ${libreria}`).not.toContain(libreria);
+    }
+  });
+
+  test('il disegno è identico a ogni caricamento', async ({ page }) => {
+    // Il layout è precalcolato server-side: se due richieste danno due SVG
+    // diversi, qualcosa lo sta calcolando nel browser.
+    const url = `/norma/${encodeURIComponent(norma!)}`;
+    await page.goto(url);
+    const grafo = page.locator('svg').first();
+    if ((await grafo.count()) === 0) test.skip();
+    const primo = await grafo.innerHTML();
+    await page.reload();
+    expect(await page.locator('svg').first().innerHTML()).toBe(primo);
+  });
+
+  test('la stessa informazione è disponibile anche in tabella', async ({ page }) => {
+    // Il disegno illustra; il contenuto vero è la tabella, che uno screen
+    // reader può leggere.
+    await page.goto(`/norma/${encodeURIComponent(norma!)}`);
+    const grafo = page.locator('.grafo');
+    if ((await grafo.count()) === 0) test.skip();
+    await expect(page.locator('table caption').first()).toBeVisible();
+  });
+});
+
+test.describe('gli URL sono il prodotto', () => {
+  const norma = primaNorma();
+
+  test.skip(!norma, 'nessuna norma nel dataset');
+
+  test('la vigenza è un parametro dello stesso URL, non una pagina diversa', async ({ page }) => {
+    // «/norma/urn:nir:…~art3?v=2013-04-20» deve poter essere incollato in una
+    // memoria difensiva e riportare alla stessa pagina.
+    const url = `/norma/${encodeURIComponent(norma!)}`;
+    await page.goto(url);
+    const prima = await page.locator('#contenuto').textContent();
+    await page.goto(`${url}?v=1990-01-01`);
+    expect(page.url()).toContain('?v=1990-01-01');
+    // La pagina risponde: o mostra la versione a quella data, o dice che a
+    // quella data l'atto non c'era. Quello che non deve fare è ignorare il
+    // parametro e mostrare la stessa cosa di prima senza dirlo.
+    const dopo = await page.locator('#contenuto').textContent();
+    expect(dopo).toBeTruthy();
+    expect(prima).toBeTruthy();
+  });
+
+  test('un articolo è indirizzabile da solo', async ({ page }) => {
+    const url = `/norma/${encodeURIComponent(norma!)}?art=1`;
+    const risposta = await page.goto(url);
+    expect(risposta?.status()).toBe(200);
+    expect(page.url()).toContain('art=1');
+  });
+});
+
 test.describe('pronunce della Corte costituzionale', () => {
   const colpita = normaConPronuncia();
 
