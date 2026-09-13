@@ -12,7 +12,8 @@ Il sito sta su **[leggichenontornano.it](https://leggichenontornano.it)**. Da
 lì: [le segnalazioni](https://leggichenontornano.it),
 [i numeri](https://leggichenontornano.it/numeri) con quello che non dicono,
 [le norme del corpus](https://leggichenontornano.it/norme),
-[le pronunce della Consulta](https://leggichenontornano.it/corte) e
+[le pronunce della Consulta](https://leggichenontornano.it/corte),
+[il progetto dentro il tuo assistente](https://leggichenontornano.it/assistente) e
 [i dati con la precisione misurata](https://leggichenontornano.it/dati) di ogni
 controllo — compresi quelli che non pubblichiamo.
 

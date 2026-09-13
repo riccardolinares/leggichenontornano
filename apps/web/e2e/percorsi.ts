@@ -108,6 +108,7 @@ export function percorsiDaVerificare(): Percorso[] {
     { nome: 'numeri', url: '/numeri' },
     { nome: 'elenco delle norme', url: '/norme' },
     { nome: 'elenco delle pronunce', url: '/corte' },
+    { nome: 'assistente', url: '/assistente' },
     { nome: 'come funziona', url: '/come-funziona' },
     { nome: 'dati', url: '/dati' },
     { nome: 'stampa', url: '/stampa' },

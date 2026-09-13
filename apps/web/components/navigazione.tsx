@@ -9,6 +9,7 @@ const VOCI = [
   { href: '/numeri', label: 'I numeri' },
   { href: '/norme', label: 'Norme' },
   { href: '/corte', label: 'Consulta' },
+  { href: '/assistente', label: 'Assistente' },
   { href: '/come-funziona', label: 'Come funziona' },
   { href: '/dati', label: 'Dati' },
 ] as const;

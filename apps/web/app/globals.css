@@ -1173,3 +1173,15 @@ a.griglia-cifre__voce:focus-visible .griglia-cifre__etichetta {
   margin-top: 1.8rem;
   font-size: 1.02rem;
 }
+
+/* Domande d'esempio: si leggono come un elenco di frasi, non come un menù. */
+.elenco-domande {
+  margin: 1rem 0;
+  padding-left: 1.2rem;
+  max-width: var(--misura);
+}
+
+.elenco-domande li {
+  margin-bottom: 0.7rem;
+  line-height: 1.55;
+}
