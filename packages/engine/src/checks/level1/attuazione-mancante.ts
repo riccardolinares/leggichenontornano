@@ -5,11 +5,15 @@
  * dall'entrata in vigore della presente legge». Il termine è scaduto e il
  * provvedimento non risulta pubblicato.
  *
- * **Il cancello.** Questo controllo segnala solo gli atti per i quali abbiamo
- * verificato in Gazzetta Ufficiale l'assenza del provvedimento attuativo
- * (`implementationCoverage`). Per tutti gli altri l'estrazione del mandato viene
- * comunque prodotta — serve al contatore nazionale dei giorni di ritardo — ma
- * non diventa una segnalazione pubblica.
+ * **Il cancello.** Questo controllo segnala solo i **mandati** per i quali
+ * abbiamo verificato in Gazzetta Ufficiale l'assenza del provvedimento attuativo
+ * (`implementationCoverage`, alimentato da `VerificaAttuazione`). Per tutti gli
+ * altri l'estrazione del mandato viene comunque prodotta — serve al contatore
+ * nazionale dei giorni di ritardo — ma non diventa una segnalazione pubblica.
+ *
+ * La granularità è il mandato e non l'atto, e la differenza non è accademica:
+ * una legge può prevedere dieci decreti, nove arrivati e uno no. Un cancello
+ * per atto pubblicherebbe dieci segnalazioni, nove delle quali false.
  *
  * Il motivo è il principio del progetto: «non ho trovato il decreto» e «il
  * decreto non esiste» sono due affermazioni diverse, e su un corpus parziale la
@@ -17,6 +21,7 @@
  * produrrebbe esattamente la segnalazione falsa che il progetto non può
  * permettersi.
  */
+import { createHash } from 'node:crypto';
 import type { Check, CheckContext } from '../../types.js';
 import type { CorpusView, ProvisionView } from '../../corpus-view.js';
 import { noResolution } from '../../resolution.js';
@@ -159,11 +164,39 @@ export function daysLate(dueBy: string, today: string): number {
   );
 }
 
+/**
+ * La chiave di un mandato: gli stessi componenti dell'identificatore della
+ * segnalazione, e gli stessi che la verifica in Gazzetta Ufficiale registra.
+ *
+ * Serve perché il cancello lavora **sul singolo mandato** e non sull'atto: una
+ * legge con dieci mandati di cui nove attuati non deve produrre dieci
+ * segnalazioni perché il decimo manca.
+ */
+export function mandateKey(mandate: {
+  actUrn: string;
+  articleNumber: string | null;
+  provisionNumber: string | null;
+  deadlineDays: number;
+}): string {
+  const parti = [
+    mandate.actUrn,
+    mandate.articleNumber ?? '',
+    mandate.provisionNumber ?? '',
+    String(mandate.deadlineDays),
+  ].join('|');
+  return `vga_${createHash('sha1').update(parti).digest('hex').slice(0, 16)}`;
+}
+
 export interface AttuazioneInput {
   view: CorpusView;
   /**
-   * Atti per i quali l'assenza del provvedimento attuativo è stata verificata in
+   * Mandati per i quali l'assenza del provvedimento è stata verificata in
    * Gazzetta Ufficiale. Solo questi producono segnalazioni pubblicabili.
+   *
+   * L'insieme contiene chiavi di mandato (`mandateKey`). Accetta anche URN di
+   * atto, che è la forma con cui il gold standard esprime la copertura: una
+   * voce di gold su un atto copre tutti i suoi mandati, ed è l'unica granularità
+   * che una fonte giuridica esterna ci dà.
    */
   implementationCoverage: ReadonlySet<string>;
   /** Provvedimenti attuativi noti, per URN dell'atto che li prevedeva. */
@@ -181,7 +214,7 @@ export const ATTUAZIONE_MANCANTE: Check<AttuazioneInput> = {
       'SELECT m.actUrn, m.articleNumber, m.dueBy',
       'FROM Mandato m                                  -- estratto dal testo del comma',
       'WHERE m.dueBy < oggi',
-      '  AND m.actUrn IN implementationCoverage        -- assenza verificata in Gazzetta Ufficiale',
+      '  AND m.chiave IN implementationCoverage        -- assenza verificata in Gazzetta Ufficiale',
       '  AND NOT EXISTS (',
       '        SELECT 1 FROM Attuazione a WHERE a.forActUrn = m.actUrn',
       '      )',
@@ -190,7 +223,7 @@ export const ATTUAZIONE_MANCANTE: Check<AttuazioneInput> = {
       '-- comparire lo strumento («con decreto…»), il verbo di adozione e il',
       '-- termine. Nessun modello linguistico è coinvolto.',
     ].join('\n'),
-    expectedPrecision: '~100% sugli atti con copertura verificata in Gazzetta Ufficiale',
+    expectedPrecision: '~100% sui mandati con assenza verificata in Gazzetta Ufficiale',
     deterministic: true,
   },
 
@@ -198,7 +231,12 @@ export const ATTUAZIONE_MANCANTE: Check<AttuazioneInput> = {
     const findings = [];
     for (const mandate of allMandates(input.view)) {
       if (!mandate.dueBy || mandate.dueBy >= ctx.today) continue;
-      if (!input.implementationCoverage.has(mandate.actUrn)) continue;
+      if (
+        !input.implementationCoverage.has(mandateKey(mandate)) &&
+        !input.implementationCoverage.has(mandate.actUrn)
+      ) {
+        continue;
+      }
       if ((input.implementations.get(mandate.actUrn) ?? []).length > 0) continue;
 
       const act = input.view.act(mandate.actUrn);

@@ -6,3 +6,4 @@ pnpm-lock.yaml
 data/snapshot
 LICENSE
 .claude
+packages/corpus/test/fixtures

@@ -138,7 +138,8 @@ jobs:
           node packages/engine/dist/cli.js esporta --dest /tmp/dataset-prova
           mancanti=0
           for f in acts.jsonl versions.jsonl articles.jsonl relations.jsonl \
-                   anomalies.jsonl pronunce.jsonl verticali.json metrics.json manifest.json; do
+                   anomalies.jsonl pronunce.jsonl verifiche.jsonl verticali.json \
+                   metrics.json manifest.json; do
             if [ -e "/tmp/dataset-prova/$f" ]; then
               echo "  ok       $f"
             else

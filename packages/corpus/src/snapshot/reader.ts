@@ -16,6 +16,7 @@ import type {
   SnapshotCounter,
   SnapshotVertical,
   SnapshotPronuncia,
+  SnapshotVerifica,
   SnapshotManifest,
   SnapshotRelation,
   SnapshotVersion,
@@ -32,6 +33,7 @@ export interface SnapshotData {
   counter?: SnapshotCounter | null;
   verticals?: SnapshotVertical[];
   pronunce?: SnapshotPronuncia[];
+  verifiche?: SnapshotVerifica[];
 }
 
 export class SnapshotReader {
@@ -77,6 +79,7 @@ export class SnapshotReader {
       counter: readJson<SnapshotCounter | null>(snapshotPath(dir, 'counter'), null),
       verticals: readJson<SnapshotVertical[]>(snapshotPath(dir, 'verticals'), []),
       pronunce: readJsonl<SnapshotPronuncia>(snapshotPath(dir, 'pronunce')),
+      verifiche: readJsonl<SnapshotVerifica>(snapshotPath(dir, 'verifiche')),
     });
   }
 

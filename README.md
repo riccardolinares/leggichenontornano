@@ -173,6 +173,21 @@ node packages/corpus/dist/cli.js consulta verifica # accordo con le note di Norm
 node packages/engine/dist/cli.js gold valuta       # quanto il motore intercetta
 ```
 
+La verifica in Gazzetta Ufficiale dei decreti attuativi — un mandato per volta,
+ripartendo da dove si era rimasti:
+
+```bash
+node packages/engine/dist/cli.js gazzetta importa   # rilegge il registro versionato
+node packages/engine/dist/cli.js gazzetta --quanti 50
+node packages/engine/dist/cli.js gazzetta stato     # quanti, con che esito, e dove ci si ferma
+node packages/engine/dist/cli.js gazzetta esporta   # riscrive il registro versionato
+```
+
+È **lenta di proposito**: interroga un servizio pubblico che non ha un'API, una
+richiesta alla volta con una pausa in mezzo e un `user-agent` che dice chi siamo.
+Verificare tutto il corpus dura settimane di notti, e va bene così. Ogni riga
+registra la query esatta e l'URL interrogato, perché la si possa contestare.
+
 Il dataset completo, in JSONL e Parquet:
 
 ```bash
@@ -261,10 +276,28 @@ quando il dispositivo nomina più atti senza che il primo sia inequivoco, e
 quando la declaratoria è parziale — in quel caso l'arco nasce a bassa
 confidenza, perché la norma non cade, cambia contenuto.
 
+**Gazzetta Ufficiale della Repubblica Italiana**
+([gazzettaufficiale.it](https://www.gazzettaufficiale.it)) — la Serie Generale,
+per sapere se un decreto attuativo previsto da una legge sia poi stato
+pubblicato.
+
+Non ha un'API né un dataset aperto: c'è un modulo di ricerca che risponde in
+HTML, e lo interroghiamo come lo interrogherebbe una persona — una richiesta
+alla volta, con una pausa in mezzo e un `user-agent` che dichiara il progetto e
+il suo repository. Il monitoraggio dell'attuazione normativa pubblicato dal
+Governo sarebbe una fonte migliore e resta quella da preferire: oggi non è
+raggiungibile, e il modulo è costruito perché sostituirla significhi scrivere un
+altro client, non riscrivere la verifica.
+
+Ogni verifica finisce con uno di tre esiti — `adottato`, `non-adottato`,
+`non-verificabile` — e solo il secondo autorizza una segnalazione pubblica.
+`non-verificabile` non è un fallimento da nascondere: è l'esito onesto quando
+non si sa, e le sue righe stanno nel dataset come le altre. Vedi
+[ADR 0013](docs/adr/0013-la-verifica-in-gazzetta.md).
+
 Altre fonti previste dall'architettura: SPARQL di Camera e Senato — non i dump
 RDF, che hanno file mancanti ed errori di parsing — Banca Dati di Merito,
-Gazzetta Ufficiale per la verifica degli atti attuativi, EUR-Lex per i rinvii
-sovranazionali.
+EUR-Lex per i rinvii sovranazionali.
 
 Il corpus di legittimità della Corte di cassazione **non è disponibile in
 blocco**: il livello giurisprudenziale è trattato per citazione, si linkano gli

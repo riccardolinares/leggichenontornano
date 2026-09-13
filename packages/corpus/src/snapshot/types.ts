@@ -139,6 +139,54 @@ export interface SnapshotConcordanza {
   accordo: number;
 }
 
+/**
+ * La verifica in Gazzetta Ufficiale di un mandato attuativo.
+ *
+ * Sta nel dataset perché è la prova. Il contatore nazionale dice quanti
+ * mandati sono stati verificati e con che esito; queste righe dicono **quali**,
+ * con la query esatta, l'URL interrogato e — dove il provvedimento c'è — i suoi
+ * estremi e la riga che lo lega al mandato. Senza, il numero andrebbe creduto
+ * sulla parola, e questo progetto esiste per non chiederlo.
+ *
+ * Le righe `non-verificabile` restano nel dataset come le altre: sapere dove la
+ * verifica non arriva è un'informazione, e nasconderla farebbe sembrare la
+ * copertura migliore di com'è.
+ */
+export interface SnapshotVerifica {
+  /** Chiave del mandato: atto, articolo, comma e termine. */
+  id: string;
+  actUrn: string;
+  articleNumber: string | null;
+  provisionNumber: string | null;
+  /** Strumento previsto, come lo nomina il testo della legge. */
+  strumento: string;
+  deadlineDays: number;
+  dueBy: string | null;
+  /** La frase del comma da cui il mandato è stato letto. */
+  mandato: string;
+  /** `adottato` | `non-adottato` | `non-verificabile` */
+  esito: string;
+  /** Perché questo esito, in lingua comune. */
+  motivo: string;
+  /** La frase esatta cercata in Gazzetta Ufficiale. */
+  query: string;
+  url: string;
+  fonte: string;
+  finestraDa: number;
+  finestraA: number;
+  risultati: number;
+  verificatoIl: string;
+  provvedimentoTipo: string | null;
+  provvedimentoTitolo: string | null;
+  /** Il fascicolo, es. `GU n.284 del 5-12-2017`. */
+  gazzetta: string | null;
+  gazzettaData: string | null;
+  codiceRedazionale: string | null;
+  provvedimentoUrl: string | null;
+  /** La citazione letterale su cui si basa la corrispondenza. */
+  citazione: string | null;
+}
+
 export interface SnapshotCheckMetric {
   checkId: string;
   label: string;
@@ -199,6 +247,8 @@ export interface SnapshotManifest {
     publishedAnomalies: number;
     /** Pronunce della Corte costituzionale incluse, quando ce ne sono. */
     pronunce?: number;
+    /** Verifiche in Gazzetta Ufficiale incluse, quando ce ne sono. */
+    verifiche?: number;
   };
   sources: Array<{
     name: string;
@@ -231,7 +281,16 @@ export interface SnapshotCounter {
   totalDaysLate: number;
   mandates: number;
   acts: number;
+  /** Mandati scaduti per i quali la verifica in Gazzetta è stata fatta. */
   verified: number;
+  /**
+   * Dei verificati, quelli il cui provvedimento risulta pubblicato **dopo** la
+   * scadenza del termine. Sono i giorni che il contatore conta e che però un
+   * decreto, arrivando tardi, ha chiuso.
+   */
+  adottatiInRitardo: number;
+  /** Dei verificati, quelli per cui il provvedimento non risulta pubblicato. */
+  nonAdottati: number;
   computedAt: string;
   caveat: string;
 }
