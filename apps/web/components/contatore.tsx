@@ -12,8 +12,10 @@ import { data, numero } from '@/lib/testo';
  * L'etichetta dice **termini scaduti**, non «provvedimenti mai adottati». Non è
  * prudenza: è la ragione per cui questa cifra si può citare. Ogni giorno che
  * conta corrisponde a una data scritta in una legge, e chi la riprende può
- * risalire fino a quella data. «Provvedimenti mai adottati» sarebbe un titolo
- * migliore e un'affermazione che non regge alla prima verifica.
+ * risalire fino a quella data. Se il decreto è poi arrivato con cinque anni di
+ * ritardo, quei cinque anni li conta lo stesso — il ritardo è reale, il buco
+ * no. «Provvedimenti mai adottati» sarebbe un titolo migliore e un'affermazione
+ * che non regge alla prima verifica.
  *
  * La riga che dice cosa misura sta accanto al numero, non in fondo alla pagina:
  * è la parte che rende la cifra utilizzabile da un giornalista.
@@ -34,7 +36,7 @@ export function ContatoreNazionale({ contatore }: { contatore: SnapshotCounter }
         legge. {contatore.caveat} Calcolato al {data(contatore.computedAt)}.
         {contatore.verified > 0
           ? ` Verifica in Gazzetta Ufficiale completata su ${numero(contatore.verified)} atti.`
-          : ''}
+          : ' Su nessuno di questi atti la verifica in Gazzetta Ufficiale è già stata fatta: per questo nessuna singola mancata attuazione è pubblicata come segnalazione.'}
       </p>
     </div>
   );

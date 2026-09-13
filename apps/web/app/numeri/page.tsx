@@ -116,10 +116,11 @@ export default function Numeri() {
       limite: (
         <>
           <strong>Cosa non dice:</strong> che quei provvedimenti non siano mai stati adottati. Il
-          conteggio misura <em>termini scaduti</em>, non attuazioni mancate — se il decreto è
-          arrivato in ritardo, il ritardo c’è comunque, ma non è un buco. La verifica in Gazzetta
-          Ufficiale non l’abbiamo ancora fatta, ed è il motivo per cui nessuna singola mancata
-          attuazione è pubblicata come segnalazione.
+          conteggio parte dalla scadenza del termine: se il decreto è poi arrivato con cinque anni
+          di ritardo, quei cinque anni li conta lo stesso, ma il provvedimento c’è. Misura{' '}
+          <em>termini scaduti</em>, non attuazioni mancate. La verifica in Gazzetta Ufficiale non
+          l’abbiamo ancora fatta, ed è il motivo per cui nessuna singola mancata attuazione è
+          pubblicata come segnalazione.
         </>
       ),
       sintesi: 'di ritardo sui termini dei provvedimenti attuativi',

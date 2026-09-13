@@ -118,9 +118,10 @@ export default async function Home({ searchParams }: Props) {
         <p className="colpo">
           <strong>{numero(contatore.mandates)} provvedimenti attuativi</strong> promessi da una
           legge hanno un termine scaduto: in media da{' '}
-          <strong>{numeroDecimale(anniMediPerMandato)} anni</strong>.{' '}
-          <Link href="/dati">Cosa misura davvero questo numero</Link> — misura termini scaduti, non
-          attuazioni mancate, e la differenza conta.
+          <strong>{numeroDecimale(anniMediPerMandato)} anni</strong>. Il conteggio parte dalla
+          scadenza: se il decreto è poi arrivato con cinque anni di ritardo, quei cinque anni li
+          conta lo stesso; se non è mai arrivato, da qui non si vede.{' '}
+          <Link href="/dati">Cosa misura davvero questo numero</Link>.
         </p>
       ) : null}
 

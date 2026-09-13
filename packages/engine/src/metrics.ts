@@ -136,6 +136,6 @@ export function buildNationalCounter(
     verified: [...acts].filter((a) => verifiedActs.has(a)).length,
     computedAt: today,
     caveat:
-      'Il conteggio riguarda i soli atti presenti nel corpus ingerito e i soli mandati con un termine espresso nel testo: da questo lato è una sottostima. Dall’altro lato misura termini scaduti, non attuazioni mancate — che il provvedimento sia stato adottato dopo la scadenza non lo verifichiamo ancora in Gazzetta Ufficiale, se non per la quota indicata come verificata.',
+      'Il conteggio riguarda i soli atti presenti nel corpus ingerito e i soli mandati con un termine espresso nel testo: da questo lato è una sottostima. Dall’altro lato parte dalla scadenza del termine: se il decreto è poi arrivato con cinque anni di ritardo, quei cinque anni li conta lo stesso, ma il provvedimento c’è. Misura termini scaduti, non attuazioni mancate — l’adozione dopo la scadenza non la verifichiamo ancora in Gazzetta Ufficiale, se non per la quota indicata come verificata.',
   };
 }
