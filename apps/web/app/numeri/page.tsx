@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Condivisione } from '@/components/condivisione';
 import { GrigliaCifre } from '@/components/griglia-cifre';
+import { GraficoBarre } from '@/components/grafico-barre';
 import { SITE_URL, dataset } from '@/lib/dataset';
 import { metadatiPagina } from '@/lib/seo';
 import {
@@ -47,6 +48,14 @@ interface Voce {
   sintesi: string;
   frase: React.ReactNode;
   limite: React.ReactNode;
+  /**
+   * Il grafico, dove la cifra da sola nasconde la sua forma.
+   *
+   * Non ce l'hanno tutte le voci, e non deve averlo tutte: un grafico che
+   * ripete il numero scritto sopra è decorazione. Sta qui solo dove la
+   * distribuzione dice qualcosa che il totale non dice.
+   */
+  grafico?: React.ReactNode;
   ancora: string;
 }
 
@@ -130,6 +139,27 @@ export default function Numeri() {
 
   if (attiRinvianti > 0) {
     const piuVecchio = rinvii.reduce((max, a) => Math.max(max, anniDaAbrogazione(a.windowFrom)), 0);
+
+    /* «Cento atti rinviano a una norma cancellata» non dice la cosa più
+       importante: che le norme cancellate sono pochissime. Il grafico la
+       mostra in un colpo d'occhio — quasi tutto il fenomeno sta in due decreti
+       sugli appalti, e un lettore che ne applica uno si riconosce subito. Una
+       distribuzione per anni direbbe meno: con due soli bersagli sarebbero due
+       colonne isolate e sei colonne vuote in mezzo, cioè le stesse due cifre
+       sotto un asse che promette una forma che non c'è. */
+    const barreBersagli = [...perBersaglio.entries()]
+      .sort((a, b) => b[1].size - a[1].size)
+      .map(([urn, sorgenti]) => {
+        const anni = anniDaAbrogazione(reader.act(urn)?.abrogatedFrom ?? null);
+        return {
+          etichetta: nomeNorma(urn),
+          valore: sorgenti.size,
+          valoreTesto: `${numero(sorgenti.size)} ${sorgenti.size === 1 ? 'atto' : 'atti'}`,
+          etichettaLunga: `${nomeNorma(urn)}, abrogata ${anni} anni fa`,
+          href: percorsoNorma(urn),
+        };
+      });
+
     voci.push({
       cifra: numero(attiRinvianti),
       unita: attiRinvianti === 1 ? 'atto' : 'atti',
@@ -148,6 +178,14 @@ export default function Numeri() {
           l’abrogazione successiva non lo tocca. Distinguere i due casi richiede di leggere la
           singola norma, e questo lo facciamo scheda per scheda, non a colpi di statistica.
         </>
+      ),
+      grafico: (
+        <GraficoBarre
+          barre={barreBersagli}
+          descrizione={`Le norme abrogate che gli atti in vigore continuano a richiamare, e da quanti atti ciascuna`}
+          didascalia={`Le norme abrogate ancora richiamate da atti in vigore, e quanti atti richiamano ciascuna, sul corpus aggiornato al ${data(conosciutoAl)}.`}
+          colonne={{ etichetta: 'Norma abrogata', valore: 'Atti che la richiamano' }}
+        />
       ),
       sintesi: 'in vigore che rinviano a una norma cancellata',
       ancora: 'rinvii',
@@ -299,6 +337,7 @@ export default function Numeri() {
             </p>
             <p className="numero__frase">{v.frase}</p>
             <p className="numero__limite">{v.limite}</p>
+            {v.grafico}
             <p className="numero__permalink">
               <a href={`${SITE_URL}/numeri#${v.ancora}`}>
                 {SITE_URL.replace(/^https?:\/\//, '')}/numeri#{v.ancora}

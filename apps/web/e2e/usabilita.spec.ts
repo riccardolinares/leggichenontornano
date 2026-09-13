@@ -753,3 +753,118 @@ test.describe('robustezza', () => {
     await contesto.close();
   });
 });
+
+test.describe('grafici', () => {
+  /*
+   * Un grafico qui è una promessa in più, non un abbellimento: promette che
+   * un'informazione si veda in un colpo d'occhio *e* che resti leggibile a chi
+   * il colpo d'occhio non ce l'ha. Questi test verificano le due metà insieme,
+   * perché è separandole che si finisce con un disegno che nessuno può leggere.
+   */
+
+  test('la pagina dei numeri mostra quali norme abrogate sono ancora richiamate', async ({
+    page,
+  }) => {
+    await page.goto('/numeri');
+    const grafico = page.getByRole('img', { name: /norme abrogate/i });
+    await expect(grafico).toBeVisible();
+
+    const etichetta = (await grafico.getAttribute('aria-label')) ?? '';
+    // L'etichetta deve dire il dato. «Grafico a barre» non è un'informazione:
+    // a chi non vede il disegno non serve sapere che forma avesse.
+    expect(etichetta, 'l’etichetta del grafico non contiene nessuna cifra').toMatch(/\d/);
+    expect(etichetta).not.toMatch(/grafico|istogramma|diagramma/i);
+    // Numeri all'italiana anche qui: «16.8» è un refuso, non un decimale.
+    expect(etichetta).not.toMatch(/\d\.\d/);
+
+    // Le barre sono disegnate dal server: nessuna libreria, nessun canvas.
+    expect(await grafico.locator('svg rect').count()).toBeGreaterThan(0);
+    // Ogni barra porta accanto il nome della norma e la propria cifra: è il
+    // punto del grafico, cioè che il fenomeno sta quasi tutto in pochi atti.
+    await expect(grafico.locator('.grafico__riga').first()).toContainText(/atti|atto/);
+
+    // L'alternativa testuale c'è e si apre: chiusa non vuol dire assente.
+    const numeri = page.locator('.grafico__numeri').first();
+    await numeri.locator('summary').click();
+    const tabella = page.getByRole('region', { name: /norme abrogate ancora richiamate/i });
+    await expect(tabella).toBeVisible();
+    expect(await tabella.locator('tbody tr').count()).toBeGreaterThan(0);
+    await expect(tabella.locator('tbody th').first()).toContainText(/abrogata/);
+  });
+
+  test('la pagina Dati disegna la soglia dentro le barre, non solo in una frase', async ({
+    page,
+  }) => {
+    await page.goto('/dati');
+    const grafico = page.getByRole('img', { name: /soglia di pubblicazione/i });
+    await expect(grafico).toBeVisible();
+
+    const etichetta = (await grafico.getAttribute('aria-label')) ?? '';
+    expect(etichetta).toMatch(/\d+(,\d+)?%/);
+    expect(etichetta).not.toMatch(/\d\.\d/);
+
+    // La riga di riferimento sta dentro ogni traccia: è quella che rende
+    // immediato un confronto che altrimenti si farebbe a mente.
+    expect(await grafico.locator('svg line').count()).toBeGreaterThan(0);
+
+    const tabella = page.getByRole('region', { name: /accordo fra le declaratorie/i });
+    await expect(tabella).toBeVisible();
+    expect(await tabella.locator('tbody tr').count()).toBeGreaterThan(0);
+  });
+
+  test('l’elenco delle norme mostra gli atti riscritti più volte, con il numero scritto', async ({
+    page,
+  }) => {
+    await page.goto('/norme');
+    const grafico = page.getByRole('img', { name: /riscritti più volte/i });
+    await expect(grafico).toBeVisible();
+
+    const etichetta = (await grafico.getAttribute('aria-label')) ?? '';
+    expect(etichetta).toMatch(/\d+ versioni/);
+
+    // Ogni barra porta accanto il proprio numero: una barra che si può solo
+    // misurare a occhio costringe a stimare, e qui non si stima niente.
+    const righe = grafico.locator('.grafico__riga');
+    expect(await righe.count()).toBeGreaterThan(2);
+    await expect(righe.first().locator('.grafico__valore')).toHaveText(/\d+ versioni/);
+
+    await page.locator('.grafico__numeri').first().locator('summary').click();
+    const tabella = page.getByRole('region', { name: /dal più riscritto in giù/i });
+    await expect(tabella).toBeVisible();
+    await expect(tabella.getByRole('link').first()).toBeVisible();
+  });
+
+  test('i grafici si vedono senza JavaScript e stanno in un telefono da 400 px', async ({
+    browser,
+  }) => {
+    // Le due condizioni che un grafico affidato a una libreria non regge: qui
+    // il disegno arriva già nell'HTML, e le barre sono in percentuale.
+    const contesto = await browser.newContext({
+      javaScriptEnabled: false,
+      viewport: { width: 400, height: 800 },
+    });
+    const pagina = await contesto.newPage();
+
+    for (const percorso of ['/numeri', '/dati', '/norme']) {
+      await pagina.goto(percorso);
+      const grafico = pagina.locator('.grafico [role="img"][aria-label]').first();
+      await expect(grafico, percorso).toBeVisible();
+
+      const disegno = await grafico.boundingBox();
+      expect(disegno!.width, `${percorso}: il disegno è largo zero`).toBeGreaterThan(100);
+
+      // Senza JavaScript le barre devono esserci già: sono nell'HTML, non
+      // disegnate dopo dal browser.
+      const barra = await grafico.locator('svg rect').first().boundingBox();
+      expect(barra!.width, `${percorso}: nessuna barra disegnata`).toBeGreaterThan(0);
+      expect(barra!.height, `${percorso}: nessuna barra disegnata`).toBeGreaterThan(0);
+
+      const straripa = await pagina.evaluate(
+        () => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
+      );
+      expect(straripa, `${percorso} scorre orizzontalmente a 400px`).toBe(false);
+    }
+
+    await contesto.close();
+  });
+});
