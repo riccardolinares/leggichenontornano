@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next';
 import { CHECK_DEFINITIONS } from '@leggichenontornano/engine';
 import { SITE_URL, dataset } from '@/lib/dataset';
 import { articoli } from '@/lib/blog';
+import { testimonianze } from '@/lib/testimonianze';
 
 export const dynamic = 'force-static';
 
@@ -32,6 +33,21 @@ export default function sitemap(): MetadataRoute.Sitemap {
     changeFrequency: 'daily' as const,
     priority: p === '' ? 1 : 0.7,
   }));
+
+  /* «Dicono di noi» entra in sitemap solo quando ha davvero delle
+     testimonianze: una pagina vuota indicizzata promette un contenuto che non
+     c'è, e la promessa la paga chi ci arriva da una ricerca. */
+  const dicono =
+    testimonianze().length > 0
+      ? [
+          {
+            url: `${SITE_URL}/dicono`,
+            lastModified: ora,
+            changeFrequency: 'monthly' as const,
+            priority: 0.5,
+          },
+        ]
+      : [];
 
   const anomalie = reader.publishedAnomalies().map((a) => ({
     url: `${SITE_URL}/anomalia/${encodeURIComponent(a.id)}`,
@@ -87,5 +103,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
   }));
 
-  return [...fisse, ...approfondimenti, ...anomalie, ...controlli, ...pronunce, ...norme];
+  return [
+    ...fisse,
+    ...dicono,
+    ...approfondimenti,
+    ...anomalie,
+    ...controlli,
+    ...pronunce,
+    ...norme,
+  ];
 }

@@ -112,6 +112,7 @@ export function percorsiDaVerificare(): Percorso[] {
     { nome: 'come funziona', url: '/come-funziona' },
     { nome: 'dati', url: '/dati' },
     { nome: 'stampa', url: '/stampa' },
+    { nome: 'dicono di noi', url: '/dicono' },
     { nome: 'pagina non trovata', url: '/percorso-che-non-esiste' },
   ];
 
