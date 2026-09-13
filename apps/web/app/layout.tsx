@@ -89,28 +89,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </div>
         </header>
 
-        {/* La riga sulle fonti è permanente e non è un banner da chiudere:
-            compare su ogni pagina che mostra testo normativo, perché i termini
-            di Normattiva lo richiedono e perché è un'informazione utile — dice
-            a chi legge da dove viene ogni parola e dove andarla a verificare.
-
-            È scritta in positivo di proposito: «testo che fa fede» al posto di
-            «non ha carattere di ufficialità» dice esattamente la stessa cosa e
-            la dice a chi non sa cosa voglia dire «carattere di ufficialità».
-
-            L'ultima frase è il vecchio «questo sito non fornisce consulenza
-            legale»: ha una funzione legale vera e non si toglie, ma dice anche a
-            cosa il sito serve invece di limitarsi a dire a cosa non serve. */}
-        <div className="avvertenza">
-          <p className="contenitore">
-            I testi vengono da <strong>Normattiva</strong> (CC BY 4.0) e sono citati alla lettera,
-            così ogni affermazione di questo sito si può risalire fino alla fonte. Il testo che fa
-            fede resta quello pubblicato sulla <em>Gazzetta Ufficiale</em>, e prevale in caso di
-            discordanza. Quello che trovate qui serve a farsi un’opinione documentata in fretta; il
-            parere legale lo dà chi ha titolo per darlo.
-          </p>
-        </div>
-
         <main id="contenuto">{children}</main>
 
         <footer className="piede">
@@ -213,15 +191,45 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </p>
             </div>
 
-            <p className="attribuzione">
-              <strong>Fonti:</strong> Normattiva — Banca dati delle norme vigenti,{' '}
-              <a href="https://dati.normattiva.it">dati.normattiva.it</a>, con licenza{' '}
-              <a href="https://creativecommons.org/licenses/by/4.0/deed.it">CC BY 4.0</a>; Corte
-              costituzionale, open data con licenza{' '}
-              <a href="https://creativecommons.org/licenses/by-sa/3.0/it/">CC BY-SA 3.0</a>. Le
-              elaborazioni e le segnalazioni sono nostre, e{' '}
-              <Link href="/segnala">si possono contestare qui</Link>.
-            </p>
+            {/* La riga sulle fonti è permanente e non è un banner da chiudere:
+                compare su ogni pagina che mostra testo normativo, perché i
+                termini di Normattiva lo richiedono e perché è un'informazione
+                utile — dice a chi legge da dove viene ogni parola e dove andarla
+                a verificare.
+
+                Sta nel piede e non sopra la prima riga di testo. Un cartello
+                messo davanti al contenuto lo si salta: dopo tre pagine non lo
+                legge più nessuno, e intanto ha rubato lo spazio in cui il sito
+                deve dire cosa ha trovato. Qui invece sta dove si cercano le
+                fonti, sempre nello stesso punto, su ogni pagina.
+
+                È scritta in positivo di proposito: «testo che fa fede» al posto
+                di «non ha carattere di ufficialità» dice esattamente la stessa
+                cosa e la dice a chi non sa cosa voglia dire «carattere di
+                ufficialità».
+
+                L'ultima frase è il vecchio «questo sito non fornisce consulenza
+                legale»: ha una funzione legale vera e non si toglie, ma dice
+                anche a cosa il sito serve invece di limitarsi a dire a cosa non
+                serve. */}
+            <div className="attribuzione">
+              <p className="avvertenza">
+                I testi vengono da <strong>Normattiva</strong> e sono citati alla lettera, così ogni
+                affermazione di questo sito si può risalire fino alla fonte. Il testo che fa fede
+                resta quello pubblicato sulla <em>Gazzetta Ufficiale</em>, e prevale in caso di
+                discordanza. Quello che trovate qui serve a farsi un’opinione documentata in fretta;
+                il parere legale lo dà chi ha titolo per darlo.
+              </p>
+              <p className="attribuzione__fonti">
+                <strong>Fonti:</strong> Normattiva — Banca dati delle norme vigenti,{' '}
+                <a href="https://dati.normattiva.it">dati.normattiva.it</a>, con licenza{' '}
+                <a href="https://creativecommons.org/licenses/by/4.0/deed.it">CC BY 4.0</a>; Corte
+                costituzionale, open data con licenza{' '}
+                <a href="https://creativecommons.org/licenses/by-sa/3.0/it/">CC BY-SA 3.0</a>. Le
+                elaborazioni e le segnalazioni sono nostre, e{' '}
+                <Link href="/segnala">si possono contestare qui</Link>.
+              </p>
+            </div>
           </div>
         </footer>
       </body>

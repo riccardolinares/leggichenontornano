@@ -259,19 +259,6 @@ pre,
 
 /* ---------- Avvertenza permanente ---------- */
 
-.avvertenza {
-  background: var(--carta-incisa);
-  border-bottom: 1px solid var(--bordo);
-  font-size: 0.875rem;
-  color: var(--inchiostro-tenue);
-}
-
-.avvertenza p {
-  margin: 0;
-  padding-block: 0.6rem;
-  max-width: 68rem;
-}
-
 /* ---------- Principale ---------- */
 
 main {
@@ -851,6 +838,7 @@ tbody th {
 
 /* L'attribuzione a Normattiva non sta in grigio chiaro nel footer. */
 .attribuzione {
+  margin-top: 1.2rem;
   background: var(--carta-incisa);
   border-radius: 3px;
   padding: 1.1rem 1.3rem;
@@ -861,6 +849,23 @@ tbody th {
 
 .attribuzione strong {
   font-weight: 700;
+}
+
+/* La riga sulle fonti e l'attribuzione delle licenze stanno nella stessa
+   scatola: dicono la stessa cosa a due livelli di dettaglio, e due riquadri
+   grigi identici uno sopra l'altro sarebbero solo rumore. */
+.avvertenza {
+  margin: 0 0 0.9rem;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid var(--bordo);
+  max-width: none;
+}
+
+.attribuzione__fonti {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--inchiostro-tenue);
+  max-width: none;
 }
 
 /* ---------- Utilità ---------- */
