@@ -1,0 +1,41 @@
+name: Irregolarità nei dati di origine
+description: Normattiva o la Corte costituzionale pubblicano un dato che, preso per buono, produce una segnalazione falsa.
+title: 'Fonte: '
+labels: ['qualita-fonti']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Queste sono le issue che fanno crescere `docs/qualita-fonti.md`, dove
+        stanno i dodici casi già trovati — sette della fonte e cinque nostri.
+
+        Un'irregolarità della fonte non è una lamentela verso chi pubblica i
+        dati: è la parte dell'ingegneria che sta fra un dataset pubblico e
+        un'affermazione pubblica.
+
+  - type: textarea
+    id: cosa
+    attributes:
+      label: Cosa succede
+      description: Il dato com'è pubblicato. Se potete, incollate il frammento esatto.
+    validations:
+      required: true
+
+  - type: textarea
+    id: effetto
+    attributes:
+      label: Cosa produce
+      description: >
+        Quale segnalazione falsa ne esce, o quale informazione vera si perde.
+        «Non produce niente di visibile» è una risposta importante: il silenzio
+        è il guasto che non si nota.
+    validations:
+      required: true
+
+  - type: input
+    id: esempio
+    attributes:
+      label: Un caso concreto
+      description: URN dell'atto, oppure ECLI della pronuncia.
+    validations:
+      required: true

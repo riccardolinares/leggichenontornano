@@ -82,12 +82,12 @@ Le revisioni entrano da due strade:
 
 Gli esiti sono quattro, e la distinzione conta:
 
-| Esito                | Significato                                                      |
-| -------------------- | ---------------------------------------------------------------- |
-| `CONFERMATA`         | L'anomalia c'è.                                                   |
+| Esito                | Significato                                                                                                 |
+| -------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `CONFERMATA`         | L'anomalia c'è.                                                                                             |
 | `NON_E_UN_CONFLITTO` | I fatti sono giusti, la qualificazione no (rinvio recettizio, norma speciale, delegificazione autorizzata). |
-| `ESTRAZIONE_ERRATA`  | I fatti sono sbagliati: abbiamo letto male il testo.              |
-| `DA_APPROFONDIRE`    | Il revisore non se la sente di decidere.                          |
+| `ESTRAZIONE_ERRATA`  | I fatti sono sbagliati: abbiamo letto male il testo.                                                        |
+| `DA_APPROFONDIRE`    | Il revisore non se la sente di decidere.                                                                    |
 
 `NON_E_UN_CONFLITTO` e `ESTRAZIONE_ERRATA` contano entrambi come non confermate,
 ma indicano due lavori diversi: la prima chiede di raffinare la regola, la seconda

@@ -91,14 +91,49 @@ dovete fare niente per ottenerlo, e non potete fare niente per evitarlo.
 
 ### Aggiungere un verticale semantico
 
-Serve un **vocabolario controllato** in `data/vocabolari/<dominio>.json`: poche
-centinaia di concetti, con i sinonimi che li denotano **in quel dominio**. Senza,
-la similarità testuale produce falsi positivi in massa — «impresa» negli appalti
-e «impresa» nel fisco sono lo stesso token e due cose diverse.
+Un verticale è **un elenco di atti**, non un elenco di parole. Il file
+`data/vocabolari/<dominio>.json` contiene entrambe le cose, e la prima è quella
+che conta:
+
+```json
+{
+  "vertical": "appalti",
+  "corpus": {
+    "radici": ["urn:nir:stato:decreto.legislativo:2023-03-31;36", "…"],
+    "espansione": ["ATTUA"]
+  },
+  "concepts": [ … ]
+}
+```
+
+**`corpus.radici` è obbligatorio**: `loadVocabulary` si rifiuta di aprire un
+vocabolario che non lo dichiara. Non è pignoleria. Nell'italiano giuridico quasi
+nessuna parola di una forma sola appartiene a un dominio solo — «concessione»
+sta nel codice dei contratti pubblici e in quello della navigazione del 1942,
+«collaudo» negli appalti e nel collaudo dei veicoli — e finché il confronto si
+attivava su qualunque comma contenente una di quelle forme, produceva duecento
+accostamenti fra materie diverse, in silenzio
+([ADR 0009](docs/adr/0009-il-verticale-e-un-elenco-di-atti.md)).
+
+L'espansione passa **solo da `ATTUA`, e di un passo**: il regolamento di
+esecuzione di un codice appartiene alla materia, l'atto che lo _modifica_ no —
+è quasi sempre un omnibus, e la sua modifica sta già dentro il testo
+multivigente della radice. `MODIFICA`, `INTRODUCE`, `ABROGA`, `SOSTITUISCE` e
+`RINVIA` sono rifiutati dal validatore, ciascuno con il motivo scritto.
+
+Il **vocabolario controllato** serve poi a distinguere fattispecie _dentro_ un
+dominio già delimitato: poche centinaia di concetti, con i sinonimi che li
+denotano in quella materia. `validaVocabolario` rifiuta le forme troppo
+generiche e quelle condivise fra due concetti; `pnpm --filter @antinomia/engine
+test` lo verifica su ogni file in `data/vocabolari/`.
 
 Il vocabolario è un documento che si legge e si discute, non un artefatto
 generato. Il primo, su appalti e contratti pubblici, è in
 [`data/vocabolari/appalti.json`](data/vocabolari/appalti.json).
+
+**Il prezzo è dichiarato**: il recall del livello 3 è limitato dalle radici che
+scrivete. Una divergenza verso una norma fuori elenco non la vediamo. Preferiamo
+non vederla piuttosto che pubblicarla insieme a duecento coppie inventate.
 
 ### Stile
 
@@ -109,6 +144,15 @@ generato. Il primo, su appalti e contratti pubblici, è in
   racconta l'errore che quella riga evita: diversi commenti di questo repository
   descrivono segnalazioni false che sono esistite davvero.
 - `prettier` prima di committare: `pnpm run format`.
+
+---
+
+## Le etichette
+
+Stanno in [`.github/labels.yml`](.github/labels.yml), con il comando per
+ricrearle. Non è decorazione: il pulsante «Non è un conflitto» costruisce un URL
+che precompila anche l'etichetta, e se quella non esiste nel repository GitHub
+la scarta in silenzio.
 
 ---
 
@@ -123,4 +167,12 @@ Non aprite una issue pubblica: vedi [SECURITY.md](SECURITY.md).
 ## Licenza dei contributi
 
 Contribuendo accettate che il vostro contributo sia distribuito con licenza
-**EUPL 1.2**, la stessa del progetto.
+**EUPL 1.2**, la stessa del progetto. Non chiediamo la firma di un CLA: la
+licenza basta, e un adempimento in più fra chi vuole aiutare e il progetto è un
+adempimento che non ci serve.
+
+## Chi decide
+
+[GOVERNANCE.md](GOVERNANCE.md) dice chi decide cosa, e soprattutto quali
+decisioni **nessuno** può prendere — fra queste, aggirare la soglia di
+pubblicazione, che non ha un pulsante nemmeno per chi mantiene il progetto.

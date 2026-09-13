@@ -38,6 +38,12 @@ jobs:
         run: pnpm --filter @antinomia/corpus exec prisma generate
       - name: Compila i pacchetti
         run: pnpm run build
+      # CONTRIBUTING chiede di passare il formatter prima di committare. Se
+      # nessuno lo verifica, la richiesta diventa una trappola: chi la segue si
+      # ritrova un diff di sessanta file che non ha scritto lui.
+      - name: Formattazione
+        run: pnpm exec prettier --check .
+
       - name: Controllo dei tipi
         run: pnpm run typecheck
       - name: Test unitari

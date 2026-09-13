@@ -1,0 +1,40 @@
+cff-version: 1.2.0
+title: 'Le leggi che non tornano'
+abstract: >-
+  Piattaforma open source che rende visibili incongruenze, contraddizioni e aree
+  grigie della legislazione italiana. Un modello linguistico estrae proposizioni
+  deontiche tipizzate da un comma alla volta; la contraddizione è una query su
+  quei campi, non un giudizio del modello. Un tipo di controllo viene pubblicato
+  solo quando la revisione umana su campione supera l'85% di precisione.
+message: >-
+  Se usate questo progetto o il suo dataset in una ricerca, citatelo così. Se
+  citate una singola segnalazione, citate l'URL della scheda: contiene la regola
+  in chiaro, i testi originali e lo stato di conoscenza a cui si riferisce.
+type: software
+license: EUPL-1.2
+repository-code: 'https://github.com/riccardolinares/leggichenontornano'
+url: 'https://leleggichenontornano.it'
+keywords:
+  - diritto
+  - legimatica
+  - open data
+  - akoma ntoso
+  - normattiva
+  - antinomie
+  - civic tech
+authors:
+  - family-names: Linares
+    given-names: Riccardo
+references:
+  - type: database
+    title: Normattiva open data
+    url: 'https://dati.normattiva.it'
+    license: CC-BY-4.0
+    notes: >-
+      La banca dati Normattiva non ha carattere di ufficialità. L'unico testo
+      ufficiale è quello pubblicato sulla Gazzetta Ufficiale della Repubblica
+      Italiana, che prevale in caso di discordanza.
+  - type: database
+    title: Corte costituzionale open data
+    url: 'https://dati.cortecostituzionale.it'
+    license: CC-BY-SA-3.0

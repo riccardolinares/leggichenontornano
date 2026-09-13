@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Problema di sicurezza
+    url: https://github.com/riccardolinares/leggichenontornano/security/advisories/new
+    about: Non aprite una issue pubblica. Usate una segnalazione privata, come spiegato in SECURITY.md.
+  - name: Il metodo, e perché è fatto così
+    url: https://github.com/riccardolinares/leggichenontornano/blob/main/METODO.md
+    about: Cosa il progetto non fa, la tassonomia delle anomalie, la soglia di pubblicazione.
+  - name: Le irregolarità già note nelle fonti
+    url: https://github.com/riccardolinares/leggichenontornano/blob/main/docs/qualita-fonti.md
+    about: Dodici casi documentati, con cosa producevano e cosa facciamo adesso.

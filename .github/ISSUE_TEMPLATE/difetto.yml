@@ -1,0 +1,46 @@
+name: Difetto nel software
+description: Il sito, l'API o la pipeline non fanno quello che dicono di fare.
+title: 'Difetto: '
+labels: ['difetto']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Per una segnalazione giuridica che non regge usate invece
+        **«Non è un conflitto»**: è un'altra cosa e prende un'altra strada.
+
+  - type: dropdown
+    id: dove
+    attributes:
+      label: Dove
+      options:
+        - Sito (apps/web)
+        - API pubblica (packages/api)
+        - Motore dei controlli (packages/engine)
+        - Ingestione e corpus (packages/corpus, packages/akn-parser)
+        - Bot (apps/bot)
+        - Pipeline e automazione (.github/workflows)
+    validations:
+      required: true
+
+  - type: textarea
+    id: passi
+    attributes:
+      label: Come si riproduce
+      description: I passi, l'URL o il comando esatto.
+    validations:
+      required: true
+
+  - type: textarea
+    id: atteso
+    attributes:
+      label: Cosa vi aspettavate, e cosa è successo
+    validations:
+      required: true
+
+  - type: textarea
+    id: ambiente
+    attributes:
+      label: Ambiente (per i difetti locali)
+      description: Sistema operativo, versione di Node, browser.
+      render: text

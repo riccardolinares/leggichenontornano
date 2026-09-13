@@ -7,7 +7,7 @@
 
 Il danno di una segnalazione falsa su una legge è asimmetrico e permanente:
 distrugge più di quanto dieci segnalazioni corrette costruiscano. Serve una
-regola che valga *prima* che il progetto arrivi in prima pagina, non dopo.
+regola che valga _prima_ che il progetto arrivi in prima pagina, non dopo.
 
 ## Decisione
 

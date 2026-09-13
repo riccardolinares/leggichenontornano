@@ -47,8 +47,8 @@ anomalia ha:
 
 ## 3. Tassonomia dei controlli
 
-| Livello | Tipo                   | Metodo                                                     | Precisione attesa |
-| ------- | ---------------------- | ---------------------------------------------------------- | ----------------- |
+| Livello | Tipo                   | Metodo                                                      | Precisione attesa |
+| ------- | ---------------------- | ----------------------------------------------------------- | ----------------- |
 | 1       | Antinomia formale      | Attraversamento del grafo, zero AI                          | ~100%             |
 | 1       | Rinvio non attuato     | Grafo + verifica di pubblicazione in Gazzetta Ufficiale     | ~100%             |
 | 2       | Gerarchia e competenza | Regole su metadati di fonte + giurisprudenza costituzionale | 70-85%            |
@@ -128,8 +128,8 @@ materie diverse, in silenzio.
 
 Ogni verticale dichiara quindi il proprio confine **per atti**, con gli URN delle
 norme fondative del dominio, e l'estrazione legge solo i commi di quegli atti.
-Il confine si allarga di un passo verso i regolamenti che *attuano* quelle norme,
-e non oltre: un atto che *modifica* un codice è quasi sempre un omnibus, e la sua
+Il confine si allarga di un passo verso i regolamenti che _attuano_ quelle norme,
+e non oltre: un atto che _modifica_ un codice è quasi sempre un omnibus, e la sua
 modifica sta già dentro il testo multivigente del codice.
 
 Il prezzo è dichiarato: **il recall del livello 3 è limitato dalle radici
@@ -162,8 +162,8 @@ illegittime. Il parser copia il riferimento e non interpreta niente: il giudizio
 l'ha già dato l'unico organo che poteva.
 
 La misura si legge in **due numeri**, perché due mancanze diverse si riparano in
-modi diversi: quante annotazioni il motore intercetta *in assoluto*, e quante ne
-intercetta *fra quelle i cui atti abbiamo davvero scaricato*. Il primo si alza
+modi diversi: quante annotazioni il motore intercetta _in assoluto_, e quante ne
+intercetta _fra quelle i cui atti abbiamo davvero scaricato_. Il primo si alza
 ampliando il corpus, il secondo scrivendo controlli migliori. Vedi
 [docs/gold-standard.md](docs/gold-standard.md).
 
@@ -201,4 +201,4 @@ validato, da due o tre giuristi esterni. Si pubblica ciò che sopravvive.
   portale di consultazione.
 - Il corpus di legittimità della Corte di cassazione **non è disponibile in
   bulk**: il layer giurisprudenziale di legittimità è trattato come
-  *citation-based*, si linkano gli estremi e non si ospita il corpus.
+  _citation-based_, si linkano gli estremi e non si ospita il corpus.

@@ -1,0 +1,45 @@
+name: Proporre un verticale semantico
+description: Un dominio su cui attivare i controlli di livello 3.
+title: 'Verticale: '
+labels: ['verticale']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Un verticale è **un elenco di atti**, non un elenco di parole
+        ([ADR 0009](../../docs/adr/0009-il-verticale-e-un-elenco-di-atti.md)).
+        Nell'italiano giuridico quasi nessuna parola di una forma sola appartiene
+        a un dominio solo: «concessione» sta nel codice dei contratti pubblici e
+        in quello della navigazione del 1942.
+
+        Non serve che portiate il vocabolario già fatto. Serve che sappiate la
+        materia abbastanza da dire quali atti la costituiscono.
+
+  - type: input
+    id: dominio
+    attributes:
+      label: Quale dominio
+      placeholder: ambiente, fisco, edilizia, sanità…
+    validations:
+      required: true
+
+  - type: textarea
+    id: radici
+    attributes:
+      label: Gli atti fondativi
+      description: >
+        Gli URN, o anche solo gli estremi. Sono le radici del verticale: tutto
+        il resto si allarga di un passo dal grafo, verso i regolamenti che le
+        attuano.
+      placeholder: |
+        - d.lgs. 3 aprile 2006, n. 152 (codice dell'ambiente)
+        - …
+    validations:
+      required: true
+
+  - type: textarea
+    id: motivo
+    attributes:
+      label: Perché questo dominio
+      description: >
+        Dove sospettate che le norme non tornino, e chi ci sbatte contro.

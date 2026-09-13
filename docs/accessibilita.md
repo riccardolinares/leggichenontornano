@@ -28,8 +28,8 @@ andrebbe documentata nel file di test con il motivo — non silenziata.
 
 Oltre ad axe, verifiche che axe non può fare:
 
-| Verifica                                                         | Perché                                                                  |
-| ---------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| Verifica                                                          | Perché                                                                   |
+| ----------------------------------------------------------------- | ------------------------------------------------------------------------ |
 | Il collegamento «Vai al contenuto» è il primo a ricevere il fuoco | Chi naviga da tastiera non deve attraversare il menu a ogni pagina       |
 | La gerarchia dei titoli non salta livelli                         | Uno screen reader naviga per intestazioni                                |
 | Ogni tabella ha `<caption>` e `<th>`                              | Senza, una tabella è una griglia di celle senza significato              |
