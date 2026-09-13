@@ -22,3 +22,4 @@ test-results/
 
 # Il dataset derivato, invece, sta nel repository: serve a far girare il sito e
 # i test da un clone appena fatto, ed e' il dataset che chiunque puo' verificare.
+.vercel
