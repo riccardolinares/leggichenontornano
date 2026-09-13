@@ -1,6 +1,6 @@
 # 0003 — Nessun grafo force-directed come navigazione
 
-- **Stato:** Accettata
+- **Stato:** Modificata in parte da [ADR 0012](0012-il-grafo-si-puo-fare-se-non-si-muove.md)
 - **Data:** 2026-09-12
 
 ## Contesto
@@ -35,6 +35,19 @@ Nessun layout a forze come strumento di navigazione. Al suo posto:
 5. Un canvas è invisibile agli screen reader. Per un progetto civico con utenti
    potenziali nella pubblica amministrazione, l'accessibilità non è negoziabile
    (ADR: vedi requisito WCAG 2.1 AA in `docs/accessibilita.md`).
+
+## Cosa di questa decisione non vale più
+
+[ADR 0012](0012-il-grafo-si-puo-fare-se-non-si-muove.md) ha separato le due cose
+che qui stavano insieme: **il layout a forze** e **la simulazione nel browser**.
+L'obiezione vera era la seconda — un disegno che cambia a ogni caricamento non
+si può citare — e si risolve calcolando il layout una volta sola sul server, con
+un seme fisso. La pagina `/grafo` fa esattamente questo.
+
+Restano validi i punti 3, 4 e 5 qui sotto, e resta vietata la nuvola
+trascinabile come modo di esplorare il corpus. Il punto 1 — che le reti di
+citazioni collassano attorno a pochi hub — si è rivelato vero e, quando il
+colore segna una cosa sola, è diventato l'informazione invece dell'ostacolo.
 
 ## Conseguenze
 
