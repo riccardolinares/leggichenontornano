@@ -92,6 +92,15 @@ export interface SnapshotAnomaly {
   severity: string;
   published: boolean;
   computedAt: string;
+  /**
+   * Quando questa segnalazione è comparsa per la prima volta.
+   *
+   * Non coincide con `computedAt`, che dice quando è girata l'ultima analisi:
+   * una segnalazione trovata a marzo e ancora viva oggi ha `computedAt` di
+   * oggi e `firstSeenAt` di marzo. È la differenza fra «cosa c'è» e «cosa è
+   * nuovo», e serve per dire cosa abbiamo trovato per ultimo.
+   */
+  firstSeenAt: string;
   /** Presente solo sulle segnalazioni di livello 4. */
   assistita?: SnapshotAnalisiAssistita | null;
 }

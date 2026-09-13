@@ -64,7 +64,7 @@ export function llmsTxt(): string {
     ...intestazione(),
     '## Le pagine principali',
     '',
-    `- [Le segnalazioni](${SITE_URL}/): l'indice di quello che i controlli hanno trovato.`,
+    `- [Le segnalazioni](${SITE_URL}/segnalazioni): l'indice di quello che i controlli hanno trovato.`,
     `- [I numeri](${SITE_URL}/numeri): le cifre principali, ciascuna con cosa misura e cosa no.`,
     `- [Dati e precisione](${SITE_URL}/dati): copertura del corpus e precisione misurata di ogni controllo.`,
     `- [Come funziona](${SITE_URL}/come-funziona): il metodo, i livelli di analisi, i limiti dichiarati.`,

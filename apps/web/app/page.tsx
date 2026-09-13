@@ -1,6 +1,5 @@
 import Link from 'next/link';
-import { CHECK_DEFINITIONS } from '@leggichenontornano/engine';
-import { Tabella } from '@/components/tabella';
+import { CifreForti, type CifraForte } from '@/components/cifre-forti';
 import { dataset } from '@/lib/dataset';
 import { metadatiPagina } from '@/lib/seo';
 import {
@@ -15,50 +14,41 @@ import {
 } from '@/lib/testo';
 
 /*
- * Niente `force-static` qui.
+ * La home apriva con l'indice completo: centotré voci in fila, sotto cinque
+ * paragrafi che spiegavano cosa fossero. Chi arrivava dal link di un
+ * conoscente leggeva un titolo, una spiegazione e poi un elenco senza fine di
+ * norme che non conosceva, e se ne andava.
  *
- * Con la generazione statica forzata i `searchParams` arrivano sempre vuoti, e
- * il filtro per tipo di controllo smette silenziosamente di funzionare: l'URL
- * cambia, la pagina no. Verificato sul sito costruito, non dedotto — è il tipo
- * di guasto che nessuno nota finché qualcuno non manda un link filtrato.
+ * Adesso la home fa due cose e basta: mostra **le cifre che fanno alzare un
+ * sopracciglio** prima che serva leggere, e **le ultime incongruenze trovate**.
+ * L'indice completo, con i filtri e la coda di lavorazione, sta a
+ * `/segnalazioni`: chi lo vuole ci arriva, e chi non sa ancora cosa sia questo
+ * sito non ci sbatte contro.
  *
- * La pagina resta economica: legge un file JSONL già in memoria.
+ * Ogni numero qui sotto è calcolato dal dataset a ogni generazione. Scriverli a
+ * mano sarebbe più semplice e sarebbe il modo più rapido di ritrovarsi una
+ * cifra falsa sulla home il giorno in cui il corpus cambia.
  */
 
-/* Il canonical è `/` anche quando l'URL porta `?tipo=`: il filtro mostra un
-   sottoinsieme dello stesso indice, e senza canonical ogni filtro diventerebbe
-   una pagina concorrente della home. Il posto indicizzabile per un singolo
-   controllo è la sua pagina, `/controllo/<id>`, non un parametro. */
+export const dynamic = 'force-static';
+
 export const metadata = metadatiPagina({
   titolo: 'Le leggi che non tornano',
   descrizione:
-    'Indice delle incongruenze rilevate nella legislazione italiana, con le prove e la regola che le ha trovate.',
+    'Atti in vigore che rinviano a leggi cancellate, provvedimenti promessi e mai arrivati in tempo, norme che si contraddicono. Trovati leggendo i testi ufficiali.',
   percorso: '/',
 });
 
-interface Props {
-  searchParams: Promise<{ tipo?: string }>;
-}
+/** Quante segnalazioni recenti stanno in home. */
+const QUANTE_ULTIME = 6;
 
-export default async function Home({ searchParams }: Props) {
-  const { tipo } = await searchParams;
+export default function Home() {
   const reader = dataset();
   const tutte = reader.publishedAnomalies();
-  const anomalie = tipo ? tutte.filter((a) => a.checkId === tipo) : tutte;
-
-  const perTipo = new Map<string, number>();
-  for (const a of tutte) perTipo.set(a.checkId, (perTipo.get(a.checkId) ?? 0) + 1);
-
   const manifest = reader.data.manifest;
-  const metriche = reader.data.metrics;
-  const sottoSoglia = metriche.filter((m) => !m.published && m.found > 0);
   const contatore = reader.counter();
 
-  /* I numeri dell'apertura, ricavati dal dataset a ogni generazione.
-     Scriverli a mano sarebbe più semplice e sarebbe il modo più rapido di
-     ritrovarsi una cifra falsa sulla home il giorno in cui il corpus cambia.
-
-     Il conteggio parte dalle sole segnalazioni di `rinvio-ad-atto-abrogato` e
+  /* Il conteggio parte dalle sole segnalazioni di `rinvio-ad-atto-abrogato` e
      prende **solo il primo URN**, che è l'atto che rinvia. Contare tutti gli
      URN di tutte le segnalazioni gonfiava la cifra con gli atti bersaglio, che
      sono per definizione abrogati: la frase diceva «atti tuttora in vigore» e
@@ -71,157 +61,91 @@ export default async function Home({ searchParams }: Props) {
     const m = /abrogato da (\d+) anni/.exec(a.title);
     return m ? Math.max(max, Number(m[1])) : max;
   }, 0);
+
   /* La divisione si fa solo dove ha un senso. Con zero mandati non esiste una
      media, e `0 / 0` produrrebbe un `NaN` che prima o poi qualcuno stampa. */
-  /* I controlli che hanno prodotto qualcosa, pubblicato o no: la loro pagina
-     ha comunque contenuto, e per quelli in coda dice perché ci resta. */
-  const controlliConEsito = CHECK_DEFINITIONS.filter(
-    (c) => (perTipo.get(c.id) ?? 0) > 0 || (reader.metric(c.id)?.found ?? 0) > 0,
-  );
-
   const anniMediPerMandato =
     contatore && contatore.mandates > 0
       ? Math.round((contatore.totalDaysLate / contatore.mandates / 365.25) * 10) / 10
       : null;
 
+  /* Le cifre si costruiscono una per una e solo se il dataset le sostiene: una
+     casella vuota è meglio di una casella con dentro zero, che si legge come
+     un'informazione e non lo è. */
+  const cifre: CifraForte[] = [];
+  if (attiColpiti > 0) {
+    cifre.push({
+      valore: numero(attiColpiti),
+      unita: attiColpiti === 1 ? 'atto' : 'atti',
+      frase: 'ancora in vigore rinviano a una legge che è stata cancellata',
+      href: '/numeri#rinvii',
+    });
+  }
+  if (annoPiuVecchio > 0) {
+    cifre.push({
+      valore: numero(annoPiuVecchio),
+      unita: annoPiuVecchio === 1 ? 'anno' : 'anni',
+      frase: 'fa è stata cancellata la legge più vecchia che qualcuno continua a citare',
+      href: '/numeri#richiamata',
+    });
+  }
+  if (contatore && contatore.mandates > 0) {
+    cifre.push({
+      valore: numero(contatore.mandates),
+      frase: 'provvedimenti promessi da una legge hanno il termine scaduto',
+      href: '/numeri#ritardo',
+    });
+  }
+  if (anniMediPerMandato !== null) {
+    cifre.push({
+      valore: numeroDecimale(anniMediPerMandato),
+      unita: 'anni',
+      frase: 'è il ritardo medio su quei termini, contato dal giorno della scadenza',
+      href: '/dati',
+    });
+  }
+
+  /* «Le ultime trovate» è un'informazione diversa da «le più gravi»: dice che
+     il sito è vivo e che il corpus si allarga. L'ordine primario è la data in
+     cui la segnalazione è comparsa; a parità — e oggi sono tutte della stessa
+     corsa — decide la norma più recente, che è comunque la più utile da
+     vedere per prima. */
+  const ultime = [...tutte]
+    .sort(
+      (a, b) =>
+        b.firstSeenAt.localeCompare(a.firstSeenAt) ||
+        (b.windowFrom ?? '').localeCompare(a.windowFrom ?? ''),
+    )
+    .slice(0, QUANTE_ULTIME);
+
   return (
     <div className="contenitore">
-      {/* La home apre con una frase, non con un cruscotto. I numeri ci sono, e
-          sono i più duri che abbiamo, ma stanno **dentro le frasi**: qui il
-          lettore deve capire *cosa* dicono, e una griglia di metriche si guarda
-          senza leggerla. Dove invece le cifre sono omogenee e si scorrono per
-          trovarne una — la pagina «I numeri» — la griglia c'è, ed è la forma
-          giusta: la regola è generale, non è un divieto (DESIGN.md).
-
-          Tutti i numeri qui sotto sono calcolati dal dataset, non scritti a
-          mano. Se il corpus cambia, cambiano — ed è l'unico modo perché una
-          cifra sulla home resti vera. */}
-      <h1>Le leggi che non tornano</h1>
-      <p className="apertura">
-        <strong className="cifra">{numero(tutte.length)}</strong> punti in cui la legislazione
-        italiana non torna: atti ancora in vigore che rinviano a leggi cancellate, modifiche a norme
-        che non esistono più, adempimenti con due termini diversi per la stessa cosa. Ogni
-        segnalazione mostra i testi originali, la regola che l’ha trovata e i suoi limiti.
-      </p>
-
-      {/* Il colpo che fa notizia, e che regge: sono atti di oggi, non reperti. */}
-      {attiColpiti > 0 && annoPiuVecchio > 0 ? (
-        <p className="colpo">
-          <strong>{numero(attiColpiti)} atti tuttora in vigore</strong> rinviano a una norma che è
-          stata abrogata. Il rinvio più vecchio punta a una legge cancellata{' '}
-          <strong>{annoPiuVecchio} anni fa</strong>: chi la applica oggi deve ricostruire da sé
-          quale disciplina si sia messa al suo posto.
+      <section className="apertura-forte">
+        <h1>Le leggi che non tornano</h1>
+        <p className="apertura-forte__riga">
+          Leggiamo i testi ufficiali della legge italiana e pubblichiamo i punti in cui non tornano.
         </p>
-      ) : null}
 
-      {contatore && anniMediPerMandato !== null ? (
-        <p className="colpo">
-          <strong>{numero(contatore.mandates)} provvedimenti attuativi</strong> promessi da una
-          legge hanno un termine scaduto: in media da{' '}
-          <strong>{numeroDecimale(anniMediPerMandato)} anni</strong>. Il conteggio parte dalla
-          scadenza: se il decreto è poi arrivato con cinque anni di ritardo, quei cinque anni li
-          conta lo stesso; se non è mai arrivato, da qui non si vede.{' '}
-          <Link href="/dati">Cosa misura davvero questo numero</Link>.
-        </p>
-      ) : null}
+        <CifreForti
+          cifre={cifre}
+          didascalia="Le cifre che riassumono cosa è stato trovato finora"
+        />
+      </section>
 
-      <p className="colpo">
-        <Link href="/numeri">Tutti i numeri, con quello che non dicono</Link> — le cifre più dure
-        che questo dataset sostiene, ciascuna con il suo limite scritto accanto.
-      </p>
-
-      {manifest ? (
-        <p className="riga-corpus">
-          Su un corpus di {numero(manifest.counts.acts)} atti e {numero(manifest.counts.relations)}{' '}
-          relazioni fra norme, aggiornato al {data(manifest.generatedAt.slice(0, 10))}.{' '}
-          <Link href="/dati">Dati e precisione di ogni controllo</Link>.
-        </p>
-      ) : null}
-
-      <h2 id="filtri-titolo" className="solo-lettori-schermo">
-        Filtra per tipo di controllo
-      </h2>
-      <ul className="filtri" aria-labelledby="filtri-titolo">
-        <li>
-          <Link className="filtro" href="/" aria-current={!tipo ? 'true' : undefined}>
-            Tutte ({tutte.length})
-          </Link>
-        </li>
-        {CHECK_DEFINITIONS.filter((c) => (perTipo.get(c.id) ?? 0) > 0).map((c) => (
-          <li key={c.id}>
-            <Link
-              className="filtro"
-              href={`/?tipo=${c.id}`}
-              aria-current={tipo === c.id ? 'true' : undefined}
-            >
-              {c.label} ({perTipo.get(c.id)})
-            </Link>
-          </li>
-        ))}
-      </ul>
-
-      {/* Il filtro mostra un sottoinsieme dell'indice; la pagina del controllo
-          dice anche **cosa cerca quella regola e quanto è precisa**, ed è quella
-          che ha senso citare o trovare da un motore di ricerca. Sta qui come
-          riga di testo e non come seconda fila di pulsanti: due file di
-          pulsanti con etichette simili sono un modo sicuro di far cliccare la
-          cosa sbagliata. */}
-      <p className="riga-corpus">
-        Cosa cerca ciascuna regola, e quanto è precisa:{' '}
-        {controlliConEsito.map((c, i) => (
-          <span key={c.id}>
-            {i > 0 ? ' · ' : ''}
-            <Link href={`/controllo/${c.id}`}>{c.label}</Link>
-          </span>
-        ))}
-        .
-      </p>
-
-      {anomalie.length === 0 ? (
-        <div className="niente-segnale">
-          <h2>Nessuna segnalazione pubblicata{tipo ? ' per questo filtro' : ''}</h2>
-          <p>
-            {tipo
-              ? 'Nessun controllo di questo tipo ha prodotto segnalazioni pubblicabili sul corpus attualmente ingerito.'
-              : 'Sul corpus attualmente ingerito nessun controllo ha prodotto segnalazioni che superino la soglia di pubblicazione.'}
-          </p>
-          <p>
-            Qui compare quello che i controlli hanno trovato sul corpus di oggi, e il corpus cresce
-            a ogni ingestione. <Link href="/dati">La pagina Dati</Link> dice esattamente quali
-            controlli girano, su quanti atti e con quale precisione misurata: è lì che si vede di
-            quanto si allarga il campo ogni volta.
-          </p>
-        </div>
-      ) : (
-        <>
-          {/* Che questo indice sia quello che **abbiamo trovato finora** va
-              detto sempre, non solo quando è vuoto: è quando è pieno che il
-              lettore rischia di leggerlo come una mappa completa. Detto in
-              positivo — «ecco fin dove siamo arrivati, ed ecco quanto cresce» —
-              informa allo stesso modo e invita a tornare. */}
-          <p
-            style={{
-              fontSize: '0.92rem',
-              color: 'var(--inchiostro-tenue)',
-              borderLeft: '3px solid var(--ocra)',
-              paddingLeft: '0.9rem',
-              maxWidth: '46rem',
-            }}
-          >
-            <strong>Questo è quello che abbiamo trovato finora.</strong> Ogni voce è verificabile
-            riga per riga; il corpus si allarga a ogni ingestione, e con lui l’indice. Se cercate
-            una norma che qui non c’è, <Link href="/segnala">segnalatecela</Link>: è il modo più
-            rapido per farla entrare nel prossimo giro.
-          </p>
+      {ultime.length > 0 ? (
+        <section className="sezione" aria-labelledby="ultime-titolo">
+          <h2 id="ultime-titolo" className="sezione__titolo">
+            Le ultime che abbiamo trovato
+          </h2>
           <ol className="elenco">
-            {anomalie.map((a) => (
+            {ultime.map((a) => (
               <li key={a.id} className="scheda">
-                <h2 className="scheda__titolo">
+                <h3 className="scheda__titolo">
                   <Link href={percorsoAnomalia(a.id)}>{a.title}</Link>
-                </h2>
+                </h3>
                 {/* «Cosa succede in pratica» viene prima di qualsiasi riferimento
-                  normativo: chi arriva qui da un link non deve conoscere gli URN
-                  per capire di cosa si tratta. */}
+                    normativo: chi arriva qui da un link non deve conoscere gli
+                    URN per capire di cosa si tratta. */}
                 <p className="scheda__pratica">{a.plainLanguage}</p>
                 <p className="scheda__meta">
                   <span className={classeGravita(a.severity)}>gravità {a.severity}</span>
@@ -234,38 +158,34 @@ export default async function Home({ searchParams }: Props) {
               </li>
             ))}
           </ol>
-        </>
+
+          <p className="azioni">
+            <Link className="bottone bottone--primario" href="/segnalazioni">
+              Tutte le {numero(tutte.length)} segnalazioni
+            </Link>
+            <Link className="bottone" href="/grafo">
+              La mappa delle leggi
+            </Link>
+          </p>
+        </section>
+      ) : (
+        <div className="niente-segnale">
+          <h2>Nessuna segnalazione pubblicata</h2>
+          <p>
+            Sul corpus attualmente ingerito nessun controllo ha prodotto segnalazioni che superino
+            la soglia di pubblicazione. <Link href="/dati">La pagina Dati</Link> dice quali
+            controlli girano, su quanti atti e con quale precisione misurata.
+          </p>
+        </div>
       )}
 
-      {sottoSoglia.length > 0 ? (
-        <section className="sezione" aria-labelledby="coda-titolo">
-          <h2 id="coda-titolo" className="sezione__titolo">
-            In lavorazione
-          </h2>
-          <p>
-            Questi controlli hanno prodotto segnalazioni che restano nella coda interna, perché la
-            loro precisione è ancora in misurazione. Le contiamo qui perché sapere cosa sta per
-            arrivare è un’informazione utile quanto sapere cosa c’è già.
-          </p>
-          <Tabella didascalia="Controlli le cui segnalazioni non compaiono nell’indice, con il motivo.">
-            <thead>
-              <tr>
-                <th scope="col">Controllo</th>
-                <th scope="col">In coda</th>
-                <th scope="col">Perché non è pubblicato</th>
-              </tr>
-            </thead>
-            <tbody>
-              {sottoSoglia.map((m) => (
-                <tr key={m.checkId}>
-                  <th scope="row">{m.label}</th>
-                  <td>{numero(m.found)}</td>
-                  <td>{m.reason}</td>
-                </tr>
-              ))}
-            </tbody>
-          </Tabella>
-        </section>
+      {manifest ? (
+        <p className="riga-corpus">
+          Su un corpus di {numero(manifest.counts.acts)} atti e {numero(manifest.counts.relations)}{' '}
+          relazioni fra norme, aggiornato al {data(manifest.generatedAt.slice(0, 10))}. Ogni
+          segnalazione mostra i testi originali, la regola che l’ha trovata e i suoi limiti:{' '}
+          <Link href="/dati">dati e precisione di ogni controllo</Link>.
+        </p>
       ) : null}
     </div>
   );

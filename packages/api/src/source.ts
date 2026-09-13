@@ -398,6 +398,7 @@ function toSnapshotAnomaly(a: {
   severity: string;
   published: boolean;
   computedAt: Date;
+  firstSeenAt: Date;
 }): SnapshotAnomaly {
   return {
     id: a.id,
@@ -414,6 +415,7 @@ function toSnapshotAnomaly(a: {
     severity: a.severity,
     published: a.published,
     computedAt: a.computedAt.toISOString(),
+    firstSeenAt: a.firstSeenAt.toISOString(),
   };
 }
 

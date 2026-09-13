@@ -12,6 +12,20 @@ const nextConfig = {
   ],
   poweredByHeader: false,
   eslint: { ignoreDuringBuilds: true },
+  /* La home era l'indice completo, e i suoi filtri erano `/?tipo=<controllo>`.
+     Un URL pubblicato non si rompe (ADR 0008): quei link riaprono la stessa
+     vista, che adesso vive a `/segnalazioni`. */
+  async redirects() {
+    return [
+      {
+        source: '/',
+        has: [{ type: 'query', key: 'tipo', value: '(?<tipo>.*)' }],
+        destination: '/segnalazioni?tipo=:tipo',
+        permanent: true,
+      },
+    ];
+  },
+
   async headers() {
     return [
       {

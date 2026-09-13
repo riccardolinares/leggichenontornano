@@ -53,10 +53,24 @@ Un numero dentro una frase si **legge**; una griglia di metriche si **guarda**.
 Una pagina che apre con sei riquadri non dice cosa contiene il sito, dice
 «guarda quanti dati abbiamo».
 
-**L'eccezione, dichiarata:** la griglia (`.griglia-cifre`) è la forma giusta
-quando le cifre sono **omogenee e destinate al confronto** — stessa unità,
-stesso significato — e il lettore le sta scorrendo per trovarne una, non per
-capire cosa dicono.
+**La prima eccezione, dichiarata:** la griglia (`.griglia-cifre`) è la forma
+giusta quando le cifre sono **omogenee e destinate al confronto** — stessa
+unità, stesso significato — e il lettore le sta scorrendo per trovarne una, non
+per capire cosa dicono.
+
+**La seconda, che è l'apertura della home** (`.cifre-forti`). La regola qui ha
+dovuto cedere a un fatto: la home apriva con una frase e quattro paragrafi, era
+scritta bene, e chi arrivava non la leggeva. Su un sito che parla di leggi
+nessuno concede sei righe di fiducia prima di sapere se c'è qualcosa di grosso.
+
+Quello che resta, e che è il vincolo vero, è che **una cifra non sta mai da
+sola**: sotto ogni numero c'è la riga che dice cosa misura, e il numero è un
+collegamento al posto dove è spiegato con il suo limite accanto. Un numero
+isolato è uno slogan; un numero che porta alla propria smentita possibile è
+un'affermazione. Lo verifica un test, non la buona volontà.
+
+Le cifre dell'apertura sono **quattro**, non sei: alla quinta non se ne ricorda
+nessuna.
 
 Il criterio pratico: _se togliendo la griglia il testo resta comprensibile, la
 griglia era decorazione. Se il lettore deve confrontare la prima cifra con la
