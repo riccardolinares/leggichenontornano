@@ -1,0 +1,63 @@
+name: Bot quotidiano
+
+# Una segnalazione al giorno. La costanza batte il picco: un account che pubblica
+# una cosa verificabile ogni giorno per sei mesi diventa una fonte che i
+# giornalisti seguono.
+#
+# Senza credenziali configurate la Action non fallisce: stampa cosa avrebbe
+# pubblicato. Un fork deve poterla eseguire.
+
+on:
+  schedule:
+    # 09:00 UTC, cioè le 10 o le 11 in Italia: l'ora in cui qualcuno legge.
+    - cron: '0 9 * * *'
+  workflow_dispatch:
+    inputs:
+      prova:
+        description: 'Solo prova: stampa il messaggio senza pubblicarlo'
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+jobs:
+  pubblica:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @antinomia/corpus exec prisma generate
+      - run: pnpm run build
+
+      - name: Pubblica la segnalazione del giorno
+        env:
+          ANTINOMIA_SNAPSHOT: data/snapshot
+          ANTINOMIA_SITE_URL: https://leleggichenontornano.it
+          MASTODON_INSTANCE: ${{ secrets.MASTODON_INSTANCE }}
+          MASTODON_TOKEN: ${{ secrets.MASTODON_TOKEN }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHANNEL: ${{ secrets.TELEGRAM_CHANNEL }}
+        run: |
+          node apps/bot/dist/cli.js pubblica \
+            ${{ github.event.inputs.prova == 'false' && ' ' || '--prova' }}
+
+      - name: Aggiorna il registro di cosa è già uscito
+        if: github.event.inputs.prova != 'true'
+        run: |
+          if git diff --quiet -- data/bot/pubblicate.json; then
+            echo "Niente da registrare."
+            exit 0
+          fi
+          git config user.name "bot antinomia"
+          git config user.email "bot@leleggichenontornano.it"
+          git add data/bot/pubblicate.json
+          git commit -m "Registra la segnalazione pubblicata oggi"
+          git push

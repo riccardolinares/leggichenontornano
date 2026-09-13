@@ -1,0 +1,361 @@
+// Store bitemporale del corpus normativo e grafo tipizzato delle relazioni.
+//
+// Due assi temporali, non uno (ADR 0007):
+//   - vigenza    (inForceFrom / inForceTo): quando la norma era in vigore;
+//   - conoscenza (knownFrom / knownTo):     quando noi abbiamo creduto che lo fosse.
+//
+// Le correzioni non sovrascrivono mai: chiudono `knownTo` sulla riga precedente
+// e ne aprono una nuova. Così una segnalazione pubblicata resta riproducibile
+// anche dopo un aggiornamento del corpus.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// Un atto normativo, identificato dal suo URN:NIR.
+model Act {
+  urn             String   @id
+  title           String
+  actType         String?
+  authority       String?
+  /// Rango della fonte: serve ai controlli di livello 2 su gerarchia e competenza.
+  sourceRank      Int      @default(0)
+  workDate        String?
+  publicationDate String?
+  gazzettaNumber  String?
+  editorialCode   String?
+  eli             String?
+  /// Collezione Normattiva da cui l'atto è stato ingerito.
+  collection      String?
+  /// `true` quando il grafo registra un'abrogazione dell'intero atto.
+  abrogated       Boolean  @default(false)
+  abrogatedFrom   String?
+  abrogatedBy     String?
+  firstSeenAt     DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  versions ActVersion[]
+  incoming Relation[]   @relation("RelationTarget")
+
+  @@index([actType])
+  @@index([publicationDate])
+  @@index([abrogated])
+}
+
+/// Una versione (Expression) dell'atto, con la sua finestra di vigenza e di conoscenza.
+model ActVersion {
+  id           String    @id
+  actUrn       String
+  ordinal      Int
+  /// Inizio della vigenza di questa versione.
+  inForceFrom  String
+  /// Ultimo giorno di vigenza; `null` se ancora aperta.
+  inForceTo    String?
+  /// Inizio della finestra di conoscenza: quando il nostro store l'ha appresa.
+  knownFrom    DateTime  @default(now())
+  /// Fine della finestra di conoscenza; `null` se è ancora la nostra verità corrente.
+  knownTo      DateTime?
+  consolidated Boolean   @default(false)
+  eli          String?
+  /// SHA-256 del file di origine: permette di saltare il re-ingest a parità di byte.
+  checksum     String
+  sourceFile   String?
+  /// Popolato quando nome del file e FRBRExpression dichiarano date diverse.
+  dateConflict String?
+
+  act      Act       @relation(fields: [actUrn], references: [urn], onDelete: Cascade)
+  articles Article[]
+
+  @@unique([actUrn, inForceFrom, knownFrom])
+  @@index([actUrn, inForceFrom])
+  @@index([knownTo])
+}
+
+/// Un articolo all'interno di una versione.
+model Article {
+  id        String  @id
+  versionId String
+  eId       String
+  /// Numero normalizzato, es. `3` o `3-bis`.
+  number    String?
+  num       String?
+  heading   String?
+  /// Partizione URN, es. `art3`.
+  partition String?
+  /// Allegato che contiene l'articolo, quando applicabile.
+  container String?
+  /// `true` per gli articoli del corpo principale dell'atto. Un atto puo' avere
+  /// due numerazioni: il codice civile e' un regio decreto di tre articoli a cui
+  /// e' annesso il codice vero, di 2969. Chi chiede l'art. 1 del codice civile
+  /// vuole il secondo.
+  principal Boolean @default(true)
+  text      String
+  /// Posizione nell'atto, per l'ordinamento di lettura.
+  position  Int
+
+  version    ActVersion  @relation(fields: [versionId], references: [id], onDelete: Cascade)
+  provisions Provision[]
+
+  @@unique([versionId, eId])
+  @@index([number])
+}
+
+/// Un comma (o una lettera) di un articolo: è l'unità su cui lavora il livello 3.
+model Provision {
+  id        String  @id
+  articleId String
+  eId       String
+  kind      String
+  number    String?
+  text      String
+  position  Int
+
+  article      Article       @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  propositions Proposition[]
+
+  @@unique([articleId, eId])
+}
+
+/// Tipi di relazione fra atti. Il grafo è tipizzato e datato: è l'informazione
+/// che un layout a forze butterebbe via (ADR 0003).
+enum RelationType {
+  MODIFICA
+  ABROGA
+  SOSTITUISCE
+  INTRODUCE
+  PROROGA
+  RINVIA
+  ATTUA
+  DEROGA
+  DICHIARA_ILLEGITTIMO
+  CONVERTE
+}
+
+/// Una pronuncia della Corte costituzionale.
+///
+/// Sta nel corpus perché una dichiarazione di illegittimità è una
+/// contraddizione certificata dall'ordinamento: serve al grafo come arco
+/// `DICHIARA_ILLEGITTIMO` e alla misurazione come gold standard. Le due cose
+/// restano separate: una pronuncia non è mai insieme input del motore e
+/// verità di riferimento contro cui lo si misura.
+///
+/// Fonte: dati.cortecostituzionale.it, licenza CC BY-SA 3.0.
+model Pronuncia {
+  /// Identificatore europeo della giurisprudenza, es. `ECLI:IT:COST:2018:232`.
+  ecli          String   @id
+  numero        String
+  anno          String
+  /// `S` sentenza, `O` ordinanza.
+  tipologia     String
+  dataDecisione String?
+  dataDeposito  String?
+  presidente    String?
+  redattore     String?
+  /// Il dispositivo: la parte in cui la Corte scrive cosa ha deciso.
+  dispositivo   String
+  /// L'epigrafe: quali norme erano impugnate e da chi.
+  epigrafe      String
+  url           String?
+  knownFrom     DateTime @default(now())
+
+  relations Relation[]
+
+  @@index([anno])
+}
+
+/// Un arco del grafo. `sourceUrn` dispone, `targetUrn` subisce.
+model Relation {
+  id               String       @id
+  type             RelationType
+  sourceUrn        String
+  /// Articolo dell'atto che dispone.
+  sourceArticle    String?
+  sourceParagraph  String?
+  targetUrn        String
+  /// Articolo colpito; `null` quando la relazione riguarda l'intero atto.
+  targetArticle    String?
+  targetParagraphs String[]     @default([])
+  targetLetters    String[]     @default([])
+  targetAnnex      String?
+  /// `true` quando la relazione colpisce l'intero atto.
+  wholeAct         Boolean      @default(false)
+  /// Data a partire dalla quale la relazione produce effetti.
+  effectiveFrom    String?
+  /// Testo redazionale da cui la relazione è stata letta: è la prova mostrata all'utente.
+  evidence         String?
+  /// `alta` o `bassa`. Il livello 1 usa solo le relazioni ad alta confidenza.
+  confidence       String       @default("alta")
+  /// Da dove viene l'arco: `activeModifications`, `passiveModifications`, `ref`.
+  origin           String
+  knownFrom        DateTime     @default(now())
+  knownTo          DateTime?
+
+  /// Bersaglio: sempre un atto del corpus, e il vincolo lo garantisce.
+  target Act @relation("RelationTarget", fields: [targetUrn], references: [urn], onDelete: Cascade)
+
+  /// La pronuncia da cui nasce l'arco, quando `origin` è `consulta`.
+  ///
+  /// La sorgente di una relazione non è sempre un atto normativo: una
+  /// declaratoria di illegittimità costituzionale parte da una sentenza, e
+  /// `sourceUrn` ne porta l'ECLI. Per questo sul lato sorgente non c'è un
+  /// vincolo verso `Act`: ci sarebbe voluta una riga finta nella tabella degli
+  /// atti per una sentenza, che non è un atto normativo e non deve fingersi
+  /// tale. Il controllo che la sorgente esista resta, dove ha senso: gli archi
+  /// prodotti dall'ingestione di un atto nascono da quell'atto, e quelli
+  /// prodotti da una pronuncia hanno questo vincolo.
+  pronuncia  Pronuncia? @relation(fields: [sourceEcli], references: [ecli], onDelete: Cascade)
+  sourceEcli String?
+
+  @@index([sourceUrn, type])
+  @@index([targetUrn, type])
+  @@index([type, confidence])
+  @@index([knownTo])
+}
+
+/// Modalità deontiche riconosciute dall'estrazione (livello 3).
+enum DeonticMode {
+  OBBLIGO
+  DIVIETO
+  PERMESSO
+  POTERE
+  ONERE
+}
+
+/// Una proposizione normalizzata estratta da un comma.
+///
+/// Il modello estrae **questi campi**; il giudizio di contraddizione è una query
+/// su questa tabella, mai un verdetto del modello (ADR 0001).
+model Proposition {
+  id             String      @id
+  provisionId    String
+  /// URN completo con partizione, es. `urn:nir:...;50~art3-com2`.
+  urn            String
+  mode           DeonticMode
+  /// Soggetto/fattispecie, normalizzato sul vocabolario controllato del verticale.
+  subject        String
+  subjectConcept String?
+  /// Oggetto della condotta.
+  object         String
+  /// Termine, quando presente, in giorni.
+  deadlineDays   Int?
+  deadlineText   String?
+  /// Conseguenza o sanzione.
+  consequence    String?
+  conditions     String[]    @default([])
+  exceptions     String[]    @default([])
+  /// Ambito di applicazione, dal vocabolario controllato.
+  scope          String?
+  /// Verticale tematico attivo che ha prodotto l'estrazione.
+  vertical       String
+  inForceFrom    String
+  inForceTo      String?
+  /// Identificativo del modello e del prompt usati: serve per la riproducibilità.
+  extractor      String
+  extractedAt    DateTime    @default(now())
+
+  provision Provision @relation(fields: [provisionId], references: [id], onDelete: Cascade)
+
+  @@index([vertical, mode])
+  @@index([subjectConcept])
+  @@index([inForceFrom, inForceTo])
+}
+
+/// Esito di una segnalazione dopo la revisione umana.
+enum ReviewVerdict {
+  CONFERMATA
+  NON_E_UN_CONFLITTO
+  ESTRAZIONE_ERRATA
+  DA_APPROFONDIRE
+}
+
+/// Una segnalazione prodotta dal motore.
+model Anomaly {
+  id            String    @id
+  /// Tipo di controllo, es. `modifica-ad-articolo-abrogato`.
+  checkId       String
+  level         Int
+  /// Titolo leggibile ad alta voce, generato da un template deterministico.
+  title         String
+  /// Spiegazione in lingua comune, da template: nessuna prosa generata da un modello.
+  plainLanguage String
+  /// URN coinvolti, in ordine di rilevanza.
+  urns          String[]  @default([])
+  /// Finestra di vigenza in cui l'anomalia sussiste.
+  windowFrom    String?
+  windowTo      String?
+  /// Regola in chiaro che ha prodotto la segnalazione, mostrata all'utente.
+  rule          String
+  /// Prove: frammenti di testo e riferimenti, serializzati.
+  evidence      Json
+  /// Criteri di risoluzione applicabili (specialità, posteriorità, gerarchia).
+  resolutions   Json
+  severity      String    @default("media")
+  /// Stato di conoscenza del corpus al momento del calcolo.
+  computedAt    DateTime  @default(now())
+  knownAt       DateTime  @default(now())
+  /// `true` quando l'anomalia ha superato il gate di pubblicazione.
+  published     Boolean   @default(false)
+  firstSeenAt   DateTime  @default(now())
+  lastSeenAt    DateTime  @default(now())
+  /// Chiusa quando il corpus è cambiato e l'anomalia non si riproduce più.
+  resolvedAt    DateTime?
+
+  reviews Review[]
+
+  @@index([checkId])
+  @@index([level, published])
+  @@index([windowFrom, windowTo])
+}
+
+/// Una revisione umana su una segnalazione. Alimenta le metriche di precisione.
+model Review {
+  id        String        @id
+  anomalyId String
+  verdict   ReviewVerdict
+  /// Chi ha revisionato: pseudonimo o ruolo, mai dati personali.
+  reviewer  String
+  note      String?
+  /// Issue GitHub aperta dal pulsante «Non è un conflitto», quando presente.
+  issueUrl  String?
+  createdAt DateTime      @default(now())
+
+  anomaly Anomaly @relation(fields: [anomalyId], references: [id], onDelete: Cascade)
+
+  @@index([anomalyId])
+  @@index([verdict])
+}
+
+/// Un'annotazione del gold standard: un'anomalia già certificata da una fonte
+/// giuridica pubblica (Consiglio di Stato, Consulta, Sezioni Unite, circolari).
+model GoldItem {
+  id          String   @id
+  /// `consiglio-di-stato` | `corte-costituzionale` | `sezioni-unite` | `circolare`
+  sourceKind  String
+  sourceRef   String
+  sourceUrl   String?
+  urns        String[] @default([])
+  /// Tipo di controllo che dovrebbe intercettarlo.
+  expectCheck String?
+  summary     String
+  addedAt     DateTime @default(now())
+
+  @@index([sourceKind])
+  @@index([expectCheck])
+}
+
+/// Esecuzione della pipeline: serve a sapere quando il dataset ha smesso di aggiornarsi.
+model PipelineRun {
+  id           String    @id
+  startedAt    DateTime  @default(now())
+  finishedAt   DateTime?
+  status       String    @default("in-corso")
+  actsIngested Int       @default(0)
+  relations    Int       @default(0)
+  anomalies    Int       @default(0)
+  notes        String?
+}

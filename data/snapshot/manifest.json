@@ -1,0 +1,45 @@
+{
+  "formatVersion": 1,
+  "generatedAt": "2026-09-13T01:38:56.549Z",
+  "knownAt": "2026-09-13T01:38:56.549Z",
+  "counts": {
+    "acts": 161,
+    "versions": 704,
+    "articles": 2500,
+    "relations": 3722,
+    "anomalies": 362,
+    "publishedAnomalies": 103,
+    "pronunce": 55
+  },
+  "sources": [
+    {
+      "name": "Normattiva open data",
+      "licence": "CC BY 4.0",
+      "retrievedAt": "2026-09-13T01:38:56.549Z"
+    },
+    {
+      "name": "Corte costituzionale open data",
+      "licence": "CC BY-SA 3.0",
+      "retrievedAt": "2026-09-13T01:38:56.549Z"
+    }
+  ],
+  "concordanzaPronunce": [
+    {
+      "confidence": "alta",
+      "archi": 9,
+      "confermate": 9,
+      "accordo": 1
+    },
+    {
+      "confidence": "bassa",
+      "archi": 95,
+      "confermate": 16,
+      "accordo": 0.16842105263157894
+    }
+  ],
+  "publicationThreshold": {
+    "minPrecision": 0.85,
+    "minSample": 30
+  },
+  "disclaimer": "La banca dati Normattiva non ha carattere di ufficialità. L'unico testo ufficiale è quello pubblicato sulla Gazzetta Ufficiale della Repubblica Italiana, che prevale in caso di discordanza. Questo dataset è un'elaborazione automatica e non costituisce consulenza legale. Elaborazione su dati Normattiva (dati.normattiva.it), licenza CC BY 4.0."
+}

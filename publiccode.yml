@@ -1,0 +1,136 @@
+# publiccode.yml — standard di metadati per il software pubblico
+# https://yml.publiccode.tools/ — indicizzato dal crawler di Developers Italia
+publiccodeYmlVersion: '0.4'
+
+name: Antinomia
+applicationSuite: Le leggi che non tornano
+url: 'https://github.com/riccardolinares/leggichenontornano'
+landingURL: 'https://leleggichenontornano.it'
+
+softwareVersion: '0.1.0'
+releaseDate: '2026-09-12'
+
+platforms:
+  - web
+  - linux
+
+categories:
+  - data-analytics
+  - data-collection
+  - knowledge-management
+  - digital-citizenship
+
+developmentStatus: development
+
+softwareType: standalone/web
+
+logo: apps/web/public/logo.svg
+
+inputTypes:
+  - application/xml
+  - application/json
+outputTypes:
+  - application/json
+  - text/html
+  - application/x-ndjson
+
+description:
+  it:
+    localisedName: Le leggi che non tornano
+    shortDescription: >-
+      Motore open source che rende visibili incongruenze, contraddizioni e aree
+      grigie della legislazione italiana, con prove tracciabili.
+    longDescription: >-
+      Antinomia ingerisce il corpus normativo statale dagli open data di
+      Normattiva in formato Akoma Ntoso, lo normalizza su chiave URN:NIR ed ELI,
+      lo conserva in uno store bitemporale (data di vigenza e data di
+      conoscenza) e ne ricostruisce il grafo tipizzato delle relazioni
+      (modifica, abroga, rinvia, attua, deroga, sostituisce, dichiara
+      illegittimo).
+
+
+      Sopra al grafo gira un motore di rilevamento delle anomalie articolato su
+      tre livelli. Il livello 1 è puramente deterministico: attraversamento del
+      grafo, nessuna intelligenza artificiale coinvolta, precisione attesa vicina
+      al 100%. Il livello 2 applica regole su metadati di fonte e competenza. Il
+      livello 3, attivo solo sui verticali tematici dotati di vocabolario
+      controllato, estrae proposizioni deontiche tipizzate e trova le
+      contraddizioni con una query, non con un giudizio del modello.
+
+
+      Il progetto non fornisce consulenza legale, non dichiara l'illegittimità di
+      alcuna norma e non usa modelli linguistici per decidere se due norme si
+      contraddicono. Un tipo di controllo viene pubblicato soltanto quando la
+      revisione umana a campione supera l'85% di precisione.
+    features:
+      - Ingestione dagli open data di Normattiva (Akoma Ntoso, URN:NIR, ELI)
+      - Store bitemporale con multivigenza per data
+      - Grafo tipizzato e datato delle relazioni fra atti
+      - Rilevamento deterministico delle antinomie formali
+      - Rilevamento dei rinvii ad atti attuativi mai emanati
+      - Estrazione di proposizioni deontiche sui verticali attivi
+      - Coda di revisione umana con metriche di precisione per tipo
+      - API pubblica e dataset scaricabile in JSONL
+    documentation: 'https://github.com/riccardolinares/leggichenontornano/tree/main/docs'
+  en:
+    localisedName: The laws that do not add up
+    shortDescription: >-
+      Open source engine that surfaces inconsistencies, contradictions and grey
+      areas in Italian legislation, with traceable evidence.
+    longDescription: >-
+      Antinomia ingests the Italian state legal corpus from Normattiva open data
+      in Akoma Ntoso format, normalises it on URN:NIR and ELI keys, stores it in
+      a bitemporal store (in-force date and knowledge date) and reconstructs the
+      typed graph of relations between acts.
+
+
+      A three-level anomaly engine runs on top of the graph. Level 1 is purely
+      deterministic graph traversal with no AI involved. Level 3 extracts typed
+      deontic propositions and finds contradictions with a SQL join, never with a
+      model verdict.
+
+
+      The project gives no legal advice and publishes a check type only once
+      sampled human review exceeds 85% precision.
+    features:
+      - Normattiva open data ingestion (Akoma Ntoso, URN:NIR, ELI)
+      - Bitemporal store with point-in-time law text
+      - Typed and dated relation graph
+      - Deterministic formal antinomy detection
+      - Public API and downloadable JSONL dataset
+
+legal:
+  license: EUPL-1.2
+  mainCopyrightOwner: Contributori del progetto "Le leggi che non tornano"
+  repoOwner: Contributori del progetto "Le leggi che non tornano"
+
+maintenance:
+  type: community
+  contacts:
+    - name: Riccardo Linares
+      email: linares.riccardo@gmail.com
+
+localisation:
+  localisationReady: true
+  availableLanguages:
+    - it
+    - en
+
+dependsOn:
+  open:
+    - name: PostgreSQL
+      versionMin: '16'
+      optional: false
+    - name: Node.js
+      versionMin: '22'
+      optional: false
+
+it:
+  countryExtensionVersion: '1.0'
+  riuso: {}
+  piattaforme:
+    spid: false
+    cie: false
+    anpr: false
+    pagopa: false
+    io: false

@@ -1,0 +1,111 @@
+name: Verifica
+
+# Tutto quello che deve valere a ogni commit: tipi, test, build del sito e
+# l'audit di accessibilità. Una violazione WCAG AA fa fallire la build come una
+# qualunque altra regressione — per un progetto civico con utenti potenziali
+# nella pubblica amministrazione non c'è una ragione per trattarla diversamente.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: verifica-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Il dataset versionato basta per costruire il sito e girare i test: nessun
+  # passo di questa verifica scarica il corpus da Normattiva.
+  ANTINOMIA_SNAPSHOT: data/snapshot
+
+jobs:
+  pacchetti:
+    name: Tipi e test dei pacchetti
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Genera il client Prisma
+        run: pnpm --filter @antinomia/corpus exec prisma generate
+      - name: Compila i pacchetti
+        run: pnpm run build
+      - name: Controllo dei tipi
+        run: pnpm run typecheck
+      - name: Test unitari
+        run: pnpm run test
+
+  sito:
+    name: Sito, accessibilità e usabilità
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @antinomia/corpus exec prisma generate
+      - run: pnpm run build
+      - name: Costruisci il sito
+        run: pnpm --filter @antinomia/web run build
+      - name: Installa Chromium
+        run: pnpm --filter @antinomia/web exec playwright install --with-deps chromium
+      - name: Playwright — accessibilità WCAG 2.1 AA e usabilità
+        run: pnpm --filter @antinomia/web run e2e
+      - name: Conserva il rapporto se qualcosa è fallito
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: apps/web/playwright-report/
+          retention-days: 14
+
+  integrazione:
+    name: Ingestione e motore su PostgreSQL
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: antinomia
+          POSTGRES_PASSWORD: antinomia
+          POSTGRES_DB: antinomia
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql://antinomia:antinomia@localhost:5432/antinomia
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @antinomia/corpus exec prisma db push
+      - run: pnpm run build
+      - name: Ingerisci le fixture e verifica che il motore giri
+        run: |
+          node packages/corpus/dist/cli.js ingest packages/akn-parser/test/fixtures \
+            --collezione "Fixture di prova"
+          node packages/corpus/dist/cli.js stats
+          node packages/engine/dist/cli.js run --oggi 2026-01-01
+          node packages/engine/dist/cli.js metriche

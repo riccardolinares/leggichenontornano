@@ -1,0 +1,23 @@
+{
+  "name": "@antinomia/api",
+  "version": "0.1.0",
+  "license": "EUPL-1.2",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": { ".": { "types": "./dist/index.d.ts", "default": "./dist/index.js" } },
+  "bin": { "antinomia-api": "./dist/server.js" },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "start": "node dist/server.js"
+  },
+  "dependencies": {
+    "@antinomia/akn-parser": "workspace:*",
+    "@antinomia/corpus": "workspace:*",
+    "@antinomia/engine": "workspace:*"
+  },
+  "devDependencies": { "typescript": "^5.7.2", "vitest": "^2.1.8" }
+}

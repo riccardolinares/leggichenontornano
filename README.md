@@ -1,0 +1,282 @@
+# Le leggi che non tornano
+
+Piattaforma open source che rende visibili incongruenze, contraddizioni e aree
+grigie della legislazione italiana. Nome tecnico del progetto: **antinomia**.
+
+> **La credibilità è il prodotto.** Una segnalazione falsa su una legge distrugge
+> più di quanto dieci segnalazioni corrette costruiscano, e il danno è
+> permanente.
+
+Da questo principio discende tutto il resto: la soglia di pubblicazione,
+l'assenza di modelli linguistici nei verdetti, il fatto che i testi originali
+stiano sempre sopra ai campi estratti. Non sono cautele accademiche: sono
+l'armatura che serve esattamente nel momento in cui il progetto arriva in prima
+pagina.
+
+---
+
+## Cosa questo progetto non fa
+
+Prima di tutto il resto, perché è la parte che qualifica tutto il resto.
+
+- **Nessuna consulenza legale.** Nessuna segnalazione è un parere.
+- **Nessuna dichiarazione di illegittimità o incostituzionalità.** L'unico
+  soggetto che può farla è la Corte costituzionale.
+- **Nessun modello linguistico che giudica se due norme si contraddicono.** Il
+  modello estrae struttura, il codice giudica. Vedi [METODO.md](METODO.md) e
+  [ADR 0001](docs/adr/0001-estrazione-piu-query.md).
+- **Nessun punteggio di qualità legislativa**, nessuna classifica politica,
+  nessuna attribuzione di responsabilità a partiti o singoli.
+- **Nessun voto dei cittadini** nella prima fase
+  ([ADR 0004](docs/adr/0004-niente-voto-cittadino.md)).
+- **Assenza di segnale ≠ norma coerente.** Detto esplicitamente
+  nell'interfaccia, su ogni pagina dell'indice.
+- **Il confronto semantico non copre tutta la legislazione**, e non copre nemmeno
+  tutta la legislazione dei domini che tratta. Ogni dominio dichiara l'elenco
+  degli atti su cui lavora, e quell'elenco è pubblicato sulla pagina **Dati** e
+  nel dataset (`verticali.json`): si può contare
+  ([ADR 0009](docs/adr/0009-il-verticale-e-un-elenco-di-atti.md)).
+
+## La soglia di pubblicazione
+
+Un tipo di controllo viene pubblicato soltanto quando la revisione umana su
+campione supera l'**85% di precisione**, con almeno **30 revisioni**. Sotto
+soglia le sue segnalazioni restano nella coda interna e non compaiono sul sito.
+
+La regola è **codificata**, non dichiarata:
+[`publication-gate.ts`](packages/engine/src/publication-gate.ts) la applica nel
+punto di esportazione, e i test in
+[`gate.test.ts`](packages/engine/test/gate.test.ts) la verificano. La precisione
+corrente di ogni controllo, compresi quelli che non pubblicano e il perché, è
+sulla pagina **Dati** del sito.
+
+---
+
+## Com'è fatto
+
+```
+Ingestione            API Normattiva open data (Akoma Ntoso, CC BY 4.0)
+Normalizzazione       chiave primaria URN:NIR + ELI
+Store bitemporale     data di vigenza + data di conoscenza
+Grafo relazioni       modifica, abroga, rinvia, attua, deroga, sostituisce
+Estrazione semantica  proposizioni deontiche tipizzate (solo verticali attivi)
+Motore anomalie       tre livelli, vedi METODO.md
+Coda di revisione     human-in-the-loop, metriche di precisione per tipo
+API pubblica          scritta prima del frontend, consumata dal frontend
+Frontend              sito pubblico, statico dove possibile
+Distribuzione         bot quotidiano, dataset release, pagina stampa
+```
+
+**Il grafo è il prodotto. Il modello è uno strumento sopra il grafo, mai il
+contrario.**
+
+### Pacchetti
+
+| Pacchetto                                      | Cosa fa                                                             |
+| ---------------------------------------------- | ------------------------------------------------------------------- |
+| [`packages/akn-parser`](packages/akn-parser)   | URN:NIR, ELI, Akoma Ntoso, multivigenza, lettura delle modifiche     |
+| [`packages/corpus`](packages/corpus)           | client Normattiva, ingestione, store bitemporale, grafo, dataset     |
+| [`packages/engine`](packages/engine)           | controlli livelli 1-3, cancello di pubblicazione, coda di revisione  |
+| [`packages/api`](packages/api)                 | API pubblica REST, OpenAPI                                           |
+| [`apps/web`](apps/web)                         | il sito, con i test di accessibilità e usabilità                     |
+| [`apps/bot`](apps/bot)                         | la segnalazione del giorno su Mastodon, Telegram e X                 |
+
+---
+
+## Partire da zero
+
+Servono Node 22 e pnpm 9. PostgreSQL serve solo per la pipeline: **il sito e i
+test girano senza**, perché leggono il dataset versionato in `data/snapshot/`.
+
+```bash
+pnpm install
+pnpm run build
+
+# Il sito, dal dataset già nel repository
+pnpm --filter @antinomia/web run build
+pnpm --filter @antinomia/web exec next start
+
+# I test: unitari, poi accessibilità e usabilità nel browser
+pnpm run test
+pnpm --filter @antinomia/web exec playwright install --with-deps chromium
+pnpm run e2e
+```
+
+### La pipeline completa
+
+```bash
+docker compose up -d                      # PostgreSQL 16
+cp .env.example .env                      # DATABASE_URL
+pnpm --filter @antinomia/corpus exec prisma db push
+
+# Le collezioni disponibili su dati.normattiva.it
+node packages/corpus/dist/cli.js collections
+
+# Scarica, ingerisci, esegui i controlli, esporta
+node packages/corpus/dist/cli.js fetch "Codici" --formato M
+node packages/corpus/dist/cli.js ingest data/corpus/codici-M --collezione "Codici"
+node packages/engine/dist/cli.js run
+node packages/engine/dist/cli.js metriche
+node packages/engine/dist/cli.js esporta --dest data/snapshot --solo-anomalie --campione 20
+```
+
+I controlli di livello 3 richiedono un passo in più, il verticale:
+
+```bash
+# Estrae le proposizioni deontiche dagli atti del dominio dichiarato nel
+# vocabolario. Senza ANTHROPIC_API_KEY usa l'estrattore a regole e funziona
+# lo stesso, con recall più basso e dichiarato.
+node packages/engine/dist/cli.js estrai --vocabolario data/vocabolari/appalti.json
+node packages/engine/dist/cli.js run --verticale appalti
+```
+
+Le pronunce della Corte costituzionale e la misura del recall:
+
+```bash
+node packages/corpus/dist/cli.js consulta          # archi + gold standard
+node packages/corpus/dist/cli.js consulta verifica # accordo con le note di Normattiva
+node packages/engine/dist/cli.js gold valuta       # quanto il motore intercetta
+```
+
+Il dataset completo, in JSONL e Parquet:
+
+```bash
+node packages/engine/dist/cli.js esporta --dest dataset-completo --parquet
+```
+
+Nel repository sta la versione **ridotta** — serve a far girare sito e test da
+un clone appena fatto. Quella completa è pubblicata come artefatto dalla
+pipeline quotidiana.
+
+L'API pubblica si alza con o senza database:
+
+```bash
+ANTINOMIA_SNAPSHOT=data/snapshot node packages/api/dist/server.js   # dal dataset
+DATABASE_URL=... node packages/api/dist/server.js                   # dal database
+```
+
+---
+
+## Le fonti
+
+**Normattiva open data** ([dati.normattiva.it](https://dati.normattiva.it)) —
+Akoma Ntoso, XML NIR, JSON, URI ELI, con la **multivigenza**: ogni atto conserva
+tutte le versioni succedutesi, interrogabili per data. Licenza **CC BY 4.0** dal
+1° gennaio 2026.
+
+Usiamo le API di export e le collezioni predefinite previste dal portale, con
+rate limiting e cache locale. Non c'è nel nostro codice un percorso che faccia
+scraping del sito di consultazione.
+
+**Corte costituzionale open data**
+([dati.cortecostituzionale.it](https://dati.cortecostituzionale.it)) — tutte le
+pronunce dal 1956, con ECLI nativo. Licenza **CC BY-SA 3.0**.
+
+Una dichiarazione di illegittimità costituzionale è una contraddizione
+**certificata dall'ordinamento**: non la troviamo noi, la dichiara l'unico
+organo che può farlo. La usiamo per due cose, e restano separate:
+
+- **archi del grafo** `DICHIARA_ILLEGITTIMO`, mostrati nel lettore norma con le
+  parole del dispositivo e il collegamento al testo integrale;
+- **gold standard**, per misurare quanto il motore intercetta. Una pronuncia non
+  è mai insieme input del motore e verità contro cui lo si misura.
+
+Questa fonte dà anche **l'unica precisione che possiamo misurare senza
+revisione umana**: Normattiva annota le stesse declaratorie in coda all'articolo
+colpito, e le due fonti non derivano l'una dall'altra. Sull'ingestione corrente
+l'accordo è **9 su 9** per gli archi ad alta confidenza
+(`antinomia-corpus consulta verifica`, e il numero viaggia nel dataset).
+
+Leggiamo il **dispositivo**, cioè la parte in cui la Corte scrive cosa ha
+deciso, e ne copiamo gli estremi. Non interpretiamo, non riassumiamo, non
+valutiamo: il giudizio l'ha già dato chi poteva darlo. Il parser si rifiuta di
+produrre un arco quando la norma è regionale (fuori dal nostro spazio di URN),
+quando il dispositivo nomina più atti senza che il primo sia inequivoco, e
+quando la declaratoria è parziale — in quel caso l'arco nasce a bassa
+confidenza, perché la norma non cade, cambia contenuto.
+
+Altre fonti previste dall'architettura: SPARQL di Camera e Senato — non i dump
+RDF, che hanno file mancanti ed errori di parsing — Banca Dati di Merito,
+Gazzetta Ufficiale per la verifica degli atti attuativi, EUR-Lex per i rinvii
+sovranazionali.
+
+Il corpus di legittimità della Corte di cassazione **non è disponibile in
+blocco**: il livello giurisprudenziale è trattato per citazione, si linkano gli
+estremi e non si ospita il testo.
+
+### Attribuzione e non ufficialità
+
+> Elaborazione su dati **Normattiva** ([dati.normattiva.it](https://dati.normattiva.it)),
+> licenza [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/deed.it).
+>
+> La banca dati Normattiva **non ha carattere di ufficialità**: l'unico testo
+> ufficiale è quello pubblicato sulla *Gazzetta Ufficiale*, che prevale in caso
+> di discordanza.
+>
+> Pronunce: elaborazione su dati **Corte costituzionale**
+> ([dati.cortecostituzionale.it](https://dati.cortecostituzionale.it)),
+> licenza [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/it/).
+
+Questa avvertenza è su ogni pagina del sito e in due intestazioni HTTP di ogni
+risposta dell'API. Non è nel footer in grigio chiaro.
+
+---
+
+## Gli errori che abbiamo trovato leggendo l'output
+
+Gli open data di Normattiva hanno irregolarità che, prese per buone, producono
+segnalazioni che **sembrano errori del legislatore e sono errori di marcatura**.
+Ne abbiamo trovate sette. Altre cinque erano nostre, e sono le più istruttive:
+il confronto semantico delimitato dalle parole invece che dagli atti, un «stesso
+soggetto» che confrontava concetti trovati in qualunque punto della frase, una
+citazione letta dentro il titolo di un altro atto che dichiarava caduta una
+legge costituzionale vigente, una data scritta «1° ottobre» che spariva, e un
+confine di parola sbagliato che trasformava le declaratorie parziali della Corte
+costituzionale in declaratorie totali. Tutte e dodici sono venute fuori
+eseguendo il motore sul corpus vero e leggendo l'output una riga per volta. Sono
+documentate in
+[docs/qualita-fonti.md](docs/qualita-fonti.md), con cosa producevano e cosa
+facciamo adesso.
+
+Vale la pena leggerlo anche se non vi interessa questo progetto: è la parte
+dell'ingegneria che sta fra un dataset pubblico e un'affermazione pubblica.
+
+---
+
+## Decisioni di progetto
+
+Gli [ADR](docs/adr) registrano le decisioni prese e il perché. Le principali:
+
+- [0001](docs/adr/0001-estrazione-piu-query.md) — l'LLM estrae struttura, il codice giudica
+- [0002](docs/adr/0002-soglia-di-pubblicazione.md) — soglia di pubblicazione all'85%
+- [0003](docs/adr/0003-niente-grafo-force-directed.md) — nessun grafo force-directed
+- [0004](docs/adr/0004-niente-voto-cittadino.md) — nessun voto cittadino
+- [0005](docs/adr/0005-scala-a-due-layer.md) — due layer con scala diversa
+- [0006](docs/adr/0006-postgres-ricorsivo-niente-neo4j.md) — PostgreSQL e recursive CTE
+- [0007](docs/adr/0007-store-bitemporale.md) — store bitemporale
+- [0008](docs/adr/0008-url-come-prodotto.md) — gli URL sono il prodotto
+- [0009](docs/adr/0009-il-verticale-e-un-elenco-di-atti.md) — il verticale è un elenco di atti, non di parole
+
+Altri documenti: [METODO.md](METODO.md),
+[docs/gold-standard.md](docs/gold-standard.md),
+[docs/accessibilita.md](docs/accessibilita.md).
+
+---
+
+## Contribuire
+
+[CONTRIBUTING.md](CONTRIBUTING.md). In breve: il contributo più prezioso non è
+una pull request, è **dirci che una segnalazione è sbagliata**. Ogni scheda ha un
+pulsante «Non è un conflitto» che apre una issue senza registrazione, e le
+risposte cambiano la precisione misurata del controllo che l'ha prodotta.
+
+Build in public dal primo commit. Per un progetto civico il codice aperto è parte
+dell'argomento: *verificate anche noi*.
+
+## Licenze
+
+- **Software:** [EUPL 1.2](LICENSE)
+- **Dataset derivato:** CC BY 4.0
+- **Dati di origine:** Normattiva, CC BY 4.0
+
+Metadati per il software pubblico: [`publiccode.yml`](publiccode.yml).

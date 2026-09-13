@@ -1,0 +1,262 @@
+{
+  "vertical": "appalti",
+  "label": "Appalti e contratti pubblici",
+  "corpus": {
+    "note": "Il verticale è un elenco di atti, non un elenco di parole. Scoperto sul corpus reale: «concessione», «collaudo», «bando», «lavori pubblici» sono italiano giuridico comune e compaiono nel codice della navigazione del 1942, nel codice della strada e in un secolo di leggi di conversione. Finché il confronto di livello 3 si attivava su qualunque comma che contenesse una di queste forme, produceva coppie fra norme che non appartengono allo stesso dominio, in silenzio e in massa. Le radici sono dichiarate a mano da chi conosce la materia; l'espansione è deterministica e passa dal grafo, non dal testo.",
+    "radici": [
+      "urn:nir:stato:decreto.legislativo:2023-03-31;36",
+      "urn:nir:stato:decreto.legislativo:2016-04-18;50",
+      "urn:nir:stato:decreto.legislativo:2006-04-12;163",
+      "urn:nir:stato:decreto.del.presidente.della.repubblica:2010-10-05;207",
+      "urn:nir:stato:legge:2010-08-13;136",
+      "urn:nir:stato:legge:1994-02-11;109",
+      "urn:nir:stato:decreto.del.presidente.della.repubblica:1999-12-21;554",
+      "urn:nir:stato:decreto.del.presidente.della.repubblica:2000-01-25;34",
+      "urn:nir:stato:decreto.legislativo:2002-08-20;190"
+    ],
+    "radiciNote": "d.lgs. 36/2023 codice vigente; d.lgs. 50/2016 e d.lgs. 163/2006 i due codici precedenti, che restano nel corpus perché il confronto è temporale e le loro finestre di vigenza si intersecano con norme tuttora vigenti; d.P.R. 207/2010 regolamento di esecuzione del 163; l. 136/2010 tracciabilità dei flussi finanziari; l. 109/1994 e d.P.R. 554/1999 la legge quadro sui lavori pubblici e il suo regolamento; d.P.R. 34/2000 qualificazione degli esecutori; d.lgs. 190/2002 infrastrutture strategiche. Una radice assente dal corpus scaricato non è un errore: l'espansione la ignora e il verticale copre meno atti, dichiaratamente.",
+    "espansione": [
+      "ATTUA"
+    ],
+    "espansioneNote": "Solo ATTUA, e di un passo solo. Un regolamento di esecuzione del codice appartiene alla materia; un atto che lo *modifica* no. Misurato su questi dati: espandendo anche per MODIFICA/INTRODUCE/ABROGA in chiusura transitiva il verticale passava da 9 atti a 131 — tirando dentro «Provvedimenti anticrisi, nonché proroga di termini», il codice delle comunicazioni elettroniche e il regolamento per la navigazione marittima del 1952 — e i confronti di livello 3 da 4 a 210, quasi tutti fra materie diverse. La modifica, del resto, è già dentro il testo multivigente della radice: includere l'atto modificante non aggiunge una norma di appalti, aggiunge tutte le sue norme che appalti non sono."
+  },
+  "concepts": [
+    {
+      "id": "stazione-appaltante",
+      "label": "stazione appaltante",
+      "synonyms": [
+        "amministrazione aggiudicatrice",
+        "ente aggiudicatore",
+        "soggetto aggiudicatore"
+      ],
+      "note": "Chi bandisce e aggiudica. Non coincide con «amministrazione» in generale: fuori dagli appalti quel termine comprende soggetti che qui non rilevano."
+    },
+    {
+      "id": "operatore-economico",
+      "label": "operatore economico",
+      "synonyms": [
+        "concorrente",
+        "impresa concorrente",
+        "offerente",
+        "aggiudicatario"
+      ],
+      "note": "«Impresa» da sola non basta: negli appalti indica il concorrente, nel fisco un soggetto passivo. È il caso che rende necessario questo vocabolario."
+    },
+    {
+      "id": "subappaltatore",
+      "label": "subappaltatore",
+      "synonyms": [
+        "impresa subappaltatrice"
+      ],
+      "broader": "operatore-economico"
+    },
+    {
+      "id": "rup",
+      "label": "responsabile unico del procedimento",
+      "synonyms": [
+        "RUP",
+        "responsabile del progetto"
+      ]
+    },
+    {
+      "id": "commissione-giudicatrice",
+      "label": "commissione giudicatrice",
+      "synonyms": [
+        "commissione di gara"
+      ]
+    },
+    {
+      "id": "contratto-pubblico",
+      "label": "contratto pubblico",
+      "synonyms": [],
+      "note": "«Contratto» da solo no: nel codice civile ce ne sono duemila articoli."
+    },
+    {
+      "id": "appalto",
+      "label": "appalto",
+      "synonyms": [],
+      "broader": "contratto-pubblico"
+    },
+    {
+      "id": "appalto-lavori",
+      "label": "appalto di lavori",
+      "synonyms": [
+        "lavori pubblici"
+      ],
+      "broader": "appalto"
+    },
+    {
+      "id": "appalto-servizi",
+      "label": "appalto di servizi",
+      "synonyms": [],
+      "broader": "appalto"
+    },
+    {
+      "id": "appalto-forniture",
+      "label": "appalto di forniture",
+      "synonyms": [],
+      "broader": "appalto"
+    },
+    {
+      "id": "concessione",
+      "label": "concessione",
+      "synonyms": [
+        "concessione di lavori",
+        "concessione di servizi"
+      ],
+      "broader": "contratto-pubblico"
+    },
+    {
+      "id": "accordo-quadro",
+      "label": "accordo quadro",
+      "synonyms": [],
+      "broader": "contratto-pubblico"
+    },
+    {
+      "id": "procedura-aperta",
+      "label": "procedura aperta",
+      "synonyms": []
+    },
+    {
+      "id": "procedura-negoziata",
+      "label": "procedura negoziata",
+      "synonyms": [
+        "procedura negoziata senza bando"
+      ]
+    },
+    {
+      "id": "affidamento-diretto",
+      "label": "affidamento diretto",
+      "synonyms": []
+    },
+    {
+      "id": "dialogo-competitivo",
+      "label": "dialogo competitivo",
+      "synonyms": []
+    },
+    {
+      "id": "bando",
+      "label": "bando di gara",
+      "synonyms": [
+        "bando"
+      ]
+    },
+    {
+      "id": "avviso-aggiudicazione",
+      "label": "avviso di aggiudicazione",
+      "synonyms": [
+        "esito di gara"
+      ]
+    },
+    {
+      "id": "offerta",
+      "label": "offerta",
+      "synonyms": [
+        "offerta economica",
+        "offerta tecnica"
+      ]
+    },
+    {
+      "id": "offerta-anomala",
+      "label": "offerta anomala",
+      "synonyms": [
+        "offerta anormalmente bassa"
+      ],
+      "broader": "offerta"
+    },
+    {
+      "id": "aggiudicazione",
+      "label": "aggiudicazione",
+      "synonyms": []
+    },
+    {
+      "id": "stipula",
+      "label": "stipula del contratto",
+      "synonyms": [
+        "stipulazione"
+      ]
+    },
+    {
+      "id": "collaudo",
+      "label": "collaudo",
+      "synonyms": [
+        "certificato di regolare esecuzione"
+      ]
+    },
+    {
+      "id": "varianti",
+      "label": "variante in corso d'opera",
+      "synonyms": [
+        "varianti"
+      ]
+    },
+    {
+      "id": "requisiti-generali",
+      "label": "requisiti di ordine generale",
+      "synonyms": [
+        "requisiti generali"
+      ]
+    },
+    {
+      "id": "cause-esclusione",
+      "label": "cause di esclusione",
+      "synonyms": [
+        "motivi di esclusione"
+      ]
+    },
+    {
+      "id": "soglia-comunitaria",
+      "label": "soglia di rilevanza europea",
+      "synonyms": [
+        "soglia comunitaria",
+        "soglie europee"
+      ]
+    },
+    {
+      "id": "sotto-soglia",
+      "label": "affidamento sotto soglia",
+      "synonyms": [
+        "sotto soglia"
+      ]
+    },
+    {
+      "id": "pubblicita",
+      "label": "obblighi di pubblicità",
+      "synonyms": [
+        "pubblicazione del bando",
+        "pubblicità legale"
+      ]
+    },
+    {
+      "id": "trasparenza",
+      "label": "obblighi di trasparenza",
+      "synonyms": [
+        "amministrazione trasparente"
+      ]
+    },
+    {
+      "id": "tracciabilita",
+      "label": "tracciabilità dei flussi finanziari",
+      "synonyms": [
+        "tracciabilità",
+        "CIG"
+      ]
+    },
+    {
+      "id": "anticorruzione",
+      "label": "misure anticorruzione",
+      "synonyms": [
+        "prevenzione della corruzione",
+        "conflitto di interessi"
+      ]
+    },
+    {
+      "id": "anac",
+      "label": "Autorità nazionale anticorruzione",
+      "synonyms": [
+        "ANAC"
+      ],
+      "note": "Solo la forma estesa e la sigla. «Autorità» da sola compare in migliaia di norme che con l'ANAC non c'entrano: un sinonimo generico annulla la ragione per cui esiste un vocabolario controllato."
+    }
+  ]
+}

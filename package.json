@@ -1,0 +1,28 @@
+{
+  "name": "antinomia",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Motore open source per rendere visibili le incongruenze della legislazione italiana. Sito pubblico: \"Le leggi che non tornano\".",
+  "license": "EUPL-1.2",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "packageManager": "pnpm@9.15.0",
+  "scripts": {
+    "build": "pnpm -r --filter \"./packages/*\" run build",
+    "build:all": "pnpm run build && pnpm --filter @antinomia/web run build",
+    "typecheck": "pnpm -r run typecheck",
+    "test": "pnpm -r run test",
+    "lint": "pnpm -r run lint",
+    "pipeline": "pnpm --filter @antinomia/corpus run pipeline",
+    "e2e": "pnpm --filter @antinomia/web run e2e",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}

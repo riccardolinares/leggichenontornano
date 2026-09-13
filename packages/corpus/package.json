@@ -1,0 +1,47 @@
+{
+  "name": "@antinomia/corpus",
+  "version": "0.1.0",
+  "license": "EUPL-1.2",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./snapshot": {
+      "types": "./dist/snapshot/index.d.ts",
+      "default": "./dist/snapshot/index.js"
+    }
+  },
+  "bin": {
+    "antinomia-corpus": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "prisma"
+  ],
+  "scripts": {
+    "build": "prisma generate && tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate dev",
+    "fetch": "node dist/cli.js fetch",
+    "ingest": "node dist/cli.js ingest",
+    "pipeline": "node dist/cli.js pipeline"
+  },
+  "dependencies": {
+    "@antinomia/akn-parser": "workspace:*",
+    "@prisma/client": "^6.19.3",
+    "fflate": "^0.8.2",
+    "hyparquet-writer": "^0.16.9"
+  },
+  "devDependencies": {
+    "hyparquet": "^1.30.1",
+    "prisma": "^6.19.3",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}
