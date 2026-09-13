@@ -947,15 +947,19 @@ tbody th {
 /* ---------- Apertura della home: i numeri dentro le frasi ---------- */
 
 /*
- * Il piano esclude il cruscotto: niente griglia di metriche in apertura. Ma un
- * lettore curioso vuole capire in tre secondi se qui c'è qualcosa di grosso, e
- * negarglielo non è rigore, è timidezza.
+ * In apertura niente cruscotto. Ma un lettore curioso vuole capire in tre
+ * secondi se qui c'è qualcosa di grosso, e negarglielo non è rigore, è
+ * timidezza.
  *
  * La soluzione è quella del prototipo: i numeri stanno **dentro le frasi**, in
  * rosso ossido e in serif, così si leggono e non si guardano soltanto. Quello
  * che non fanno è promettere più di quanto i dati sostengano — ogni cifra qui
  * è calcolata dal dataset, e accanto a quella più fragile c'è il collegamento
  * che spiega cosa misura davvero.
+ *
+ * Questa è la regola generale, non un divieto: dove le cifre sono omogenee e
+ * il lettore le sta scorrendo per trovarne una, la griglia è la forma giusta.
+ * Vedi `.griglia-cifre` e DESIGN.md.
  */
 .apertura .cifra {
   font-family: var(--serif);
@@ -1065,4 +1069,70 @@ tbody th {
 .numero:target {
   background: var(--carta-incisa);
   box-shadow: 0 0 0 1rem var(--carta-incisa);
+}
+
+/* ---------- Griglia di cifre ---------- */
+
+/*
+ * Ammessa, non incoraggiata. Vedi DESIGN.md: i numeri stanno dentro le frasi,
+ * tranne quando sono omogenei e il lettore li sta scorrendo per trovarne uno.
+ *
+ * Il formato è volutamente sobrio — nessun riquadro, nessuna ombra, solo una
+ * riga di separazione — perché una griglia con la cornice diventa un cruscotto,
+ * e un cruscotto promette un'analisi che qui non c'è.
+ */
+/*
+ * Le righe di separazione stanno sulle voci, non sul `gap` della griglia.
+ *
+ * Colorare il `gap` e mettere il fondo sulle celle è il trucco classico per
+ * ottenere una griglia rigata, e ha un difetto che si vede solo con certi
+ * numeri di voci: l'ultima riga incompleta resta scoperta e le celle mancanti
+ * diventano rettangoli grigi. Con sei voci su cinque colonne erano quattro.
+ */
+.griglia-cifre {
+  display: grid;
+  column-gap: 1.6rem;
+  row-gap: 0;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  margin: 1.6rem 0;
+  border-top: 1px solid var(--bordo);
+}
+
+.griglia-cifre__voce {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--bordo);
+  text-decoration: none;
+  color: inherit;
+}
+
+a.griglia-cifre__voce:hover .griglia-cifre__etichetta,
+a.griglia-cifre__voce:focus-visible .griglia-cifre__etichetta {
+  color: var(--inchiostro);
+  text-decoration: underline;
+}
+
+.griglia-cifre__valore {
+  font-family: var(--serif);
+  font-size: 1.9rem;
+  line-height: 1;
+  font-weight: 600;
+  color: var(--ossido);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.griglia-cifre__unita {
+  font-family: var(--grottesco);
+  font-size: 0.86rem;
+  font-weight: 500;
+  color: var(--inchiostro);
+}
+
+.griglia-cifre__etichetta {
+  font-size: 0.82rem;
+  line-height: 1.4;
+  color: var(--inchiostro-tenue);
 }

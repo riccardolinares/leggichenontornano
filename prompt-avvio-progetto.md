@@ -176,7 +176,7 @@ Le revisioni non vengono da un comitato: vengono da chi legge. Ogni scheda espon
 
 ### Direzione visiva
 
-Carta grigio-fredda, inchiostro verdastro quasi nero, verderame come unico colore interattivo, ocra per le aree grigie, rosso ossido spento per le antinomie. Riferimento agli archivi e al bronzo, non alla palette terracotta ormai onnipresente. Tipografia: un serif per il testo normativo, un grottesco per l'interfaccia (candidati: Newsreader + Archivo). Il testo di legge deve leggersi come un documento, l'interfaccia come segnaletica. Nessun cruscotto: la home apre con una frase che dice cosa contiene il sito, non con un indovinello o una griglia di metriche.
+Carta grigio-fredda, inchiostro verdastro quasi nero, verderame come unico colore interattivo, ocra per le aree grigie, rosso ossido spento per le antinomie. Riferimento agli archivi e al bronzo, non alla palette terracotta ormai onnipresente. Tipografia: un serif per il testo normativo, un grottesco per l'interfaccia (candidati: Newsreader + Archivo). Il testo di legge deve leggersi come un documento, l'interfaccia come segnaletica. Nessun cruscotto in apertura: la home comincia con una frase che dice cosa contiene il sito, non con un indovinello o una griglia di metriche. La griglia resta ammessa dove le cifre sono omogenee e il lettore le sta scorrendo per trovarne una — è una regola sulla forma giusta, non un divieto.
 
 ---
 

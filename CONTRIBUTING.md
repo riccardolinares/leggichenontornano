@@ -50,6 +50,11 @@ fa fallire la build come una qualunque altra regressione. Non disattivate regole
 axe per far passare i test — se una violazione è un falso positivo, va
 documentata nel file di test con il motivo.
 
+Se la modifica tocca l'aspetto del sito, [DESIGN.md](DESIGN.md) dice quali sono
+le regole e — cosa più utile — da quale principio discendono. Le eccezioni sono
+scritte accanto a ciascuna regola: una regola senza eccezioni dichiarate è una
+regola che verrà aggirata in silenzio.
+
 ### Quello che non accettiamo
 
 Non è burocrazia: sono i vincoli che tengono in piedi il progetto.

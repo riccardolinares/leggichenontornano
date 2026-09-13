@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Condivisione } from '@/components/condivisione';
+import { GrigliaCifre } from '@/components/griglia-cifre';
 import { SITE_URL, dataset } from '@/lib/dataset';
 import { metadatiPagina } from '@/lib/seo';
 import {
@@ -42,6 +43,8 @@ export const metadata = metadatiPagina({
 interface Voce {
   cifra: string;
   unita: string;
+  /** Cosa misura, in poche parole: è quello che compare nella griglia. */
+  sintesi: string;
   frase: React.ReactNode;
   limite: React.ReactNode;
   ancora: string;
@@ -119,6 +122,7 @@ export default function Numeri() {
           attuazione è pubblicata come segnalazione.
         </>
       ),
+      sintesi: 'di ritardo sui termini dei provvedimenti attuativi',
       ancora: 'ritardo',
     });
   }
@@ -144,6 +148,7 @@ export default function Numeri() {
           singola norma, e questo lo facciamo scheda per scheda, non a colpi di statistica.
         </>
       ),
+      sintesi: 'in vigore che rinviano a una norma cancellata',
       ancora: 'rinvii',
     });
   }
@@ -176,6 +181,7 @@ export default function Numeri() {
           schede.
         </>
       ),
+      sintesi: 'che richiamano la stessa legge abrogata',
       ancora: 'bersaglio',
     });
   }
@@ -199,6 +205,7 @@ export default function Numeri() {
           deve. Dice quanto è difficile, per chi lo applica, sapere cosa vale oggi.
         </>
       ),
+      sintesi: 'dello stesso atto, riscritto nel tempo',
       ancora: 'versioni',
     });
   }
@@ -223,6 +230,7 @@ export default function Numeri() {
           colpiscono atti che abbiamo ingerito, che è una frazione della legislazione.
         </>
       ),
+      sintesi: 'di illegittimità costituzionale sul corpus',
       ancora: 'consulta',
     });
   }
@@ -246,6 +254,7 @@ export default function Numeri() {
           pubblichiamo. <Link href="/dati">Le misure per intero</Link>.
         </>
       ),
+      sintesi: 'accordo fra la Corte e le note di Normattiva',
       ancora: 'accordo',
     });
   }
@@ -263,6 +272,22 @@ export default function Numeri() {
         Calcolate sul corpus aggiornato al {data(conosciutoAl)}. Nessuna è scritta a mano: se il
         corpus cambia, cambiano. <Link href="/dati">Come rifare questi conti</Link>.
       </p>
+
+      {/* Qui la griglia serve, e si vede dal comportamento del lettore: questa
+          pagina si scorre per trovare *una* cifra da citare, non per leggerla
+          dalla prima all'ultima. Le voci sono omogenee — una cifra, cosa
+          misura — e incolonnarle le rende trovabili. Sotto, ciascuna torna
+          dentro la sua frase con il suo limite accanto, che è il posto dove
+          smette di essere un numero e diventa un'affermazione. */}
+      <GrigliaCifre
+        didascalia="Le cifre di questa pagina, in breve"
+        cifre={voci.map((v) => ({
+          valore: v.cifra,
+          ...(v.unita ? { unita: v.unita } : {}),
+          etichetta: v.sintesi,
+          href: `#${v.ancora}`,
+        }))}
+      />
 
       <ol className="numeri">
         {voci.map((v) => (
