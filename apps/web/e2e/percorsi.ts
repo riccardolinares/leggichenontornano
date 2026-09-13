@@ -1,5 +1,6 @@
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
+import { percorsoPronuncia, type PronunciaIndirizzabile } from '../lib/testo';
 
 /**
  * I percorsi da verificare.
@@ -85,9 +86,20 @@ export function primoControlloConEsito(): string | null {
   return anomalie.find((a) => a.published)?.checkId ?? anomalie[0]?.checkId ?? null;
 }
 
+/**
+ * Tutte le pronunce del dataset, nella forma che basta a costruirne l'indirizzo.
+ *
+ * I test le vogliono tutte e non un campione: sono cinquantacinque, costano
+ * poco, e l'unica verifica che avrebbe intercettato il guasto in produzione è
+ * proprio «ognuna di queste ha una pagina che risponde».
+ */
+export function tuttePronunce(): PronunciaIndirizzabile[] {
+  return jsonl<PronunciaIndirizzabile>('pronunce.jsonl');
+}
+
 /** Una pronuncia presente nel dataset, per la pagina della singola decisione. */
-export function primaPronuncia(): string | null {
-  return jsonl<{ ecli: string }>('pronunce.jsonl')[0]?.ecli ?? null;
+export function primaPronuncia(): PronunciaIndirizzabile | null {
+  return tuttePronunce()[0] ?? null;
 }
 
 /** Uno degli articoli del blog, se ce n'è: la pagina ha una forma sua. */
@@ -133,11 +145,12 @@ export function percorsiDaVerificare(): Percorso[] {
     percorsi.push({ nome: 'approfondimento', url: `/blog/${approfondimento}` });
   }
 
-  const pronuncia = primaPronuncia();
+  const pronunce = tuttePronunce();
+  const pronuncia = pronunce[0];
   if (pronuncia) {
     percorsi.push({
       nome: 'pagina di una pronuncia',
-      url: `/corte/${encodeURIComponent(pronuncia)}`,
+      url: percorsoPronuncia(pronuncia, pronunce),
     });
   }
 

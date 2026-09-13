@@ -258,9 +258,9 @@ export default function Numeri() {
         <>
           della Corte costituzionale hanno dichiarato illegittima una norma presente nel corpus. La
           più recente è la{' '}
-          <Link href={percorsoPronuncia(ultima.ecli)}>{titoloPronuncia(ultima)}</Link>, depositata
-          il {data(ultima.dataDeposito)}. Illegittimità non è abrogazione: è come se quella norma
-          non fosse mai esistita.
+          <Link href={percorsoPronuncia(ultima, pronunce)}>{titoloPronuncia(ultima)}</Link>,
+          depositata il {data(ultima.dataDeposito)}. Illegittimità non è abrogazione: è come se
+          quella norma non fosse mai esistita.
         </>
       ),
       limite: (

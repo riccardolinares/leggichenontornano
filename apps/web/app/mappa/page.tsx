@@ -120,7 +120,7 @@ export default function Mappa() {
             <ul>
               {pronunce.slice(0, 10).map((p) => (
                 <li key={p.ecli}>
-                  <Link href={percorsoPronuncia(p.ecli)}>{titoloPronuncia(p)}</Link>
+                  <Link href={percorsoPronuncia(p, pronunce)}>{titoloPronuncia(p)}</Link>
                 </li>
               ))}
             </ul>

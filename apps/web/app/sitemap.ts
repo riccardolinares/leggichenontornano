@@ -3,6 +3,7 @@ import { CHECK_DEFINITIONS } from '@leggichenontornano/engine';
 import { SITE_URL, dataset } from '@/lib/dataset';
 import { articoli } from '@/lib/blog';
 import { testimonianze } from '@/lib/testimonianze';
+import { percorsoPronuncia } from '@/lib/testo';
 
 export const dynamic = 'force-static';
 
@@ -72,9 +73,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
   );
 
   /* Le decisioni della Corte: si cercano per numero, e sono un centinaio al
-     massimo. A differenza del lettore norma, qui l'elenco completo ci sta. */
-  const pronunce = reader.pronunce().map((p) => ({
-    url: `${SITE_URL}/corte/${encodeURIComponent(p.ecli)}`,
+     massimo. A differenza del lettore norma, qui l'elenco completo ci sta.
+     L'indirizzo lo costruisce `percorsoPronuncia` e non questa riga: quando la
+     sitemap si scriveva l'URL da sola, ha continuato a pubblicare per mesi
+     cinquantacinque indirizzi che rispondevano 404. */
+  const tuttePronunce = reader.pronunce();
+  const pronunce = tuttePronunce.map((p) => ({
+    url: `${SITE_URL}${percorsoPronuncia(p, tuttePronunce)}`,
     lastModified: p.dataDeposito ? new Date(p.dataDeposito) : ora,
     changeFrequency: 'yearly' as const,
     priority: 0.6,

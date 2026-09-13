@@ -127,9 +127,120 @@ export function numeroDecimale(value: number, decimali = 1): string {
   }).format(value);
 }
 
-/** Percorso della pagina di una pronuncia, indirizzata dal suo ECLI. */
-export function percorsoPronuncia(ecli: string): string {
-  return `/corte/${encodeURIComponent(ecli)}`;
+/**
+ * I campi di una pronuncia che ne determinano l'indirizzo.
+ *
+ * È un'interfaccia minima e non il record del dataset: così queste funzioni
+ * restano usabili anche da chi legge il JSONL da solo — i test e i percorsi di
+ * verifica — senza passare dal lettore del dataset.
+ */
+export interface PronunciaIndirizzabile {
+  ecli: string;
+  numero: string;
+  anno: string;
+  /** `S` sentenza, `O` ordinanza. */
+  tipologia: string;
+}
+
+/**
+ * Minuscole, cifre e trattini: tutto il resto diventa un trattino.
+ *
+ * Da qui dipende la proprietà che conta — un segmento che non ha bisogno di
+ * essere codificato — e per questo lavora per sottrazione: non elenca i
+ * caratteri da togliere, tiene solo quelli sicuri. Un carattere nuovo nel dato
+ * non può così reintrodurre una percentuale nell'indirizzo.
+ */
+function senzaCaratteriDaCodificare(valore: string): string {
+  return valore
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+/**
+ * Come si dice una decisione a voce: `sentenza-121-2026`.
+ *
+ * Numero e poi anno perché è l'ordine con cui la si cita e con cui la si cerca
+ * — «sentenza 121 del 2026», mai «sentenza 2026 121».
+ */
+function formaLeggibile(p: PronunciaIndirizzabile): string {
+  const tipo = p.tipologia === 'O' ? 'ordinanza' : 'sentenza';
+  return `${tipo}-${senzaCaratteriDaCodificare(p.numero)}-${senzaCaratteriDaCodificare(p.anno)}`;
+}
+
+/**
+ * L'ECLI ridotto a segmento di percorso: `ECLI:IT:COST:2001:251` diventa
+ * `ecli-it-cost-2001-251`.
+ *
+ * Serve solo ai vecchi indirizzi: è la forma in cui arrivano fin qui dopo che
+ * il middleware ha tolto di mezzo i due punti.
+ */
+export function ecliNelPercorso(ecli: string): string {
+  return senzaCaratteriDaCodificare(ecli);
+}
+
+/**
+ * Lo slug di una pronuncia, univoco sull'insieme in cui vive.
+ *
+ * Vuole tutte le pronunce e non solo la sua perché l'univocità non è una
+ * proprietà di un record: numero, anno e tipologia identificano una decisione
+ * sola in tutto il dataset di oggi, ma è un fatto misurato sul dato, non una
+ * garanzia della Corte. Se due decisioni si chiamassero allo stesso modo,
+ * entrambe prendono in coda il proprio ECLI — che è unico per definizione — e
+ * nessuna delle due cambia indirizzo per colpa dell'altra. Meglio un indirizzo
+ * brutto per due pronunce che due pronunce a un indirizzo solo.
+ */
+export function slugPronuncia<T extends PronunciaIndirizzabile>(
+  pronuncia: T,
+  tutte: readonly T[],
+): string {
+  const forma = formaLeggibile(pronuncia);
+  const omonime = tutte.filter((altra) => formaLeggibile(altra) === forma);
+  return omonime.length > 1 ? `${forma}--${ecliNelPercorso(pronuncia.ecli)}` : forma;
+}
+
+/** Percorso della pagina di una pronuncia. */
+export function percorsoPronuncia<T extends PronunciaIndirizzabile>(
+  pronuncia: T,
+  tutte: readonly T[],
+): string {
+  return `/corte/${slugPronuncia(pronuncia, tutte)}`;
+}
+
+/** L'inversa di `slugPronuncia`: dallo slug alla decisione che indirizza. */
+export function pronunciaDaSlug<T extends PronunciaIndirizzabile>(
+  slug: string,
+  tutte: readonly T[],
+): T | null {
+  return tutte.find((p) => slugPronuncia(p, tutte) === slug) ?? null;
+}
+
+/**
+ * La pronuncia a cui punta un vecchio indirizzo, comunque sia scritto.
+ *
+ * In giro ci sono tre forme dello stesso indirizzo — `ECLI:IT:COST:2001:251`,
+ * la stessa con i due punti codificati, e quella che il middleware riscrive —
+ * e sono la stessa cosa. Si confrontano tutte sulla forma normalizzata invece
+ * di indovinare quale sia arrivata.
+ */
+export function pronunciaDaEcli<T extends PronunciaIndirizzabile>(
+  segmento: string,
+  tutte: readonly T[],
+): T | null {
+  const cercato = ecliNelPercorso(decodificato(segmento));
+  if (!cercato) return null;
+  return tutte.find((p) => ecliNelPercorso(p.ecli) === cercato) ?? null;
+}
+
+/** Un segmento malformato non è un errore del server: è un indirizzo che non esiste. */
+function decodificato(segmento: string): string {
+  try {
+    return decodeURIComponent(segmento);
+  } catch {
+    return segmento;
+  }
 }
 
 /**
