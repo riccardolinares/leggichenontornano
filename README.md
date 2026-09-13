@@ -16,11 +16,11 @@ lì: [le segnalazioni](https://leggichenontornano.it),
 [i dati con la precisione misurata](https://leggichenontornano.it/dati) di ogni
 controllo — compresi quelli che non pubblichiamo.
 
-> **Stato: non ancora pubblicato.** Il codice gira e il dataset si rigenera ogni
-> giorno, ma manca il passo che viene prima del lancio — far _demolire_ il primo
-> lotto di segnalazioni da giuristi esterni. Finché non sarà fatto, il sito lo
-> dichiara sulla pagina Dati, e nessun numero di questo repository va citato come
-> definitivo.
+> **Online, non ancora lanciato.** Il sito si raggiunge, il codice gira e il
+> dataset si rigenera ogni giorno, ma manca il passo che viene prima del lancio
+> vero — far _demolire_ il primo lotto di segnalazioni da giuristi esterni.
+> Finché non sarà fatto, il sito lo dichiara sulla pagina Dati, e nessun numero
+> di questo repository va citato come definitivo.
 
 > **La credibilità è il prodotto.** Una segnalazione falsa su una legge distrugge
 > più di quanto dieci segnalazioni corrette costruiscano, e il danno è
