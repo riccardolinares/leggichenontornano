@@ -1,3 +1,5 @@
+@import 'tailwindcss';
+
 /*
  * Direzione visiva.
  *
@@ -117,6 +119,121 @@
   --ossido-linea: #5a2c24;
   --bordo: #2b332f;
   --bordo-forte: #5c6862;
+}
+
+/*
+ * Il contratto di shadcn, agganciato alla tavolozza di questo progetto.
+ *
+ * shadcn si aspetta di trovare certi nomi — `--background`, `--primary`,
+ * `--destructive` — e i suoi componenti li usano senza sapere cosa ci sia
+ * dentro. Qui dentro c'è la tavolozza che il sito aveva già: carta,
+ * inchiostro, verderame, ocra, ossido.
+ *
+ * Sono **alias**, non copie. Scrivere di nuovo i valori esadecimali avrebbe
+ * prodotto una seconda tavolozza capace di divergere dalla prima — cioè
+ * esattamente il guasto che `test/tema.test.ts` esiste per impedire, rifatto
+ * in grande. Con `var()` la sorgente resta una sola, e il tema scuro si ribalta
+ * da sé: quando `--carta` diventa quasi nera, `--background` la segue senza
+ * che nessuno debba ricordarsene.
+ *
+ * Le corrispondenze non ovvie, e perché:
+ *
+ * - `--secondary` è la carta incisa e non un grigio nuovo: in questo sito il
+ *   secondo piano è una superficie, non un altro colore.
+ * - `--accent` è il velo di verderame, lo stesso fondo che usano già i filtri
+ *   attivi: così il passaggio del mouse su un elemento shadcn somiglia a
+ *   quello che il sito faceva prima.
+ * - `--destructive` è l'ossido, che qui non vuol dire «cancella» ma «questa
+ *   norma non torna». È il colore più carico del sito e va speso solo lì.
+ * - `--ring` è il verderame pieno: il contorno del fuoco deve arrivare a 3:1
+ *   sul proprio fondo, e il velo non ci arriverebbe.
+ */
+:root {
+  --background: var(--carta);
+  --foreground: var(--inchiostro);
+
+  --card: var(--carta-alta);
+  --card-foreground: var(--inchiostro);
+  --popover: var(--carta-alta);
+  --popover-foreground: var(--inchiostro);
+
+  --primary: var(--verderame);
+  --primary-foreground: var(--carta-alta);
+
+  --secondary: var(--carta-incisa);
+  --secondary-foreground: var(--inchiostro);
+
+  --muted: var(--carta-incisa);
+  --muted-foreground: var(--inchiostro-tenue);
+
+  --accent: var(--verderame-velo);
+  --accent-foreground: var(--verderame-scuro);
+
+  --destructive: var(--ossido);
+  --destructive-foreground: var(--carta-alta);
+
+  --border: var(--bordo);
+  --input: var(--bordo-forte);
+  --ring: var(--verderame);
+
+  /* Il sito squadra gli angoli quasi ovunque: 2px è il raggio che usano già le
+     schede e i bottoni. shadcn ne deriva gli altri. */
+  --radius: 2px;
+}
+
+/*
+ * I nomi che Tailwind espone come utility.
+ *
+ * `@theme inline` non crea colori nuovi: dice a Tailwind che `bg-background` o
+ * `text-muted-foreground` devono leggere le variabili qui sopra invece di una
+ * tavolozza propria. Senza `inline`, Tailwind fisserebbe il valore al momento
+ * della compilazione e il tema scuro smetterebbe di funzionare.
+ */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Anche i colori propri del progetto diventano utility, così una classe
+     Tailwind può dire «ocra» invece di un esadecimale sciolto. */
+  --color-carta: var(--carta);
+  --color-carta-alta: var(--carta-alta);
+  --color-carta-incisa: var(--carta-incisa);
+  --color-inchiostro: var(--inchiostro);
+  --color-inchiostro-tenue: var(--inchiostro-tenue);
+  --color-inchiostro-debole: var(--inchiostro-debole);
+  --color-verderame: var(--verderame);
+  --color-verderame-scuro: var(--verderame-scuro);
+  --color-verderame-velo: var(--verderame-velo);
+  --color-ocra: var(--ocra);
+  --color-ocra-velo: var(--ocra-velo);
+  --color-ossido: var(--ossido);
+  --color-ossido-velo: var(--ossido-velo);
+  --color-bordo: var(--bordo);
+  --color-bordo-forte: var(--bordo-forte);
+
+  --font-serif: var(--serif);
+  --font-sans: var(--grottesco);
+
+  --radius-sm: calc(var(--radius) * 0.5);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) * 2);
 }
 
 *,
