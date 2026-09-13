@@ -97,7 +97,7 @@ export default function Mappa() {
           <h2 id="m-usare">Da usare</h2>
           <ul>
             <li>
-              <Link href="/assistente">Dentro il tuo assistente</Link> — collega Claude o Codex al
+              <Link href="/mcp">MCP, dentro il tuo assistente</Link> — collega Claude o Codex al
               corpus, tre righe di configurazione
             </li>
             <li>

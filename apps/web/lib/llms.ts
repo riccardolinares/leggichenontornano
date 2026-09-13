@@ -93,7 +93,7 @@ export function llmsTxt(): string {
     ...comeCitare(),
     '## Per gli assistenti',
     '',
-    `- Server MCP ufficiale: \`npx -y @leggichenontornano/mcp\`, trasporto stdio, nessun account. Istruzioni: ${SITE_URL}/assistente`,
+    `- Server MCP ufficiale: \`npx -y @leggichenontornano/mcp\`, trasporto stdio, nessun account. Istruzioni: ${SITE_URL}/mcp`,
     `- API pubblica e dataset scaricabile: ${SITE_URL}/dati`,
     `- Versione estesa di questo file: ${SITE_URL}/llms-full.txt`,
     '',
