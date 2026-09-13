@@ -409,15 +409,19 @@ test.describe('il grafo', () => {
   });
 
   test('il disegno è identico a ogni caricamento', async ({ page }) => {
-    // Il layout è precalcolato server-side: se due richieste danno due SVG
-    // diversi, qualcosa lo sta calcolando nel browser.
+    /* Il layout è precalcolato server-side: se due richieste danno due SVG
+       diversi, qualcosa lo sta calcolando nel browser.
+       Il disegno si cerca **dentro `.grafo`**, non come primo `svg` della
+       pagina: da quando la testata ha il selettore del tema, il primo `svg`
+       è l'icona del sole o della luna, che cambia per forza a seconda del
+       tema risolto — e il test falliva misurando la cosa sbagliata. */
     const url = `/norma/${encodeURIComponent(norma!)}`;
     await page.goto(url);
-    const grafo = page.locator('svg').first();
+    const grafo = page.locator('.grafo svg').first();
     if ((await grafo.count()) === 0) test.skip();
     const primo = await grafo.innerHTML();
     await page.reload();
-    expect(await page.locator('svg').first().innerHTML()).toBe(primo);
+    expect(await page.locator('.grafo svg').first().innerHTML()).toBe(primo);
   });
 
   test('la stessa informazione è disponibile anche in tabella', async ({ page }) => {

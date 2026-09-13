@@ -78,7 +78,10 @@ export function SegnalaProblema({
         setContatto('');
         return;
       }
-      if (dati.errore === 'apertura-automatica-non-configurata') {
+      if (
+        dati.errore === 'apertura-automatica-non-configurata' ||
+        dati.errore === 'apertura-automatica-non-disponibile'
+      ) {
         setStato({ tipo: 'ripiego', url: urlDiRipiego() });
         return;
       }
