@@ -102,7 +102,218 @@ test.describe('vincoli non negoziabili', () => {
     // La sezione dice le stesse cose di prima — cosa è un parere e cosa no, chi
     // dichiara illegittima una norma — ma come garanzie invece che come divieti.
     // Quello che deve restare vero è che siano **in apertura**.
-    await expect(primoH2).toHaveText(/su cosa potete contare/i);
+    await expect(primoH2).toHaveText(/su cosa puoi contare/i);
+  });
+
+  /*
+   * Il sito dà del tu.
+   *
+   * Chi legge è **una persona alla volta**: il voi la mette in mezzo a una
+   * folla che non c'è, e a una norma che non torna ci si arriva da soli. La
+   * regola vale per tutto il testo rivolto a chi legge, e senza un test si
+   * perde alla prima pagina nuova scritta di fretta.
+   *
+   * Il controllo è un **elenco di forme**, cercate a parola intera, non una
+   * regex sulle desinenze: in italiano `-ate` e `-ite` sono anche participi
+   * femminili plurali («le norme trovate», «le lettere colpite») e una regex
+   * larga fallirebbe su mezzo sito dicendo il falso. Nell'elenco entrano solo
+   * forme che non possono essere altro:
+   *
+   * - i pronomi e i possessivi (`voi`, `vostro`…);
+   * - le forme in `-ete`, che nessun participio condivide;
+   * - `fate`, `dite`, `aprite`, i cui participi sono `fatte`, `dette`,
+   *   `aperte`;
+   * - l'imperfetto in `-vate` e il congiuntivo in `-iate`, elencati uno per
+   *   uno perché `-vate` e `-iate` da soli prenderebbero participi come
+   *   «cavate» o «inviate»;
+   * - il futuro, che finisce in `-rete` ma si elenca a mano: `[a-z]+rete`
+   *   prenderebbe «parete».
+   *
+   * Fuori restano di proposito `vi` e `ve`: `vi` è anche avverbio di luogo
+   * («non vi si applica») e numero romano («libro VI»), e su un sito di testi
+   * di legge urlerebbe in continuazione. Le forme del voi con `vi` che
+   * contano davvero — «vi serve», «vi aspettavate» — le prendono comunque
+   * l'imperfetto e i verbi in `-ete` che le accompagnano.
+   */
+  const FORME_DEL_VOI = [
+    // Pronomi e possessivi.
+    'voi',
+    'vostro',
+    'vostra',
+    'vostri',
+    'vostre',
+    // Presente e imperativo in -ete: nessun participio finisce così.
+    'avete',
+    'siete',
+    'potete',
+    'dovete',
+    'volete',
+    'sapete',
+    'vedete',
+    'leggete',
+    'scrivete',
+    'prendete',
+    'mettete',
+    'chiedete',
+    'conoscete',
+    'credete',
+    'rispondete',
+    'ricevete',
+    'tenete',
+    'ottenete',
+    'scegliete',
+    'vivete',
+    // Presente e imperativo con participio di forma diversa.
+    'fate',
+    'dite',
+    'aprite',
+    // Imperfetto.
+    'avevate',
+    'eravate',
+    'sapevate',
+    'potevate',
+    'dovevate',
+    'volevate',
+    'facevate',
+    'dicevate',
+    'vedevate',
+    'leggevate',
+    'credevate',
+    'pensavate',
+    'cercavate',
+    'aspettavate',
+    // Congiuntivo.
+    'siate',
+    'abbiate',
+    'sappiate',
+    'possiate',
+    'vogliate',
+    'facciate',
+    'diciate',
+    'portiate',
+    // Futuro.
+    'sarete',
+    'avrete',
+    'potrete',
+    'dovrete',
+    'vorrete',
+    'saprete',
+    'vedrete',
+    'farete',
+    'direte',
+    'troverete',
+    'scriverete',
+    // Imperativo con il pronome attaccato, nelle forme che il sito usava
+    // davvero prima di passare al tu.
+    'scrivetelo',
+    'ditelo',
+    'fatelo',
+    'mandatelo',
+    'guardatelo',
+    'usatelo',
+    'provatelo',
+  ];
+
+  /*
+   * L'imperativo con il pronome attaccato, per forma invece che per elenco.
+   *
+   * Solo `-teci`, `-tecela`, `-tecelo` e `-tevi`: sono terminazioni che in
+   * italiano nascono soltanto da un imperativo alla seconda plurale. Restano
+   * fuori `-telo` e `-tela`, che prenderebbero «cautela», «tutela» e
+   * «clientela»; quelle poche che servono stanno nell'elenco qui sopra. Le
+   * corrispondenti forme del tu non somigliano: «diccelo», «segnalacela»,
+   * «aiutaci».
+   */
+  const VOI_CON_PRONOME = /\b[a-zà-ù]+te(?:ci|cela|celo|vi)\b/gi;
+
+  const VOI = new RegExp(`\\b(?:${FORME_DEL_VOI.join('|')})\\b`, 'gi');
+
+  /*
+   * Le parti della pagina che non sono parole nostre.
+   *
+   * Il testo di una legge, un dispositivo della Corte, la frase che qualcuno
+   * ha scritto su di noi: sono citazioni alla lettera, e si riportano come
+   * sono anche quando danno del voi. Il perimetro della regola è il testo che
+   * scriviamo noi.
+   */
+  const CITAZIONI = ['.norma', '.prova__testo', '.muro__testo', '.assistita__ragionamento'];
+
+  /*
+   * I falsi positivi che non si possono togliere altrimenti.
+   *
+   * Si aggiunge una voce qui solo quando la forma sta in una frase che deve
+   * restare com'è — una formula legale, il titolo di un documento altrui — e
+   * il motivo si scrive accanto. È un'eccezione dichiarata, non una regex
+   * ammorbidita: allargare l'elenco delle forme per far passare un caso
+   * spegnerebbe il controllo su tutti gli altri.
+   */
+  const ECCEZIONI: Array<{ frase: RegExp; perche: string }> = [
+    {
+      /* L'informativa privacy traduce gli articoli 15-21 del Regolamento in
+         frasi fra virgolette, e quelle frasi le scrive **chi ci contatta**:
+         «Cosa avete di mio?», «correggetelo», «Cancellatelo», «Fermatevi
+         finché non chiariamo». Lì il plurale è la forma giusta, perché a
+         essere in due o più siamo noi. Riscriverle al singolare farebbe dire
+         a chi legge una cosa che non dice: non si scrive a una persona sola,
+         si scrive a un progetto. */
+      frase:
+        /«(?:Cosa avete di mio\?|Questo dato è sbagliato, correggetelo|Cancellatelo|Fermatevi[^»]*|Datemelo[^»]*|Non voglio)»/g,
+      perche: 'sono le frasi che chi legge scrive a noi, non quelle che noi scriviamo a chi legge',
+    },
+  ];
+
+  test('dà del tu a chi legge, su ogni pagina', async ({ page }) => {
+    const colti: string[] = [];
+
+    for (const percorso of percorsiDaVerificare()) {
+      await page.goto(percorso.url);
+      const testo = await page.evaluate((selettori) => {
+        const copia = document.body.cloneNode(true) as HTMLElement;
+        for (const selettore of [...selettori, 'script', 'style']) {
+          copia.querySelectorAll(selettore).forEach((el) => el.remove());
+        }
+        return copia.textContent ?? '';
+      }, CITAZIONI);
+
+      let ripulito = testo;
+      for (const eccezione of ECCEZIONI) ripulito = ripulito.replace(eccezione.frase, ' ');
+
+      const occorrenze = [
+        ...new Set([...(ripulito.match(VOI) ?? []), ...(ripulito.match(VOI_CON_PRONOME) ?? [])]),
+      ];
+      if (occorrenze.length > 0) colti.push(`${percorso.url} → ${occorrenze.join(', ')}`);
+    }
+
+    expect(
+      colti,
+      'Queste pagine danno del voi a chi legge. Il sito dà del tu: una persona alla volta, ' +
+        'non una folla. Se una di queste è un falso positivo, aggiungila a ECCEZIONI con il motivo.',
+    ).toEqual([]);
+  });
+
+  test('«Per la stampa» dà le formule pronte invece dell’elenco di cosa non scrivere', async ({
+    page,
+  }) => {
+    await page.goto('/stampa');
+    await expect(page.getByRole('heading', { name: /le formule pronte/i })).toBeVisible();
+
+    // Ogni formula è una frase da copiare, in un blocco suo: se tornassero
+    // dentro i paragrafi, la pagina smetterebbe di servire a chi ha fretta.
+    expect(await page.locator('.formula__pronta').count()).toBeGreaterThanOrEqual(5);
+
+    const testo = ((await page.locator('main').textContent()) ?? '').replace(/\s+/g, ' ');
+
+    // Il perimetro è lo stesso di quando era scritto come divieto, e sta tutto
+    // qui dentro: chi dichiara illegittima una norma, chi fa il confronto,
+    // cosa misura il contatore, e che il totale è quello della porzione di
+    // corpus ingerita.
+    expect(testo).toMatch(/spetta alla Corte costituzionale/i);
+    expect(testo).toMatch(/il modello estrae, il confronto lo fa il codice/i);
+    expect(testo).toMatch(/termin[ei] scadut[oi]/i);
+    expect(testo).toMatch(/porzione di corpus/i);
+
+    // E non torna a essere una lista di divieti.
+    expect(testo).not.toMatch(/cose da non scrivere/i);
   });
 
   test('nessuna cifra della home sta lì da sola', async ({ page }) => {
@@ -735,14 +946,14 @@ test.describe('segnalare un problema', () => {
   test('il modulo c’è, e dice che la segnalazione diventa pubblica', async ({ page }) => {
     await page.goto('/segnala');
     await expect(page.getByRole('heading', { name: /qualcosa non torna/i })).toBeVisible();
-    await expect(page.getByLabel(/che cosa avete visto/i)).toBeVisible();
+    await expect(page.getByLabel(/che cosa hai visto/i)).toBeVisible();
     // Chi scrive deve sapere *prima* che finirà in pubblico.
     await expect(page.getByText(/issue pubblica/i)).toBeVisible();
   });
 
   test('un messaggio troppo corto non parte, e lo dice', async ({ page }) => {
     await page.goto('/segnala');
-    await page.getByLabel(/che cosa avete visto/i).fill('non va');
+    await page.getByLabel(/che cosa hai visto/i).fill('non va');
     await page.getByRole('button', { name: /manda la segnalazione/i }).click();
     await expect(page.getByText(/almeno trenta caratteri/i)).toBeVisible();
   });
@@ -763,18 +974,16 @@ test.describe('segnalare un problema', () => {
   }) => {
     await page.goto('/segnala');
     await page
-      .getByLabel(/che cosa avete visto/i)
+      .getByLabel(/che cosa hai visto/i)
       .fill(
         'Sulla pagina dei numeri il totale dei giorni non coincide con quello della pagina dati.',
       );
     await page.getByRole('button', { name: /manda la segnalazione/i }).click();
     // In prova il token non è configurato: deve comparire il ripiego, non un
     // messaggio d'errore generico.
-    await expect(page.getByRole('link', { name: /aprite la segnalazione su github/i })).toBeVisible(
-      {
-        timeout: 15000,
-      },
-    );
+    await expect(page.getByRole('link', { name: /apri la segnalazione su github/i })).toBeVisible({
+      timeout: 15000,
+    });
   });
 });
 

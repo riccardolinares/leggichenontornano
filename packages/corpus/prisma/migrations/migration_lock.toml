@@ -1,0 +1,2 @@
+# Generato da Prisma: dichiara il motore con cui le migrazioni sono scritte.
+provider = "postgresql"

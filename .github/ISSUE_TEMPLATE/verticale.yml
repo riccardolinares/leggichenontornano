@@ -12,8 +12,8 @@ body:
         a un dominio solo: «concessione» sta nel codice dei contratti pubblici e
         in quello della navigazione del 1942.
 
-        Non serve che portiate il vocabolario già fatto. Serve che sappiate la
-        materia abbastanza da dire quali atti la costituiscono.
+        Non serve che porti il vocabolario già fatto. Serve che tu conosca la materia
+        abbastanza da dire quali atti la costituiscono.
 
   - type: input
     id: dominio
@@ -42,4 +42,4 @@ body:
     attributes:
       label: Perché questo dominio
       description: >
-        Dove sospettate che le norme non tornino, e chi ci sbatte contro.
+        Dove sospetti che le norme non tornino, e chi ci sbatte contro.

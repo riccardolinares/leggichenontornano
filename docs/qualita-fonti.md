@@ -328,7 +328,7 @@ Poi abbiamo letto l'articolo per intero, e in coda c'era questo:
 
 Normattiva **annota le declaratorie**. Non le cancella dal testo — e fa bene,
 perché il testo storico serve — ma le registra. Una segnalazione che dicesse
-«nessuno ve lo dice» sarebbe falsa, e il primo giurista che la leggesse se ne
+«nessuno te lo dice» sarebbe falsa, e il primo giurista che la leggesse se ne
 accorgerebbe in dieci secondi. Il controllo non esiste.
 
 Resta un problema vero, ma è di lettura, non di legge: la nota sta in fondo a un
@@ -350,6 +350,6 @@ umana, e va rimisurata a ogni aggiornamento del corpus.
 
 ## Come segnalarci un caso nuovo
 
-Se trovate una segnalazione che dipende da un'irregolarità della fonte e non da
+Se trovi una segnalazione che dipende da un'irregolarità della fonte e non da
 un problema della legge, il pulsante **«Non è un conflitto»** sulla scheda apre
 una issue con tutti i riferimenti già dentro. Sono le più utili che riceviamo.

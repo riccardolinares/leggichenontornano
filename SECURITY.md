@@ -1,10 +1,10 @@
 # Segnalare un problema di sicurezza
 
-Non aprite una issue pubblica.
+Non aprire una issue pubblica.
 
-Scrivete a **info@leggichenontornano.it** con «leggichenontornano — sicurezza»
-nell'oggetto. Rispondiamo entro cinque giorni lavorativi e vi teniamo aggiornati
-fino alla chiusura.
+Scrivi a **info@leggichenontornano.it** con «leggichenontornano — sicurezza»
+nell'oggetto. Rispondiamo entro cinque giorni lavorativi e ti diciamo come
+procede fino alla chiusura.
 
 ## Cosa ci interessa
 
@@ -34,4 +34,4 @@ superficie è piccola. Le cose che ci interessano davvero:
 ## Divulgazione
 
 Preferiamo la divulgazione coordinata. Se il problema riguarda i dati di origine
-e non il nostro codice, vi aiutiamo a portarlo a chi di dovere.
+e non il nostro codice, ti aiutiamo a portarlo a chi di dovere.

@@ -197,6 +197,71 @@ model Verticale {
   knownFrom               DateTime @default(now())
 }
 
+/// La verifica in Gazzetta Ufficiale di un singolo mandato attuativo.
+///
+/// Il motore estrae dai commi i mandati — «con decreto del Ministro… entro
+/// sessanta giorni» — e sa dire quando il termine è scaduto. Sapere che un
+/// termine è passato però non è sapere che il decreto non è arrivato: per
+/// quello bisogna guardare in Gazzetta, mandato per mandato. Questa tabella è
+/// il registro di quelle guardate.
+///
+/// Tre esiti e mai due insieme: `adottato`, `non-adottato`, `non-verificabile`.
+/// Il terzo non è un fallimento da nascondere, è l'esito onesto quando non si
+/// sa, e il sistema lo preferisce a tirare a indovinare.
+///
+/// Ogni riga porta la **prova**: la query esatta, l'URL interrogato, la data
+/// della verifica e — quando il provvedimento c'è — i suoi estremi e la frase
+/// del preambolo che cita il mandato. Senza la prova la verifica non si può
+/// contestare, e una verifica che non si può contestare non vale niente.
+///
+/// Vedi ADR 0013.
+model VerificaAttuazione {
+  /// Chiave del mandato: atto, articolo, comma e termine. Stabile fra i giri.
+  id              String   @id
+  actUrn          String
+  articleNumber   String?
+  provisionNumber String?
+  /// Strumento previsto, come lo nomina il testo della legge.
+  strumento       String
+  deadlineDays    Int
+  /// Data entro cui il provvedimento andava adottato.
+  dueBy           String?
+  /// La frase del comma da cui il mandato è stato letto.
+  mandato         String
+  /// `adottato` | `non-adottato` | `non-verificabile`
+  esito           String
+  /// Perché questo esito, in lingua comune. Sempre valorizzato.
+  motivo          String
+  /// La frase esatta cercata in Gazzetta Ufficiale.
+  query           String
+  /// L'URL interrogato.
+  url             String
+  /// Fonte interrogata, per esteso: comparirà accanto alla segnalazione.
+  fonte           String
+  /// Intervallo di anni di pubblicazione coperto dalla ricerca.
+  finestraDa      Int
+  finestraA       Int
+  /// Quanti atti ha restituito la ricerca su cui si fonda l'esito.
+  risultati       Int      @default(0)
+  verificatoIl    DateTime @default(now())
+
+  /// Estremi del provvedimento trovato, valorizzati solo su `adottato`.
+  provvedimentoTipo     String?
+  provvedimentoTitolo   String?
+  /// Il fascicolo, es. `GU n.284 del 5-12-2017`.
+  gazzetta              String?
+  /// Data di pubblicazione in Gazzetta, ISO.
+  gazzettaData          String?
+  codiceRedazionale     String?
+  provvedimentoUrl      String?
+  /// La citazione letterale su cui si basa la corrispondenza.
+  citazione             String?
+
+  @@index([esito])
+  @@index([actUrn])
+  @@index([verificatoIl])
+}
+
 /// Un arco del grafo. `sourceUrn` dispone, `targetUrn` subisce.
 model Relation {
   id               String       @id

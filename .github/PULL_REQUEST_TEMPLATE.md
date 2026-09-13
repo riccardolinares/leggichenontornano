@@ -5,7 +5,7 @@
 ## Perché
 
 <!-- Il caso reale che questa modifica risolve. Se è un difetto che produceva
-     una segnalazione falsa, scrivete quale: sono i commenti più utili del
+     una segnalazione falsa, scrivi quale: sono i commenti più utili del
      repository. -->
 
 ## Verifica
@@ -28,7 +28,7 @@ pnpm --filter @leggichenontornano/web run build && pnpm run e2e
 
 ## Se cambia il numero di segnalazioni
 
-Scrivete il prima e il dopo, e **perché il dopo è più giusto**. Un calo non è
+Scrivi il prima e il dopo, e **perché il dopo è più giusto**. Un calo non è
 una regressione: sul corpus reale le segnalazioni sono passate da 238 a 103
 mentre la qualità saliva, un difetto della fonte alla volta.
 

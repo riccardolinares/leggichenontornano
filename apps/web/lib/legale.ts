@@ -34,14 +34,14 @@ export const PAGINE_LEGALI: readonly PaginaLegale[] = [
     percorso: '/legal/privacy',
     titolo: 'Informativa privacy',
     sommario:
-      'Quali dati il sito può ricevere — solo quelli che scrivete nel modulo — dove finiscono e come si chiede di cancellarli.',
+      'Quali dati il sito può ricevere — solo quelli che scrivi nel modulo — dove finiscono e come si chiede di cancellarli.',
     aggiornataIl: '2026-09-13',
   },
   {
     percorso: '/legal/termini',
     titolo: 'Termini di servizio',
     sommario:
-      'Cosa potete fare con questo sito e con i suoi dati, a quali condizioni, e cosa vi garantiamo.',
+      'Cosa puoi fare con questo sito e con i suoi dati, a quali condizioni, e cosa ti garantiamo.',
     aggiornataIl: '2026-09-13',
   },
   {
@@ -54,7 +54,7 @@ export const PAGINE_LEGALI: readonly PaginaLegale[] = [
     percorso: '/legal/disclaimer',
     titolo: 'Limitazione di responsabilità',
     sommario:
-      'Quanto vale quello che leggete qui: il testo che fa fede, i limiti dei controlli automatici e come contestarli.',
+      'Quanto vale quello che leggi qui: il testo che fa fede, i limiti dei controlli automatici e come contestarli.',
     aggiornataIl: '2026-09-13',
   },
 ];

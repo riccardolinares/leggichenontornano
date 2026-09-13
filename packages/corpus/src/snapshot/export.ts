@@ -24,6 +24,7 @@ import {
   type SnapshotManifest,
   type SnapshotConcordanza,
   type SnapshotPronuncia,
+  type SnapshotVerifica,
   type SnapshotVertical,
   type SnapshotRelation,
   type SnapshotVersion,
@@ -273,6 +274,44 @@ export async function exportSnapshot(opts: ExportOptions): Promise<SnapshotManif
     computedAt: v.computedAt,
   }));
 
+  // Le verifiche in Gazzetta Ufficiale escono **tutte**, compresi i
+  // `non-verificabile`, e anche in modalità ridotta. Due ragioni, e la seconda
+  // è quella che ha fatto togliere il filtro per atto che c'era qui: sapere
+  // dove la verifica non arriva è un'informazione, e nasconderla farebbe
+  // sembrare la copertura migliore di com'è; e questo file è il registro che la
+  // campagna notturna rilegge per sapere cosa ha già guardato — un'esportazione
+  // che ne tiene solo una parte le farebbe rifare il lavoro già fatto.
+  const verifiche: SnapshotVerifica[] = (
+    await prisma.verificaAttuazione.findMany({
+      orderBy: [{ actUrn: 'asc' }, { id: 'asc' }],
+    })
+  ).map((v) => ({
+    id: v.id,
+    actUrn: v.actUrn,
+    articleNumber: v.articleNumber,
+    provisionNumber: v.provisionNumber,
+    strumento: v.strumento,
+    deadlineDays: v.deadlineDays,
+    dueBy: v.dueBy,
+    mandato: v.mandato,
+    esito: v.esito,
+    motivo: v.motivo,
+    query: v.query,
+    url: v.url,
+    fonte: v.fonte,
+    finestraDa: v.finestraDa,
+    finestraA: v.finestraA,
+    risultati: v.risultati,
+    verificatoIl: v.verificatoIl.toISOString(),
+    provvedimentoTipo: v.provvedimentoTipo,
+    provvedimentoTitolo: v.provvedimentoTitolo,
+    gazzetta: v.gazzetta,
+    gazzettaData: v.gazzettaData,
+    codiceRedazionale: v.codiceRedazionale,
+    provvedimentoUrl: v.provvedimentoUrl,
+    citazione: v.citazione,
+  }));
+
   const manifest: SnapshotManifest = {
     formatVersion: 1,
     generatedAt: knownAt.toISOString(),
@@ -285,6 +324,7 @@ export async function exportSnapshot(opts: ExportOptions): Promise<SnapshotManif
       anomalies: anomalies.length,
       publishedAnomalies: anomalies.filter((a) => a.published).length,
       pronunce: pronunce.length,
+      verifiche: verifiche.length,
     },
     sources: opts.sources ?? [
       { name: 'Normattiva open data', licence: 'CC BY 4.0', retrievedAt: knownAt.toISOString() },
@@ -293,6 +333,15 @@ export async function exportSnapshot(opts: ExportOptions): Promise<SnapshotManif
             {
               name: 'Corte costituzionale open data',
               licence: 'CC BY-SA 3.0',
+              retrievedAt: knownAt.toISOString(),
+            },
+          ]
+        : []),
+      ...(verifiche.length > 0
+        ? [
+            {
+              name: 'Gazzetta Ufficiale della Repubblica Italiana — Serie Generale',
+              licence: 'Consultazione pubblica, www.gazzettaufficiale.it',
               retrievedAt: knownAt.toISOString(),
             },
           ]
@@ -309,6 +358,7 @@ export async function exportSnapshot(opts: ExportOptions): Promise<SnapshotManif
   writeJsonl(snapshotPath(opts.dir, 'relations'), relations);
   writeJsonl(snapshotPath(opts.dir, 'anomalies'), anomalies);
   writeJsonl(snapshotPath(opts.dir, 'pronunce'), pronunce);
+  writeJsonl(snapshotPath(opts.dir, 'verifiche'), verifiche);
   writeJson(snapshotPath(opts.dir, 'verticals'), verticali);
 
   // Parquet accanto al JSONL, dalla stessa esportazione: le due forme non
