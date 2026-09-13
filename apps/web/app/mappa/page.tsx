@@ -45,8 +45,8 @@ export default function Mappa() {
           <h2 id="m-leggere">Da leggere</h2>
           <ul>
             <li>
-              <Link href="/">Le segnalazioni</Link> — {numero(pubblicate.length)} punti in cui la
-              legislazione non torna, con i testi e la regola che li ha trovati
+              <Link href="/segnalazioni">Le segnalazioni</Link> — {numero(pubblicate.length)} punti
+              in cui la legislazione non torna, con i testi e la regola che li ha trovati
             </li>
             <li>
               <Link href="/numeri">I numeri</Link> — le cifre più dure che il dataset sostiene

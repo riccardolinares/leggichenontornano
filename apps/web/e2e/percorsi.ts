@@ -104,6 +104,7 @@ export function primoApprofondimento(): string | null {
 export function percorsiDaVerificare(): Percorso[] {
   const percorsi: Percorso[] = [
     { nome: 'home', url: '/' },
+    { nome: 'indice delle segnalazioni', url: '/segnalazioni' },
     { nome: 'indice del blog', url: '/blog' },
     { nome: 'numeri', url: '/numeri' },
     { nome: 'grafo delle leggi', url: '/grafo' },

@@ -20,6 +20,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const ora = new Date();
   const fisse = [
     '',
+    '/segnalazioni',
     '/blog',
     '/numeri',
     '/norme',

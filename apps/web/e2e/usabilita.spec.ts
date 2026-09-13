@@ -100,12 +100,30 @@ test.describe('vincoli non negoziabili', () => {
     await expect(primoH2).toHaveText(/su cosa potete contare/i);
   });
 
-  test('la home apre con una frase, non con un cruscotto di metriche', async ({ page }) => {
+  test('nessuna cifra della home sta lì da sola', async ({ page }) => {
+    /*
+     * La home adesso apre con le cifre: il muro di testo che c'era prima era
+     * corretto e non lo leggeva nessuno. Quello che non deve diventare è un
+     * cruscotto — sei riquadri con dei numeri dentro, che si guardano senza
+     * capire cosa dicono.
+     *
+     * Il vincolo che resta, e che questo test difende, è che **ogni cifra
+     * porti con sé la frase che dice cosa misura** e il collegamento al posto
+     * dove è spiegata con il suo limite accanto.
+     */
     await page.goto('/');
-    const apertura = page.locator('.apertura');
-    await expect(apertura).toBeVisible();
-    const testo = (await apertura.textContent()) ?? '';
-    expect(testo.length).toBeGreaterThan(120);
+    const voci = page.locator('.cifre-forti__voce');
+    const quante = await voci.count();
+    expect(quante).toBeGreaterThan(0);
+
+    for (let i = 0; i < quante; i++) {
+      const voce = voci.nth(i);
+      const frase = (await voce.locator('.cifre-forti__frase').textContent()) ?? '';
+      expect(frase.trim().length, 'una cifra senza la frase che dice cosa misura').toBeGreaterThan(
+        20,
+      );
+      await expect(voce.getByRole('link')).toHaveAttribute('href', /\S/);
+    }
   });
 
   test('la pagina Dati mostra anche i controlli ancora in lavorazione', async ({ page }) => {
@@ -173,13 +191,13 @@ test.describe('vincoli non negoziabili', () => {
     expect(testo).toMatch(/termini scaduti(,| e) non attuazioni mancate/i);
   });
 
-  test('la home dice che l’indice è quello trovato finora, e che il corpus cresce', async ({
-    page,
-  }) => {
-    await page.goto('/');
+  test('l’indice dice che è quello trovato finora, e che il corpus cresce', async ({ page }) => {
+    // Sta su `/segnalazioni` insieme all'elenco completo: è lì che qualcuno
+    // rischia di leggerlo come una mappa di tutto quello che non torna nella
+    // legge italiana. Detto in positivo informa uguale e invita a tornare, ma
+    // deve esserci.
+    await page.goto('/segnalazioni');
     const testo = (await page.locator('main').textContent()) ?? '';
-    // L'informazione che conta è che l'indice non sia una mappa completa. Detta
-    // in positivo informa uguale e invita a tornare, ma deve esserci.
     expect(testo).toMatch(/trovato finora|corpus (si allarga|cresce)/i);
   });
 });
@@ -296,14 +314,14 @@ test.describe('scheda anomalia', () => {
   test('la pagina dichiara un canonical assoluto, e i parametri non ne creano di nuovi', async ({
     page,
   }) => {
-    await page.goto('/');
-    const canonicalHome = await page.locator('link[rel="canonical"]').getAttribute('href');
-    expect(canonicalHome).toMatch(/^https?:\/\//);
+    await page.goto('/segnalazioni');
+    const canonicalIndice = await page.locator('link[rel="canonical"]').getAttribute('href');
+    expect(canonicalIndice).toMatch(/^https?:\/\//);
 
     // Il filtro è un parametro dello stesso indice, non una pagina concorrente.
-    await page.goto('/?tipo=rinvio-ad-atto-abrogato');
+    await page.goto('/segnalazioni?tipo=rinvio-ad-atto-abrogato');
     const canonicalFiltro = await page.locator('link[rel="canonical"]').getAttribute('href');
-    expect(canonicalFiltro).toBe(canonicalHome);
+    expect(canonicalFiltro).toBe(canonicalIndice);
   });
 
   test('i dati strutturati dichiarano un dataset con licenza e fonte', async ({ page }) => {
@@ -391,15 +409,19 @@ test.describe('il grafo', () => {
   });
 
   test('il disegno è identico a ogni caricamento', async ({ page }) => {
-    // Il layout è precalcolato server-side: se due richieste danno due SVG
-    // diversi, qualcosa lo sta calcolando nel browser.
+    /* Il layout è precalcolato server-side: se due richieste danno due SVG
+       diversi, qualcosa lo sta calcolando nel browser.
+       Il disegno si cerca **dentro `.grafo`**, non come primo `svg` della
+       pagina: da quando la testata ha il selettore del tema, il primo `svg`
+       è l'icona del sole o della luna, che cambia per forza a seconda del
+       tema risolto — e il test falliva misurando la cosa sbagliata. */
     const url = `/norma/${encodeURIComponent(norma!)}`;
     await page.goto(url);
-    const grafo = page.locator('svg').first();
+    const grafo = page.locator('.grafo svg').first();
     if ((await grafo.count()) === 0) test.skip();
     const primo = await grafo.innerHTML();
     await page.reload();
-    expect(await page.locator('svg').first().innerHTML()).toBe(primo);
+    expect(await page.locator('.grafo svg').first().innerHTML()).toBe(primo);
   });
 
   test('la stessa informazione è disponibile anche in tabella', async ({ page }) => {
@@ -817,6 +839,116 @@ test.describe('la mappa delle leggi', () => {
     await expect(
       page.locator('.piede').getByRole('link', { name: /mappa delle leggi/i }),
     ).toBeVisible();
+  });
+});
+
+test.describe('testata', () => {
+  test('il tema si sceglie, e la scelta resta fra una pagina e l’altra', async ({ page }) => {
+    await page.goto('/');
+    const radice = page.locator('html');
+
+    // Senza scelta il tema è quello del sistema: il contesto di prova è
+    // chiaro, quindi la radice deve dire «chiaro».
+    await expect(radice).toHaveAttribute('data-theme', 'light');
+
+    await page.getByRole('button', { name: /tema/i }).click();
+    await page.getByRole('menuitemcheckbox', { name: 'Scuro' }).click();
+    await expect(radice).toHaveAttribute('data-theme', 'dark');
+
+    // Il fondo deve cambiare davvero: l'attributo da solo non prova che il CSS
+    // lo stia ascoltando, ed è esattamente l'errore che si fa spostando i
+    // colori dentro o fuori una media query.
+    const fondo = await page
+      .locator('body')
+      .evaluate((el) => window.getComputedStyle(el).backgroundColor);
+    expect(fondo).not.toBe('rgb(245, 246, 244)');
+
+    // La scelta vale per il sito, non per la pagina.
+    await page.goto('/numeri');
+    await expect(radice).toHaveAttribute('data-theme', 'dark');
+  });
+
+  test('la scelta esplicita vince sul sistema', async ({ browser }) => {
+    // Il caso che una media query da sola non copre: sistema scuro, ma chi
+    // legge ha chiesto il chiaro.
+    const contesto = await browser.newContext({ colorScheme: 'dark' });
+    const pagina = await contesto.newPage();
+    await pagina.goto('/');
+    await expect(pagina.locator('html')).toHaveAttribute('data-theme', 'dark');
+
+    await pagina.getByRole('button', { name: /tema/i }).click();
+    await pagina.getByRole('menuitemcheckbox', { name: 'Chiaro' }).click();
+    await expect(pagina.locator('html')).toHaveAttribute('data-theme', 'light');
+    const fondo = await pagina
+      .locator('body')
+      .evaluate((el) => window.getComputedStyle(el).backgroundColor);
+    expect(fondo, 'il sistema scuro sta ancora vincendo sulla scelta').toBe('rgb(245, 246, 244)');
+    await contesto.close();
+  });
+
+  test('il menù del tema si usa da tastiera', async ({ page }) => {
+    await page.goto('/');
+    await page.getByRole('button', { name: /tema/i }).focus();
+    await page.keyboard.press('Enter');
+    await expect(page.getByRole('menuitemcheckbox', { name: 'Chiaro' })).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(page.getByRole('menuitemcheckbox', { name: 'Chiaro' })).toHaveCount(0);
+    // Il fuoco torna da dove era partito: chi naviga da tastiera non deve
+    // ricominciare dall'inizio della pagina.
+    await expect(page.getByRole('button', { name: /tema/i })).toBeFocused();
+  });
+
+  test('la testata porta al codice sorgente', async ({ page }) => {
+    await page.goto('/');
+    const codice = page.locator('.testata').getByRole('link', { name: /codice del progetto/i });
+    await expect(codice).toBeVisible();
+    await expect(codice).toHaveAttribute('href', /github\.com/);
+  });
+});
+
+test.describe('home', () => {
+  test('sopra la piega ci sono le cifre, non un muro di testo', async ({ page }) => {
+    // 820 px è uno schermo da portatile: quello che sta qui dentro è tutto
+    // quello su cui si può contare per fermare chi arriva.
+    await page.setViewportSize({ width: 1200, height: 820 });
+    await page.goto('/');
+
+    const cifre = page.locator('.cifre-forti__voce');
+    expect(await cifre.count(), 'le cifre dell’apertura non ci sono').toBeGreaterThanOrEqual(3);
+
+    for (const voce of await cifre.all()) {
+      const riquadro = await voce.boundingBox();
+      expect(riquadro!.y, 'una cifra dell’apertura cade sotto la piega').toBeLessThan(820);
+      // Ogni cifra porta dove è spiegata con il suo limite accanto: un numero
+      // che non si può verificare è uno slogan.
+      await expect(voce.getByRole('link')).toHaveAttribute('href', /./);
+    }
+
+    // La riga di apertura è una, non cinque paragrafi.
+    const apertura = await page.locator('.apertura-forte__riga').textContent();
+    expect(apertura!.trim().length, 'l’apertura è tornata a essere un tema').toBeLessThan(160);
+  });
+
+  test('la home mostra le ultime trovate, non l’indice intero', async ({ page }) => {
+    await page.goto('/');
+    const schede = page.locator('.elenco .scheda');
+    const quante = await schede.count();
+    expect(quante).toBeGreaterThan(0);
+    expect(quante, 'la home è tornata a essere l’elenco completo').toBeLessThanOrEqual(8);
+
+    await page.getByRole('link', { name: /Tutte le .* segnalazioni/ }).click();
+    await expect(page).toHaveURL(/\/segnalazioni$/);
+    expect(await page.locator('.elenco .scheda').count()).toBeGreaterThan(quante);
+  });
+
+  test('i vecchi link filtrati della home continuano a funzionare', async ({ page }) => {
+    // Gli URL sono il prodotto (ADR 0008): `/?tipo=` era pubblicato, e deve
+    // riaprire la stessa vista dove adesso vive.
+    const risposta = await page.request.fetch('/?tipo=rinvio-ad-atto-abrogato', {
+      maxRedirects: 0,
+    });
+    expect(risposta.status()).toBe(308);
+    expect(risposta.headers()['location']).toContain('/segnalazioni?tipo=rinvio-ad-atto-abrogato');
   });
 });
 

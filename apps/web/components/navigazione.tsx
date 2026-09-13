@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const VOCI = [
-  { href: '/', label: 'Segnalazioni' },
+  { href: '/segnalazioni', label: 'Segnalazioni' },
   { href: '/blog', label: 'Approfondimenti' },
   { href: '/numeri', label: 'I numeri' },
   { href: '/norme', label: 'Norme' },
@@ -27,7 +27,7 @@ export function Navigazione() {
     <nav className="navigazione" aria-label="Navigazione principale">
       <ul>
         {VOCI.map((voce) => {
-          const attiva = voce.href === '/' ? pathname === '/' : pathname.startsWith(voce.href);
+          const attiva = pathname === voce.href || pathname.startsWith(`${voce.href}/`);
           return (
             <li key={voce.href}>
               <Link href={voce.href} {...(attiva ? { 'aria-current': 'page' as const } : {})}>

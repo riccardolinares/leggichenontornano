@@ -19,7 +19,10 @@
     "@leggichenontornano/corpus": "workspace:*",
     "@leggichenontornano/engine": "workspace:*",
     "@leggichenontornano/redazione": "workspace:*",
+    "@radix-ui/react-dropdown-menu": "^2.1.24",
+    "lucide-react": "^1.45.0",
     "next": "^15.5.4",
+    "next-themes": "^0.4.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
