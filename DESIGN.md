@@ -137,6 +137,11 @@ dentro una conversazione che parla d'altro, e hanno due secondi e un pollice.
   eccezione le citazioni alla lettera — testi di legge, dispositivi della
   Corte, licenze — che si riportano come sono. Un test end-to-end scorre le
   pagine e fallisce se ci trova le forme del voi.
+- **Un limite si dice dal lato di quello che si può fare.** Il perimetro non
+  cambia, cambia da che parte è detto: «la formula esatta è Y» al posto di «non
+  scrivere X», «su cosa puoi contare» al posto di «cosa non facciamo». Un
+  elenco di divieti insegna a diffidare prima ancora di aver letto qualcosa, e
+  non dice mai a cosa serve quello che si sta guardando.
 - I commenti dicono **perché**, non cosa. Un commento che ripete la riga sotto è
   rumore; un commento che spiega quale guasto quella riga previene è
   documentazione.

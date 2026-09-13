@@ -1167,6 +1167,59 @@ tbody th {
   box-shadow: 0 0 0 1rem var(--carta-incisa);
 }
 
+/* ---------- Le formule pronte per la stampa ---------- */
+
+/*
+ * Una formula si cita se si può copiare.
+ *
+ * Da qui la forma di ogni voce: a cosa serve, la frase già scritta, e sotto
+ * il perché è quella. La frase sta in un blocco suo, nel serif del testo
+ * normativo e con il segno del verderame a sinistra: chi ha fretta seleziona
+ * quel rettangolo e ha finito, senza dover ritagliare una proposizione da
+ * dentro un paragrafo.
+ *
+ * Il perché non è più piccolo per caso: dice il limite della formula, e un
+ * limite scritto in grigio minuscolo è un limite che si salta. Sta nello
+ * stesso blocco, subito sotto, come la riga dei limiti nella pagina dei
+ * numeri.
+ */
+.formule {
+  list-style: none;
+  padding: 0;
+  margin: 1.4rem 0 0;
+  display: grid;
+  gap: 1.8rem;
+}
+
+.formula__uso {
+  margin: 0 0 0.6rem;
+  font-family: var(--grottesco);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.formula__pronta {
+  margin: 0;
+  padding: 1rem 1.2rem;
+  background: var(--carta-alta);
+  border: 1px solid var(--bordo);
+  border-left: 4px solid var(--verderame);
+  border-radius: 2px;
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  line-height: 1.55;
+  max-width: none;
+}
+
+.formula__perche {
+  margin: 0.7rem 0 0;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--inchiostro-tenue);
+  border-left: 3px solid var(--ocra);
+  padding-left: 0.9rem;
+}
+
 /* ---------- Griglia di cifre ---------- */
 
 /*

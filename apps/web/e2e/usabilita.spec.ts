@@ -273,6 +273,31 @@ test.describe('vincoli non negoziabili', () => {
     ).toEqual([]);
   });
 
+  test('«Per la stampa» dà le formule pronte invece dell’elenco di cosa non scrivere', async ({
+    page,
+  }) => {
+    await page.goto('/stampa');
+    await expect(page.getByRole('heading', { name: /le formule pronte/i })).toBeVisible();
+
+    // Ogni formula è una frase da copiare, in un blocco suo: se tornassero
+    // dentro i paragrafi, la pagina smetterebbe di servire a chi ha fretta.
+    expect(await page.locator('.formula__pronta').count()).toBeGreaterThanOrEqual(5);
+
+    const testo = ((await page.locator('main').textContent()) ?? '').replace(/\s+/g, ' ');
+
+    // Il perimetro è lo stesso di quando era scritto come divieto, e sta tutto
+    // qui dentro: chi dichiara illegittima una norma, chi fa il confronto,
+    // cosa misura il contatore, e che il totale è quello della porzione di
+    // corpus ingerita.
+    expect(testo).toMatch(/spetta alla Corte costituzionale/i);
+    expect(testo).toMatch(/il modello estrae, il confronto lo fa il codice/i);
+    expect(testo).toMatch(/termin[ei] scadut[oi]/i);
+    expect(testo).toMatch(/porzione di corpus/i);
+
+    // E non torna a essere una lista di divieti.
+    expect(testo).not.toMatch(/cose da non scrivere/i);
+  });
+
   test('la home apre con una frase, non con un cruscotto di metriche', async ({ page }) => {
     await page.goto('/');
     const apertura = page.locator('.apertura');
