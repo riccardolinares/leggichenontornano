@@ -204,7 +204,6 @@ pre,
 .testata {
   background: var(--carta-alta);
   border-bottom: 1px solid var(--bordo);
-  background: var(--carta-alta);
 }
 
 .testata__riga {

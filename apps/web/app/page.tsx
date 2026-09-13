@@ -50,15 +50,27 @@ export default async function Home({ searchParams }: Props) {
 
   /* I numeri dell'apertura, ricavati dal dataset a ogni generazione.
      Scriverli a mano sarebbe più semplice e sarebbe il modo più rapido di
-     ritrovarsi una cifra falsa sulla home il giorno in cui il corpus cambia. */
-  const attiColpiti = new Set(tutte.flatMap((a) => a.urns.map((u) => u.split('~')[0]))).size;
-  const annoPiuVecchio = tutte.reduce((max, a) => {
+     ritrovarsi una cifra falsa sulla home il giorno in cui il corpus cambia.
+
+     Il conteggio parte dalle sole segnalazioni di `rinvio-ad-atto-abrogato` e
+     prende **solo il primo URN**, che è l'atto che rinvia. Contare tutti gli
+     URN di tutte le segnalazioni gonfiava la cifra con gli atti bersaglio, che
+     sono per definizione abrogati: la frase diceva «atti tuttora in vigore» e
+     fra quegli atti ce n'erano di cancellati. */
+  const rinviiAdAbrogato = tutte.filter((a) => a.checkId === 'rinvio-ad-atto-abrogato');
+  const attiColpiti = new Set(
+    rinviiAdAbrogato.map((a) => (a.urns[0] ? urnAtto(a.urns[0]) : '')).filter((u) => u !== ''),
+  ).size;
+  const annoPiuVecchio = rinviiAdAbrogato.reduce((max, a) => {
     const m = /abrogato da (\d+) anni/.exec(a.title);
     return m ? Math.max(max, Number(m[1])) : max;
   }, 0);
-  const anniMediPerMandato = contatore
-    ? Math.round((contatore.totalDaysLate / contatore.mandates / 365.25) * 10) / 10
-    : 0;
+  /* La divisione si fa solo dove ha un senso. Con zero mandati non esiste una
+     media, e `0 / 0` produrrebbe un `NaN` che prima o poi qualcuno stampa. */
+  const anniMediPerMandato =
+    contatore && contatore.mandates > 0
+      ? Math.round((contatore.totalDaysLate / contatore.mandates / 365.25) * 10) / 10
+      : null;
 
   return (
     <div className="contenitore">
@@ -78,7 +90,7 @@ export default async function Home({ searchParams }: Props) {
       </p>
 
       {/* Il colpo che fa notizia, e che regge: sono atti di oggi, non reperti. */}
-      {attiColpiti > 0 ? (
+      {attiColpiti > 0 && annoPiuVecchio > 0 ? (
         <p className="colpo">
           <strong>{numero(attiColpiti)} atti tuttora in vigore</strong> rinviano a una norma che è
           stata abrogata. Il rinvio più vecchio punta a una legge cancellata{' '}
@@ -87,7 +99,7 @@ export default async function Home({ searchParams }: Props) {
         </p>
       ) : null}
 
-      {contatore && contatore.mandates > 0 ? (
+      {contatore && anniMediPerMandato !== null ? (
         <p className="colpo">
           <strong>{numero(contatore.mandates)} provvedimenti attuativi</strong> promessi da una
           legge hanno un termine scaduto: in media da{' '}
