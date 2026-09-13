@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { CHECK_DEFINITIONS } from '@antinomia/engine';
 import { Tabella } from '@/components/tabella';
 import { dataset } from '@/lib/dataset';
+import { metadatiPagina } from '@/lib/seo';
 import {
   classeGravita,
   data,
@@ -24,11 +25,16 @@ import {
  * La pagina resta economica: legge un file JSONL già in memoria.
  */
 
-export const metadata = {
-  title: 'Le leggi che non tornano',
-  description:
+/* Il canonical è `/` anche quando l'URL porta `?tipo=`: il filtro mostra un
+   sottoinsieme dello stesso indice, e senza canonical ogni filtro diventerebbe
+   una pagina concorrente della home. Il posto indicizzabile per un singolo
+   controllo è la sua pagina, `/controllo/<id>`, non un parametro. */
+export const metadata = metadatiPagina({
+  titolo: 'Le leggi che non tornano',
+  descrizione:
     'Indice delle incongruenze rilevate nella legislazione italiana, con le prove e la regola che le ha trovate.',
-};
+  percorso: '/',
+});
 
 interface Props {
   searchParams: Promise<{ tipo?: string }>;
@@ -67,6 +73,12 @@ export default async function Home({ searchParams }: Props) {
   }, 0);
   /* La divisione si fa solo dove ha un senso. Con zero mandati non esiste una
      media, e `0 / 0` produrrebbe un `NaN` che prima o poi qualcuno stampa. */
+  /* I controlli che hanno prodotto qualcosa, pubblicato o no: la loro pagina
+     ha comunque contenuto, e per quelli in coda dice perché ci resta. */
+  const controlliConEsito = CHECK_DEFINITIONS.filter(
+    (c) => (perTipo.get(c.id) ?? 0) > 0 || (reader.metric(c.id)?.found ?? 0) > 0,
+  );
+
   const anniMediPerMandato =
     contatore && contatore.mandates > 0
       ? Math.round((contatore.totalDaysLate / contatore.mandates / 365.25) * 10) / 10
@@ -109,6 +121,11 @@ export default async function Home({ searchParams }: Props) {
         </p>
       ) : null}
 
+      <p className="colpo">
+        <Link href="/numeri">Tutti i numeri, con quello che non dicono</Link> — le cifre più dure
+        che questo dataset sostiene, ciascuna con il suo limite scritto accanto.
+      </p>
+
       {manifest ? (
         <p className="riga-corpus">
           Su un corpus di {numero(manifest.counts.acts)} atti e {numero(manifest.counts.relations)}{' '}
@@ -138,6 +155,23 @@ export default async function Home({ searchParams }: Props) {
           </li>
         ))}
       </ul>
+
+      {/* Il filtro mostra un sottoinsieme dell'indice; la pagina del controllo
+          dice anche **cosa cerca quella regola e quanto è precisa**, ed è quella
+          che ha senso citare o trovare da un motore di ricerca. Sta qui come
+          riga di testo e non come seconda fila di pulsanti: due file di
+          pulsanti con etichette simili sono un modo sicuro di far cliccare la
+          cosa sbagliata. */}
+      <p className="riga-corpus">
+        Cosa cerca ciascuna regola, e quanto è precisa:{' '}
+        {controlliConEsito.map((c, i) => (
+          <span key={c.id}>
+            {i > 0 ? ' · ' : ''}
+            <Link href={`/controllo/${c.id}`}>{c.label}</Link>
+          </span>
+        ))}
+        .
+      </p>
 
       {anomalie.length === 0 ? (
         <div className="niente-segnale">

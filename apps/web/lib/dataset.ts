@@ -24,7 +24,7 @@ export function dataset(): SnapshotReader {
 
 /** Base pubblica del sito, per gli URL assoluti nei metadati social. */
 export const SITE_URL = (
-  process.env['ANTINOMIA_SITE_URL'] ?? 'https://leleggichenontornano.it'
+  process.env['ANTINOMIA_SITE_URL'] ?? 'https://leggichenontornano.it'
 ).replace(/\/+$/, '');
 
 /** Repository pubblica: il pulsante «Non è un conflitto» apre una issue qui. */

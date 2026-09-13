@@ -3,13 +3,15 @@ import { REPO_URL, SITE_URL, dataset } from '@/lib/dataset';
 import { data, numero } from '@/lib/testo';
 import { Tabella } from '@/components/tabella';
 import { ContatoreNazionale } from '@/components/contatore';
+import { metadatiPagina } from '@/lib/seo';
 
 export const dynamic = 'force-static';
 
-export const metadata = {
-  title: 'Per la stampa',
-  description: 'Dataset scaricabile, frase citabile, contatti e cosa possiamo e non possiamo dire.',
-};
+export const metadata = metadatiPagina({
+  titolo: 'Per la stampa',
+  descrizione: 'Dataset scaricabile, frase citabile, contatti e cosa possiamo e non possiamo dire.',
+  percorso: '/stampa',
+});
 
 export default function Stampa() {
   const reader = dataset();

@@ -219,9 +219,43 @@ export class SnapshotReader {
       const pronuncia = (this.data.pronunce ?? []).find((p) => p.ecli === ecli);
       if (pronuncia) out.push({ pronuncia, relazioni });
     }
-    return out.sort((a, b) =>
-      (b.pronuncia.dataDeposito ?? '') < (a.pronuncia.dataDeposito ?? '') ? -1 : 1,
+    return out.sort((a, b) => perDepositoDecrescente(a.pronuncia, b.pronuncia));
+  }
+
+  /** Tutte le pronunce del dataset, dalla più recente. */
+  pronunce(): SnapshotPronuncia[] {
+    return [...(this.data.pronunce ?? [])].sort(perDepositoDecrescente);
+  }
+
+  /** Una pronuncia per ECLI, che è l'identificatore che la Corte le dà. */
+  pronuncia(ecli: string): SnapshotPronuncia | null {
+    return (this.data.pronunce ?? []).find((p) => p.ecli === ecli) ?? null;
+  }
+
+  /**
+   * Le norme colpite da una pronuncia: il verso opposto di `pronunceSuAtto`.
+   *
+   * Serve a rispondere alla domanda che si fa chi cerca una sentenza per
+   * numero — «cosa ha abbattuto, di preciso» — che dal lato dell'atto non si
+   * vede: dall'atto si vede cosa è stato colpito **lì**, non l'intera portata
+   * della decisione.
+   */
+  attiColpitiDa(ecli: string): Array<{ act: SnapshotAct; relazioni: SnapshotRelation[] }> {
+    const archi = this.data.relations.filter(
+      (r) => r.type === 'DICHIARA_ILLEGITTIMO' && r.sourceUrn === ecli,
     );
+    const perAtto = new Map<string, SnapshotRelation[]>();
+    for (const a of archi) {
+      const lista = perAtto.get(a.targetUrn);
+      if (lista) lista.push(a);
+      else perAtto.set(a.targetUrn, [a]);
+    }
+    const out: Array<{ act: SnapshotAct; relazioni: SnapshotRelation[] }> = [];
+    for (const [urn, relazioni] of perAtto) {
+      const act = this.actByUrn.get(urn);
+      if (act) out.push({ act, relazioni });
+    }
+    return out;
   }
 
   metric(checkId: string): SnapshotCheckMetric | null {
@@ -265,6 +299,25 @@ function normalizzaRicerca(value: string): string {
     .toLowerCase()
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '');
+}
+
+/**
+ * Dalla più recente, e con l'uguaglianza gestita.
+ *
+ * Un comparatore che non restituisce mai `0` viola il contratto di `sort`:
+ * due decisioni depositate lo stesso giorno — o entrambe senza data — si
+ * dichiarerebbero a vicenda «viene prima», e l'ordine finale dipenderebbe
+ * dall'implementazione. Qui l'ordine deve essere lo stesso ovunque, perché
+ * il sito lo genera staticamente e chi rilegge il dataset deve ritrovarlo.
+ */
+function perDepositoDecrescente(
+  a: { dataDeposito: string | null },
+  b: { dataDeposito: string | null },
+): number {
+  const primo = a.dataDeposito ?? '';
+  const secondo = b.dataDeposito ?? '';
+  if (primo === secondo) return 0;
+  return primo < secondo ? 1 : -1;
 }
 
 function groupBy<T, K>(items: readonly T[], key: (item: T) => K): Map<K, T[]> {

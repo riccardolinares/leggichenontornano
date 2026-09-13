@@ -21,7 +21,7 @@ body:
     attributes:
       label: Indirizzo della segnalazione
       description: L'URL della scheda. Se avete usato il pulsante sul sito è già qui.
-      placeholder: https://leleggichenontornano.it/anomalia/...
+      placeholder: https://leggichenontornano.it/anomalia/...
     validations:
       required: true
 

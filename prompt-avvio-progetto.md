@@ -10,7 +10,7 @@
 
 Stiamo costruendo una piattaforma open source che rende visibili le incongruenze, le contraddizioni e le aree grigie della legislazione italiana.
 
-**Nome di lavoro pubblico:** Le leggi che non tornano (dominio candidato `leleggichenontornano.it`)
+**Nome di lavoro pubblico:** Le leggi che non tornano (dominio candidato `leggichenontornano.it`)
 **Nome tecnico** per repository, API e pacchetti: `antinomia`
 **Licenza:** EUPL 1.2
 **Obiettivo:** progetto civico, non commerciale. Deve parlare al grande pubblico, fare notizia e reggere l'esame di un giurista ostile.
