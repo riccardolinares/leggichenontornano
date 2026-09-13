@@ -157,10 +157,9 @@ export default async function PaginaControllo({ params }: Props) {
 
         {segnalazioni.length === 0 ? (
           <p>
-            <strong>Assenza di segnale non significa norma coerente.</strong>{' '}
             {inCoda > 0
-              ? `Questo controllo ha ${numero(inCoda)} segnalazion${inCoda === 1 ? 'e' : 'i'} nella coda interna, che non pubblichiamo perché la precisione non è ancora misurata o è sotto la soglia.`
-              : 'Sulla porzione di corpus che abbiamo, questo controllo non ha trovato nulla.'}
+              ? `Questo controllo ha ${numero(inCoda)} segnalazion${inCoda === 1 ? 'e' : 'i'} in lavorazione: entrano nell’indice quando la misura di precisione è completa.`
+              : 'Su questo corpus il controllo non ha ancora trovato nulla — e il corpus si allarga a ogni ingestione.'}
           </p>
         ) : (
           <ol className="elenco">

@@ -89,15 +89,25 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </div>
         </header>
 
-        {/* L'avvertenza è permanente e non è un banner da chiudere: compare su
-            ogni pagina che può mostrare testo normativo, come richiesto dai
-            termini di Normattiva e dal metodo del progetto. */}
+        {/* La riga sulle fonti è permanente e non è un banner da chiudere:
+            compare su ogni pagina che mostra testo normativo, perché i termini
+            di Normattiva lo richiedono e perché è un'informazione utile — dice
+            a chi legge da dove viene ogni parola e dove andarla a verificare.
+
+            È scritta in positivo di proposito: «testo che fa fede» al posto di
+            «non ha carattere di ufficialità» dice esattamente la stessa cosa e
+            la dice a chi non sa cosa voglia dire «carattere di ufficialità».
+
+            L'ultima frase è il vecchio «questo sito non fornisce consulenza
+            legale»: ha una funzione legale vera e non si toglie, ma dice anche a
+            cosa il sito serve invece di limitarsi a dire a cosa non serve. */}
         <div className="avvertenza">
           <p className="contenitore">
-            Elaborazione automatica su dati <strong>Normattiva</strong> (CC BY 4.0). La banca dati
-            Normattiva non ha carattere di ufficialità: l’unico testo ufficiale è quello pubblicato
-            sulla <em>Gazzetta Ufficiale</em>, che prevale in caso di discordanza. Questo sito non
-            fornisce consulenza legale.
+            I testi vengono da <strong>Normattiva</strong> (CC BY 4.0) e sono citati alla lettera,
+            così ogni affermazione di questo sito si può risalire fino alla fonte. Il testo che fa
+            fede resta quello pubblicato sulla <em>Gazzetta Ufficiale</em>, e prevale in caso di
+            discordanza. Quello che trovate qui serve a farsi un’opinione documentata in fretta; il
+            parere legale lo dà chi ha titolo per darlo.
           </p>
         </div>
 

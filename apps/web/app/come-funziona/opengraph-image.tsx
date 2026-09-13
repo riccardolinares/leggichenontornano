@@ -11,8 +11,8 @@ export default function Image() {
       occhiello: 'Come funziona',
       accento: OG.verderame,
       titolo:
-        'Nessun modello che giudica le norme. Query deterministiche sul grafo, testi originali, e i limiti dichiarati.',
-      nota: 'Assenza di segnale non significa norma coerente.',
+        'Interrogazioni deterministiche sul grafo delle norme, testi originali in pagina, ogni regola in chiaro.',
+      nota: 'Ogni segnalazione si può rifare da soli, con il dataset scaricabile.',
     }),
     size,
   );

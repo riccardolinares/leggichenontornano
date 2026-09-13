@@ -29,7 +29,7 @@ export default function Image() {
             unita: 'segnalazioni',
             titolo:
               'Punti in cui la legislazione italiana non torna, con i testi e la regola che li ha trovati.',
-            nota: 'Ogni segnalazione mostra le sue prove e i suoi limiti.',
+            nota: 'Con i testi originali e la regola che li ha trovati.',
           }
         : {
             occhiello: 'Le leggi che non tornano',

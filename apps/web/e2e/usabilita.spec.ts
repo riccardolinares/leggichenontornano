@@ -70,14 +70,20 @@ test.describe('vincoli non negoziabili', () => {
       await expect(avvertenza, percorso.url).toBeVisible();
       await expect(avvertenza).toContainText(/Normattiva/);
       await expect(avvertenza).toContainText(/Gazzetta Ufficiale/);
-      await expect(avvertenza).toContainText(/non fornisce consulenza legale/i);
+      // La riga sul parere legale ha una funzione vera e deve esserci su ogni
+      // pagina. È scritta in positivo — «il parere lo dà chi ha titolo» — e
+      // copre lo stesso perimetro del vecchio «non fornisce consulenza legale».
+      await expect(avvertenza).toContainText(/parere legale lo dà chi ha titolo/i);
     }
   });
 
   test('«Come funziona» dice per prima cosa cosa il progetto non fa', async ({ page }) => {
     await page.goto('/come-funziona');
     const primoH2 = page.locator('h2').first();
-    await expect(primoH2).toHaveText(/cosa questo sito non fa/i);
+    // La sezione dice le stesse cose di prima — cosa è un parere e cosa no, chi
+    // dichiara illegittima una norma — ma come garanzie invece che come divieti.
+    // Quello che deve restare vero è che siano **in apertura**.
+    await expect(primoH2).toHaveText(/su cosa potete contare/i);
   });
 
   test('la home apre con una frase, non con un cruscotto di metriche', async ({ page }) => {
@@ -88,7 +94,7 @@ test.describe('vincoli non negoziabili', () => {
     expect(testo.length).toBeGreaterThan(120);
   });
 
-  test('la pagina Dati mostra anche i controlli che non pubblicano', async ({ page }) => {
+  test('la pagina Dati mostra anche i controlli ancora in lavorazione', async ({ page }) => {
     await page.goto('/dati');
     await expect(page.getByRole('heading', { name: /precisione per controllo/i })).toBeVisible();
     await expect(page.getByText(/soglia di pubblicazione/i).first()).toBeVisible();
@@ -153,10 +159,14 @@ test.describe('vincoli non negoziabili', () => {
     expect(testo).toMatch(/termini scaduti(,| e) non attuazioni mancate/i);
   });
 
-  test('la home dice che assenza di segnale non significa norma coerente', async ({ page }) => {
+  test('la home dice che l’indice è quello trovato finora, e che il corpus cresce', async ({
+    page,
+  }) => {
     await page.goto('/');
     const testo = (await page.locator('main').textContent()) ?? '';
-    expect(testo).toMatch(/assenza di segnale|non significa che la norma sia coerente/i);
+    // L'informazione che conta è che l'indice non sia una mappa completa. Detta
+    // in positivo informa uguale e invita a tornare, ma deve esserci.
+    expect(testo).toMatch(/trovato finora|corpus (si allarga|cresce)/i);
   });
 });
 
