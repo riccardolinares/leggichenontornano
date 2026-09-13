@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { SITE_URL } from './dataset';
+import { SITE_URL, X_PROGETTO } from './dataset';
 
 /**
  * I metadati delle pagine, costruiti in un posto solo.
@@ -49,7 +49,16 @@ export function metadatiPagina({
       siteName: NOME_SITO,
       locale: 'it_IT',
     },
-    twitter: { card: 'summary_large_image', title: titolo, description: descrizione },
+    /* `creator` e `site` sono quello che fa comparire «di @…» sotto la scheda
+       su X, e che rende cliccabile l'account dal post di qualcun altro. Senza,
+       la scheda è corretta ma anonima: il progetto circola e chi lo fa no. */
+    twitter: {
+      card: 'summary_large_image',
+      title: titolo,
+      description: descrizione,
+      site: X_PROGETTO,
+      creator: X_PROGETTO,
+    },
     ...(nonIndicizzare ? { robots: { index: false, follow: true } } : {}),
   };
 }

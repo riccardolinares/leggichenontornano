@@ -415,6 +415,15 @@ risposte cambiano la precisione misurata del controllo che l'ha prodotta.
 Build in public dal primo commit. Per un progetto civico il codice aperto è parte
 dell'argomento: _verificate anche noi_.
 
+## Chi lo fa
+
+- [Riccardo Linares](https://x.com/riccardolinares) — fondatore
+- [@dom_gag_96](https://x.com/dom_gag_96) — co-fondatore
+- [@antoniodongu](https://x.com/antoniodongu) — l'idea di partenza
+
+L'idea non è di chi ha scritto il codice, e sta scritto qui perché è il primo
+posto in cui qualcuno la cerca.
+
 ## Licenze
 
 - **Software:** [EUPL 1.2](LICENSE)

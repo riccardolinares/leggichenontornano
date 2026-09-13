@@ -5,7 +5,15 @@ import './globals.css';
 import { MarchioGithub } from '@/components/marchio-github';
 import { Navigazione } from '@/components/navigazione';
 import { FornitoreTema, SelettoreTema } from '@/components/tema';
-import { EMAIL, REPO_URL, SITE_URL, SOSTIENI_URL, dataset } from '@/lib/dataset';
+import {
+  EMAIL,
+  PERSONE,
+  REPO_URL,
+  SITE_URL,
+  SOSTIENI_URL,
+  X_PROGETTO,
+  dataset,
+} from '@/lib/dataset';
 import { NOME_SITO, datiStrutturatiSito } from '@/lib/seo';
 
 /*
@@ -47,7 +55,13 @@ export const metadata: Metadata = {
     title: NOME_SITO,
     description: DESCRIZIONE,
   },
-  twitter: { card: 'summary_large_image', title: NOME_SITO, description: DESCRIZIONE },
+  twitter: {
+    card: 'summary_large_image',
+    title: NOME_SITO,
+    description: DESCRIZIONE,
+    site: X_PROGETTO,
+    creator: X_PROGETTO,
+  },
   // `max-image-preview: large` è quello che permette all'anteprima di comparire
   // a piena larghezza nei risultati di ricerca invece che come miniatura.
   robots: {
@@ -188,6 +202,24 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     <li>
                       <Link href="/dicono">Dicono di noi</Link>
                     </li>
+                  </ul>
+                </div>
+
+                {/* Chi fa il progetto sta nel piede accanto alle licenze, non
+                    in una pagina «chi siamo»: è un'attribuzione, e
+                    un'attribuzione sta dove stanno le altre. L'idea è di chi
+                    l'ha avuta, e non di chi ha scritto il codice. */}
+                <div>
+                  <h2>Chi lo fa</h2>
+                  <ul>
+                    {PERSONE.map((persona) => (
+                      <li key={persona.x}>
+                        <a href={`https://x.com/${persona.x}`} rel="noopener">
+                          {persona.nome}
+                        </a>{' '}
+                        — {persona.ruolo}
+                      </li>
+                    ))}
                   </ul>
                 </div>
 
