@@ -285,7 +285,7 @@ main {
 
 .scheda {
   border-top: 1px solid var(--bordo);
-  padding-block: 1.6rem;
+  padding-block: 2.2rem;
 }
 
 .scheda__titolo {
@@ -422,18 +422,20 @@ main {
 }
 
 .sezione {
-  margin-block: 3rem;
+  margin-block: 4rem;
 }
 
 .sezione__titolo {
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
+  /* Maiuscoletto spaziato basta da solo a dire «questa è un'etichetta di
+     sezione». Prima c'erano tre segnali per lo stesso lavoro — maiuscolo,
+     grassetto forte e una riga sotto — e tre segnali per un lavoro solo sono
+     rumore, non enfasi. */
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--inchiostro-debole);
-  border-bottom: 1px solid var(--bordo);
-  padding-bottom: 0.4rem;
-  margin-bottom: 1.2rem;
+  margin-bottom: 1.5rem;
 }
 
 /* Testi affiancati: il testo originale sta sempre sopra i campi estratti. */
@@ -449,10 +451,13 @@ main {
   }
 }
 
+/* I pannelli si distinguono per il **fondo**, non per un bordo che lo ripete.
+   Il bordo resta dove separa davvero due cose — le righe di una tabella, la
+   traccia delle vigenze — e sparisce dove raddoppiava solo il riempimento. */
 .prova {
-  border: 1px solid var(--bordo);
   background: var(--carta-alta);
-  padding: 1.1rem 1.2rem;
+  padding: 1.2rem 1.3rem;
+  border-radius: 3px;
 }
 
 .prova__etichetta {
@@ -483,8 +488,8 @@ main {
 /* ---------- Barra delle vigenze ---------- */
 
 .vigenze {
-  border: 1px solid var(--bordo);
   background: var(--carta-alta);
+  border-radius: 3px;
   padding: 1rem 1.2rem 1.2rem;
 }
 
@@ -559,8 +564,8 @@ details > *:last-child {
   display: block;
   overflow-x: auto;
   background: var(--carta-incisa);
-  border: 1px solid var(--bordo);
-  padding: 0.9rem 1rem;
+  border-radius: 3px;
+  padding: 1rem 1.1rem;
   font-size: 0.8rem;
   line-height: 1.55;
   white-space: pre;
@@ -624,12 +629,12 @@ details > *:last-child {
 
 .articolo__num {
   font-family: var(--grottesco);
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
   color: var(--inchiostro-debole);
-  margin: 0 0 0.3rem;
+  margin: 0 0 0.35rem;
 }
 
 .articolo__rubrica {
@@ -698,10 +703,13 @@ th {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  padding: 0.55rem 1rem;
+  padding: 0.6rem 1.05rem;
+  /* Il bordo resta: è quello che dà al bottone il contrasto di 3:1 richiesto
+     per un elemento non testuale. A sparire è il riempimento, che duplicava il
+     confine senza aggiungere informazione. */
   border: 1px solid var(--verderame);
-  border-radius: 2px;
-  background: var(--carta-alta);
+  border-radius: 3px;
+  background: transparent;
   color: var(--verderame);
   font-family: inherit;
   font-size: 0.92rem;
@@ -736,10 +744,14 @@ th {
 
 /* ---------- Niente segnale ---------- */
 
+/* Questo riquadro deve farsi notare: dice che l'assenza di segnale non
+   significa norma coerente, ed è la cautela più importante del sito. Basta la
+   riga sul lato che l'occhio incontra per primo; il contorno sugli altri tre
+   non aggiungeva niente. */
 .niente-segnale {
-  border: 1px solid var(--bordo-forte);
   border-left: 4px solid var(--ocra);
   background: var(--carta-alta);
+  border-radius: 0 3px 3px 0;
   padding: 1.3rem 1.5rem;
   max-width: 46rem;
 }
@@ -751,8 +763,8 @@ th {
 /* ---------- Grafo a strati ---------- */
 
 .grafo {
-  border: 1px solid var(--bordo);
   background: var(--carta-alta);
+  border-radius: 3px;
   padding: 1rem;
   overflow-x: auto;
 }
@@ -797,9 +809,9 @@ th {
 
 /* L'attribuzione a Normattiva non sta in grigio chiaro nel footer. */
 .attribuzione {
-  border: 1px solid var(--bordo-forte);
   background: var(--carta-incisa);
-  padding: 1rem 1.2rem;
+  border-radius: 3px;
+  padding: 1.1rem 1.3rem;
   color: var(--inchiostro);
   font-size: 0.92rem;
   max-width: 46rem;
@@ -837,9 +849,11 @@ th {
 /* ---------- Contatore nazionale ---------- */
 
 .contatore {
-  border: 1px solid var(--bordo-forte);
+  /* Come «niente-segnale»: la riga sul lato basta, il contorno sugli altri tre
+     ripeteva il fondo. */
   border-left: 4px solid var(--ossido);
   background: var(--carta-alta);
+  border-radius: 0 3px 3px 0;
   padding: 1.4rem 1.6rem;
   max-width: 46rem;
 }
@@ -867,4 +881,23 @@ th {
   color: var(--inchiostro-tenue);
   margin: 0;
   max-width: 38rem;
+}
+
+/* ---------- Nota sulla qualità della fonte ---------- */
+
+/*
+ * Una discordanza fra le date dichiarate dalla fonte è un'informazione da non
+ * perdere, ma è una nota a piè di pagina: dentro l'intestazione della tabella
+ * delle vigenze ereditava maiuscolo, grassetto e spaziatura, e finiva per
+ * gridare più del dato che annota.
+ */
+.nota-fonte {
+  display: inline-block;
+  margin-top: 0.3rem;
+  color: var(--ocra);
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  font-size: 0.8rem;
+  line-height: 1.4;
 }
