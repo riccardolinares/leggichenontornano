@@ -28,8 +28,15 @@ import { ETICHETTA_FAMIGLIA, type Famiglia } from '@/lib/grafo-tipi';
 export interface NodoVivo {
   urn: string;
   nome: string;
-  /** Percorso della scheda della norma: un grafo che non porta a niente è un salvaschermo. */
-  percorso: string;
+  /**
+   * Percorso della scheda, o `null` quando quel vertice non ne ha una.
+   *
+   * Un grafo che non porta a niente è un salvaschermo, ma un nodo che porta a
+   * una pagina inesistente è peggio: promette e non mantiene. I vertici senza
+   * scheda restano nel disegno — sono relazioni vere — e semplicemente non si
+   * cliccano.
+   */
+  percorso: string | null;
   grado: number;
   entranti: number;
   uscenti: number;
@@ -386,8 +393,11 @@ export function GrafoVivo({
              sola, e l'evidenziazione non comparirebbe mai. */
           istanza?.linkColor(coloreArco);
         })
-        // Cliccare un nodo porta alla scheda della norma: è il punto di tutto.
-        .onNodeClick((n) => router.push(n.percorso))
+        // Cliccare un nodo porta alla sua scheda: è il punto di tutto. Dove la
+        // scheda non c'è, il clic non fa niente invece di portare su un 404.
+        .onNodeClick((n) => {
+          if (n.percorso) router.push(n.percorso);
+        })
         .onEngineStop(() => {
           if (!vivo) return;
           setInMoto(false);

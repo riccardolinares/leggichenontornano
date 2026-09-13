@@ -1,10 +1,17 @@
 import Link from 'next/link';
 import { GrafoVivo, type ArcoVivo, type NodoVivo } from '@/components/grafo-vivo';
 import { Tabella } from '@/components/tabella';
-import { REPO_URL } from '@/lib/dataset';
+import { dataset, REPO_URL } from '@/lib/dataset';
 import { ETICHETTA_FAMIGLIA, grafo } from '@/lib/grafo';
 import { metadatiPagina } from '@/lib/seo';
-import { data, numero, percorsoNorma } from '@/lib/testo';
+import {
+  data,
+  numero,
+  percorsoNorma,
+  percorsoPronuncia,
+  pronunciaDaEcli,
+  titoloPronuncia,
+} from '@/lib/testo';
 
 /*
  * La mappa viva: lo stesso grafo di `/grafo`, con la simulazione accesa.
@@ -42,21 +49,55 @@ export const metadata = metadatiPagina({
 
 export default function PaginaGrafoVivo() {
   const g = grafo();
+  const pronunce = dataset().pronunce();
+
+  /*
+   * Non tutti i nodi del grafo sono norme.
+   *
+   * Fra i vertici ci sono anche le pronunce della Corte costituzionale, che si
+   * riconoscono dall'ECLI e vivono sotto `/corte`, non sotto `/norma`.
+   * Costruire l'indirizzo con `percorsoNorma()` per tutti produceva
+   * cinquantasette link plausibili e tutti morti — lo stesso difetto già
+   * trovato nel grafo attorno alla singola norma, e per la stessa ragione: un
+   * indirizzo composto dal codice è sempre presente, anche quando non porta da
+   * nessuna parte.
+   *
+   * `/grafo` non aveva il problema perché elenca solo le norme cancellate che
+   * qualcuno richiama, e quelle sono norme per definizione. Qui l'elenco è
+   * tutto il grafo, e il grafo contiene entrambe le cose.
+   */
+  function indirizzo(urn: string): { percorso: string; nome: string } | null {
+    if (urn.startsWith('ECLI:')) {
+      const pronuncia = pronunciaDaEcli(urn, pronunce);
+      if (!pronuncia) return null;
+      return {
+        percorso: percorsoPronuncia(pronuncia, pronunce),
+        nome: titoloPronuncia(pronuncia),
+      };
+    }
+    return { percorso: percorsoNorma(urn), nome: '' };
+  }
 
   /* Dal grafo del server si prende tutto tranne le posizioni: quelle le
      calcola la simulazione nel browser, ed è l'unica differenza con `/grafo`. */
-  const nodi: NodoVivo[] = g.nodi.map((n) => ({
-    urn: n.urn,
-    nome: n.nome,
-    percorso: percorsoNorma(n.urn),
-    grado: n.grado,
-    entranti: n.entranti,
-    uscenti: n.uscenti,
-    abrogato: n.abrogato,
-    fuoriCorpus: n.fuoriCorpus,
-    puntaAlVuoto: n.puntaAlVuoto,
-    segnalazioni: n.segnalazioni,
-  }));
+  const nodi: NodoVivo[] = g.nodi.map((n) => {
+    const dove = indirizzo(n.urn);
+    return {
+      urn: n.urn,
+      nome: dove?.nome || n.nome,
+      /* Senza indirizzo il nodo resta nel disegno — è un vertice vero del grafo —
+       ma smette di essere un collegamento: meglio un nome senza link che un
+       link verso una pagina che non c'è. */
+      percorso: dove?.percorso ?? null,
+      grado: n.grado,
+      entranti: n.entranti,
+      uscenti: n.uscenti,
+      abrogato: n.abrogato,
+      fuoriCorpus: n.fuoriCorpus,
+      puntaAlVuoto: n.puntaAlVuoto,
+      segnalazioni: n.segnalazioni,
+    };
+  });
 
   const archi: ArcoVivo[] = g.archi.map((a) => ({
     da: a.da,
@@ -180,9 +221,7 @@ export default function PaginaGrafoVivo() {
           <tbody>
             {inElenco.map((n) => (
               <tr key={n.urn}>
-                <th scope="row">
-                  <Link href={n.percorso}>{n.nome}</Link>
-                </th>
+                <th scope="row">{n.percorso ? <Link href={n.percorso}>{n.nome}</Link> : n.nome}</th>
                 <td>{numero(n.entranti)}</td>
                 <td>{numero(n.uscenti)}</td>
                 <td>
