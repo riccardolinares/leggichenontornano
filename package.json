@@ -16,6 +16,7 @@
     "test": "pnpm -r run test",
     "lint": "pnpm -r run lint",
     "pipeline": "pnpm --filter @leggichenontornano/corpus run pipeline",
+    "consumi": "node packages/consumi/dist/cli.js",
     "e2e": "pnpm --filter @leggichenontornano/web run e2e",
     "format": "prettier --write ."
   },

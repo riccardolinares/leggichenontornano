@@ -2050,6 +2050,39 @@ a.griglia-cifre__voce:focus-visible .griglia-cifre__etichetta {
   max-width: 22rem;
 }
 
+/* ---------- Le tre strade per contribuire ---------- */
+
+/* Le tre strade hanno la stessa dignità, e in una pagina la dignità è una cosa
+   che si vede: stessa larghezza, stesso fondo, stesso corpo di testo, nessun
+   ordine che suggerisca una scala. Un elenco puntato le avrebbe messe in fila —
+   e la prima di una fila è sempre la più importante, anche quando chi l'ha
+   scritta giura di no. Su schermo stretto si impilano, ed è l'unico punto in cui
+   un ordine esiste: lì lo decide la larghezza, non noi. */
+.strade {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));
+  margin-top: 1.6rem;
+}
+
+.strada {
+  background: var(--carta-alta);
+  border: 1px solid var(--bordo);
+  border-radius: 2px;
+  padding: 1.3rem 1.4rem;
+}
+
+.strada h3 {
+  margin-top: 0;
+  margin-bottom: 0.7rem;
+  font-size: 1.05rem;
+}
+
+.strada p {
+  font-size: 0.94rem;
+  line-height: 1.6;
+}
+
 /* ---------- Pagine legali ---------- */
 
 /*

@@ -45,6 +45,16 @@ campione su cui è misurata.
   pipeline schedulata che riscarica il delta e apre una pull request con il diff.
 - **Dataset derivato** in JSONL e Parquet, con licenze e provenienza nel
   manifesto.
+- **Registro dei consumi e pagina «Costi e contributori»** (`/costi`). Ogni
+  chiamata a un modello linguistico passa da un unico client che ne registra
+  data, modello, token e costo stimato in `data/consumi/`, un JSONL append-only
+  versionato nel repository; i prezzi stanno in un file solo, ciascuno con la
+  data da cui vale, e le righe già scritte non si ricalcolano quando il listino
+  cambia. La pagina mostra la spesa, i contributori letti da GitHub in fase di
+  costruzione e le tre strade per contribuire — e quando il registro non ha
+  abbastanza righe per sostenere una cifra **lo dice**, invece di mostrare zeri
+  che somigliano a una misura. Chi contribuisce può dichiarare il proprio
+  consumo con `pnpm consumi dichiara`.
 
 ### Misurato
 

@@ -144,6 +144,48 @@ generato. Il primo, su appalti e contratti pubblici, è in
 scrivete. Una divergenza verso una norma fuori elenco non la vediamo. Preferiamo
 non vederla piuttosto che pubblicarla insieme a duecento coppie inventate.
 
+### Se lavorate con un assistente, dichiarate il consumo
+
+Il progetto pubblica quanto costa far girare la propria macchina: la pagina
+[/costi](https://leggichenontornano.it/costi) mostra i token e la spesa stimata
+di ogni chiamata a un modello, presi dal registro append-only in
+[`data/consumi/`](data/consumi/README.md). Le chiamate che fa il progetto — il
+blog, l'estrazione deontica, il confronto assistito — si registrano da sole:
+passano tutte da un unico client, e non c'è niente da ricordarsi.
+
+Quelle che fate voi, no. Se scrivete codice per questo progetto con l'aiuto di
+un assistente, **quel consumo è parte del costo del progetto** e oggi non lo
+vede nessuno. Dichiararlo è un comando:
+
+```bash
+pnpm run build                                    # una volta sola
+pnpm consumi dichiara --chi <vostro-utente-github> --sessione <file.jsonl>
+```
+
+`--sessione` è il file di trascrizione del vostro assistente: i token ci sono
+già dentro, il comando li somma per modello e appende una riga al registro. Se
+il vostro strumento non lo produce, i numeri si passano a mano:
+
+```bash
+pnpm consumi dichiara --chi <vostro-utente-github> \
+  --modello claude-opus-5 --ingresso 120000 --uscita 8000 \
+  --nota "controllo sui rinvii circolari"
+```
+
+Aggiungete `--prova` per vedere cosa scriverebbe senza scrivere niente, e
+`pnpm consumi riepilogo` per leggere il registro. Il file modificato va nella
+stessa pull request del vostro lavoro: è così che la spesa diventa pubblica.
+
+Due cose che il comando **non** fa, di proposito: non legge niente da solo e non
+manda niente da nessuna parte. Scrive una riga in un file del repository, e
+quella riga la vedete prima di committarla.
+
+Se non vi va, non fatelo: non è un requisito per unire una pull request e non lo
+diventerà. Un adempimento obbligatorio fra chi vuole aiutare e il progetto è un
+adempimento che non ci serve — ma un registro che conta solo le chiamate
+automatiche racconta la metà più facile del costo di questo progetto, non la più
+grande.
+
 ### Stile
 
 - **Italiano** nel codice e nei commenti: è la lingua del dominio, e tradurre

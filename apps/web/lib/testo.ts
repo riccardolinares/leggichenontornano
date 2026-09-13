@@ -31,6 +31,13 @@ export function data(iso: string | null | undefined): string {
   return `${Number(d)} ${MESI[Number(m) - 1] ?? m} ${y}`;
 }
 
+/** `2026-09` → «settembre 2026». */
+export function mese(iso: string): string {
+  const [y, m] = iso.split('-');
+  if (!y || !m) return iso;
+  return `${MESI[Number(m) - 1] ?? m} ${y}`;
+}
+
 /** Finestra di vigenza in lingua comune. */
 export function finestra(from: string | null, to: string | null): string {
   if (!from) return 'periodo non determinato';
@@ -241,6 +248,30 @@ function decodificato(segmento: string): string {
   } catch {
     return segmento;
   }
+}
+
+/**
+ * Una cifra di denaro, all'italiana e con la valuta detta.
+ *
+ * La valuta è un parametro e non una costante perché l'API del modello si paga
+ * in dollari: scrivere «€ 12,35» su un costo fatturato in dollari sarebbe una
+ * conversione che non abbiamo fatto, a un cambio che non conosciamo, su una
+ * pagina che chiede agli altri di dichiarare da dove vengono i propri numeri.
+ *
+ * I decimali sono due, come su qualunque prezzo, tranne quando due
+ * arrotonderebbero a «0,00» una spesa che c'è stata: quello sarebbe scrivere
+ * «gratis» senza volerlo. Sopra quella soglia si resta a due anche per le cifre
+ * piccole — in una colonna, «3,76» accanto a «0,0419» fa sembrare che le due
+ * righe misurino cose diverse.
+ */
+export function denaro(valore: number, valuta = 'USD'): string {
+  const rischioZero = valore !== 0 && Math.abs(valore) < 0.005;
+  return new Intl.NumberFormat('it-IT', {
+    style: 'currency',
+    currency: valuta,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: rischioZero ? 4 : 2,
+  }).format(valore);
 }
 
 /**

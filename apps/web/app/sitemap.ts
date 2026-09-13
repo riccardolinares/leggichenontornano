@@ -30,6 +30,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/come-funziona',
     '/dati',
     '/mcp',
+    '/costi',
     '/stampa',
   ].map((p) => ({
     url: `${SITE_URL}${p}`,
