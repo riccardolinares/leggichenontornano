@@ -17,31 +17,38 @@
 :root {
   color-scheme: light;
 
-  /* Carta */
-  --carta: #eaece9;
-  --carta-alta: #f4f5f2;
-  --carta-incisa: #dfe2dd;
+  /* Carta: un grigio-verde freddissimo, e il bianco per le superfici che
+     devono staccarsi — la testata, le schede, i pannelli. */
+  --carta: #f5f6f4;
+  --carta-alta: #ffffff;
+  --carta-incisa: #eef0ec;
 
-  /* Inchiostro */
-  --inchiostro: #131d19;
-  --inchiostro-tenue: #3f4b46;
-  --inchiostro-debole: #5c6763;
+  /* Inchiostro, su tre livelli.
+     `--inchiostro-debole` è il più chiaro dei tre e regge comunque 4,5:1 sulla
+     carta: il valore del prototipo (#8A938D) si fermava a 2,92:1, e con quello
+     metà delle didascalie del sito sarebbe stata sotto la soglia AA. */
+  --inchiostro: #14201c;
+  --inchiostro-tenue: #57625c;
+  --inchiostro-debole: #6a736d;
 
-  /* Verderame: l'unico colore interattivo */
-  --verderame: #0f5c50;
-  --verderame-scuro: #0a413a;
-  --verderame-velo: #d7e5e1;
+  /* Verderame: l'unico colore interattivo. */
+  --verderame: #1f5c4d;
+  --verderame-scuro: #123b31;
+  --verderame-velo: #e7efea;
 
-  /* Ocra: aree grigie */
-  --ocra: #7a5206;
-  --ocra-velo: #f0e6d2;
+  /* Ocra: le aree grigie, e i limiti dichiarati. */
+  --ocra: #856210;
+  --ocra-velo: #f5eedd;
 
-  /* Rosso ossido spento: antinomie */
-  --ossido: #8c2f21;
-  --ossido-velo: #f2ddd9;
+  /* Rosso ossido: le antinomie, e i numeri che pesano. */
+  --ossido: #9e3323;
+  --ossido-velo: #f6e9e6;
+  --ossido-linea: #e3ccc7;
 
-  --bordo: #c3c9c3;
-  --bordo-forte: #97a09a;
+  /* Due pesi di linea: `--bordo` separa e basta, `--bordo-forte` disegna il
+     confine di un elemento su cui si clicca e deve quindi arrivare a 3:1. */
+  --bordo: #dce0da;
+  --bordo-forte: #869282;
 
   --serif: 'Newsreader', 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
   --grottesco: 'Archivo', 'Helvetica Neue', Inter, system-ui, -apple-system, sans-serif;
@@ -53,21 +60,26 @@
 @media (prefers-color-scheme: dark) {
   :root {
     color-scheme: dark;
-    --carta: #121614;
-    --carta-alta: #1a201d;
-    --carta-incisa: #232a27;
-    --inchiostro: #e6eae6;
-    --inchiostro-tenue: #b6c0ba;
+    /* Il prototipo non aveva un tema scuro. Questo lo deriva mantenendo i
+       rapporti del chiaro: la carta diventa quasi nera, il bianco delle
+       superfici diventa il grigio appena più chiaro del fondo, e gli accenti
+       si schiariscono quanto basta per restare sopra 4,5:1. */
+    --carta: #111614;
+    --carta-alta: #191f1c;
+    --carta-incisa: #222925;
+    --inchiostro: #e7ebe7;
+    --inchiostro-tenue: #b7c1bb;
     --inchiostro-debole: #97a29c;
     --verderame: #6fd3bf;
     --verderame-scuro: #9ae5d4;
-    --verderame-velo: #17332e;
+    --verderame-velo: #16312c;
     --ocra: #e0b463;
-    --ocra-velo: #33280f;
+    --ocra-velo: #322810;
     --ossido: #f0917f;
-    --ossido-velo: #3a1d17;
-    --bordo: #333c38;
-    --bordo-forte: #4e5a54;
+    --ossido-velo: #391d17;
+    --ossido-linea: #5a2c24;
+    --bordo: #2b332f;
+    --bordo-forte: #5c6862;
   }
 }
 
@@ -86,8 +98,8 @@ body {
   background: var(--carta);
   color: var(--inchiostro);
   font-family: var(--grottesco);
-  font-size: 1.0625rem;
-  line-height: 1.6;
+  font-size: 1rem;
+  line-height: 1.55;
   font-synthesis-weight: none;
 }
 
@@ -190,8 +202,8 @@ pre,
 /* ---------- Intestazione ---------- */
 
 .testata {
-  border-bottom: 1px solid var(--bordo);
   background: var(--carta-alta);
+  border-bottom: 1px solid var(--bordo);
 }
 
 .testata__riga {
@@ -284,8 +296,12 @@ main {
 }
 
 .scheda {
-  border-top: 1px solid var(--bordo);
-  padding-block: 2.2rem;
+  border-bottom: 1px solid var(--bordo);
+  padding-block: 1.6rem;
+}
+
+.scheda:first-of-type {
+  border-top: 1px solid var(--bordo-forte);
 }
 
 .scheda__titolo {
@@ -454,10 +470,14 @@ main {
 /* I pannelli si distinguono per il **fondo**, non per un bordo che lo ripete.
    Il bordo resta dove separa davvero due cose — le righe di una tabella, la
    traccia delle vigenze — e sparisce dove raddoppiava solo il riempimento. */
+/* Su carta chiarissima il bianco da solo non basta a delimitare un pannello:
+   serve una linea sottile. È l'opposto della scelta fatta quando il fondo era
+   più scuro, ed è il motivo per cui una palette non si cambia a pezzi. */
 .prova {
   background: var(--carta-alta);
+  border: 1px solid var(--bordo);
   padding: 1.2rem 1.3rem;
-  border-radius: 3px;
+  border-radius: 2px;
 }
 
 .prova__etichetta {
@@ -489,7 +509,8 @@ main {
 
 .vigenze {
   background: var(--carta-alta);
-  border-radius: 3px;
+  border: 1px solid var(--bordo);
+  border-radius: 2px;
   padding: 1rem 1.2rem 1.2rem;
 }
 
@@ -764,7 +785,8 @@ th {
 
 .grafo {
   background: var(--carta-alta);
-  border-radius: 3px;
+  border: 1px solid var(--bordo);
+  border-radius: 2px;
   padding: 1rem;
   overflow-x: auto;
 }
@@ -900,4 +922,50 @@ th {
   text-transform: none;
   font-size: 0.8rem;
   line-height: 1.4;
+}
+
+/* ---------- Apertura della home: i numeri dentro le frasi ---------- */
+
+/*
+ * Il piano esclude il cruscotto: niente griglia di metriche in apertura. Ma un
+ * lettore curioso vuole capire in tre secondi se qui c'è qualcosa di grosso, e
+ * negarglielo non è rigore, è timidezza.
+ *
+ * La soluzione è quella del prototipo: i numeri stanno **dentro le frasi**, in
+ * rosso ossido e in serif, così si leggono e non si guardano soltanto. Quello
+ * che non fanno è promettere più di quanto i dati sostengano — ogni cifra qui
+ * è calcolata dal dataset, e accanto a quella più fragile c'è il collegamento
+ * che spiega cosa misura davvero.
+ */
+.apertura .cifra {
+  font-family: var(--serif);
+  font-weight: 600;
+  color: var(--ossido);
+  font-variant-numeric: tabular-nums;
+}
+
+.colpo {
+  max-width: 52ch;
+  margin: 0 0 0.9rem;
+  font-size: 0.98rem;
+  color: var(--inchiostro-tenue);
+}
+
+.colpo strong {
+  font-weight: 600;
+  color: var(--inchiostro);
+  font-variant-numeric: tabular-nums;
+}
+
+.colpo:first-of-type {
+  margin-top: 1.4rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--bordo);
+}
+
+.riga-corpus {
+  margin-top: 1.4rem;
+  font-size: 0.86rem;
+  color: var(--inchiostro-debole);
+  max-width: 56ch;
 }

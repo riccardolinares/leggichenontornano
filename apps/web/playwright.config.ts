@@ -65,12 +65,21 @@ export default defineConfig({
       },
     },
   ],
+  /**
+   * Mai riusare un server già in ascolto, nemmeno in locale.
+   *
+   * Con `reuseExistingServer` acceso, un `next start` rimasto vivo da una build
+   * precedente serve il sito vecchio e i test misurano codice che non è più
+   * quello che si sta modificando. È successo tre volte, e ogni volta il
+   * risultato sembrava plausibile: qualche test in meno, nessun errore. Meglio
+   * un fallimento immediato «porta occupata» che un verde che non vale niente.
+   */
   webServer: process.env['ANTINOMIA_BASE_URL']
     ? undefined
     : {
         command: 'pnpm exec next start -p 3100',
         url: 'http://127.0.0.1:3100',
-        reuseExistingServer: !process.env['CI'],
+        reuseExistingServer: false,
         timeout: 120_000,
       },
 });

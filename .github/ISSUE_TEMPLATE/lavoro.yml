@@ -1,0 +1,137 @@
+name: Un lavoro da fare
+description: Una modifica al codice, descritta in modo che chi la prende in mano non debba indovinare niente.
+title: 'Lavoro: '
+labels: ['lavoro']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Questo modulo è lungo di proposito. Un lavoro descritto male costa più
+        tempo di quanto ne faccia risparmiare la fretta di aprirlo: chi lo
+        prende in mano si ferma alla prima ambiguità, e a quel punto servono due
+        persone invece di una.
+
+        Le sezioni obbligatorie sono quelle senza le quali il lavoro **non si
+        può cominciare**. Se non sai rispondere a una di esse, è il segnale che
+        va discusso prima in una issue normale.
+
+        Per una segnalazione giuridica che non regge usa invece
+        **«Non è un conflitto»**; per un difetto del software, **«Difetto»**.
+
+  - type: textarea
+    id: problema
+    attributes:
+      label: Il problema, non la soluzione
+      description: >
+        Cosa non va **oggi**, e per chi. Se scrivi già la soluzione, chi legge
+        non può proporne una migliore — e spesso ce n'è una migliore.
+      placeholder: |
+        Chi apre una scheda da un link condiviso non capisce quale versione
+        della norma sta leggendo: la data di vigenza compare solo in fondo.
+    validations:
+      required: true
+
+  - type: textarea
+    id: risultato
+    attributes:
+      label: Come si vede che è fatto
+      description: >
+        Il risultato osservabile, non l'attività. «Aggiungere un campo» è
+        un'attività; «aprendo /anomalia/X si legge la data di vigenza sopra il
+        testo» è un risultato: o c'è o non c'è, e non serve discutere.
+      placeholder: |
+        - Aprendo la scheda di una segnalazione, la finestra di vigenza è visibile
+          senza scorrere.
+        - La stessa informazione resta leggibile a 360px di larghezza.
+        - `pnpm run e2e` continua a passare.
+    validations:
+      required: true
+
+  - type: textarea
+    id: dove
+    attributes:
+      label: Dove mettere le mani
+      description: >
+        I file o i pacchetti che con ogni probabilità vanno toccati. Non deve
+        essere esatto: serve a far partire chi legge dal punto giusto invece
+        che dalla ricerca a tappeto.
+      placeholder: |
+        - `apps/web/app/anomalia/[id]/page.tsx` — la scheda
+        - `apps/web/components/vigenze.tsx` — la barra delle vigenze
+        - `apps/web/app/globals.css` — se serve uno stile nuovo
+      render: markdown
+    validations:
+      required: true
+
+  - type: textarea
+    id: verifica
+    attributes:
+      label: Come si verifica
+      description: >
+        I comandi esatti da eseguire, e cosa devono dire. Se serve un test
+        nuovo, dillo qui: **un lavoro senza un modo di verificarlo non è
+        finito, è solo scritto.**
+      value: |
+        ```bash
+        pnpm run build && pnpm run typecheck && pnpm run test
+        pnpm --filter @antinomia/web run build && pnpm run e2e
+        pnpm exec prettier --check .
+        ```
+
+        Test nuovi attesi:
+        -
+      render: markdown
+    validations:
+      required: true
+
+  - type: textarea
+    id: vincoli
+    attributes:
+      label: Vincoli che questo lavoro non può violare
+      description: >
+        Quelli generali stanno in CONTRIBUTING e valgono sempre. Qui vanno i
+        vincoli **specifici** di questo lavoro: un invariante da non rompere,
+        una decisione già presa altrove, un limite dichiarato sul sito.
+      placeholder: |
+        - Il testo originale resta sopra i campi estratti (regola non negoziabile).
+        - Non cambiare il conteggio delle segnalazioni pubblicate: se cambia,
+          va spiegato nel CHANGELOG perché il dopo è più giusto del prima.
+        - La riga «possibile risoluzione» deve restare su ogni scheda.
+
+  - type: textarea
+    id: contesto
+    attributes:
+      label: Contesto utile
+      description: >
+        Un caso reale, un URN da usare per provare, una ADR che spiega perché
+        le cose stanno così, una discussione precedente. Risparmia a chi legge
+        l'archeologia nel repository.
+      placeholder: |
+        - Si vede bene su `/anomalia/...`
+        - ADR 0008 spiega perché gli URL sono fatti così
+        - Ne avevamo parlato nella issue #12
+
+  - type: dropdown
+    id: dimensione
+    attributes:
+      label: Quanto è grosso
+      description: >
+        Una stima onesta, non un impegno. Serve a capire se il lavoro va
+        spezzato: sopra la mezza giornata quasi sempre conviene.
+      options:
+        - Piccolo — un file, nessuna decisione da prendere
+        - Medio — qualche file, le decisioni sono già prese qui
+        - Grosso — va spezzato, o discusso prima
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: pronto
+    attributes:
+      label: Prima di aprire
+      options:
+        - label: Il risultato atteso si può verificare senza chiedere niente a nessuno
+          required: true
+        - label: Ho detto dove guardare, anche se non sono sicuro che sia il punto esatto
+          required: true
+        - label: Se tocca un controllo o un verticale, ho riletto la sezione di CONTRIBUTING che lo riguarda
