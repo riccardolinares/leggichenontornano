@@ -38,3 +38,4 @@ export * from './deontic/vocabulary.js';
 export * from './deontic/rule-based.js';
 export { LlmExtractor, LLM_SYSTEM_PROMPT, LLM_EXTRACTION_TOOL } from './deontic/llm.js';
 export type { LlmExtractorOptions, AnthropicLike } from './deontic/llm.js';
+export * from './checks/level4/contrasto-assistito.js';

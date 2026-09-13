@@ -12,6 +12,7 @@ import { RINVIO_AD_ATTO_ABROGATO } from './checks/level1/rinvio-ad-atto-abrogato
 import { ATTUAZIONE_MANCANTE } from './checks/level1/attuazione-mancante.js';
 import { FONTE_SECONDARIA_SU_PRIMARIA } from './checks/level2/fonte-secondaria-su-primaria.js';
 import { TERMINI_DIVERGENTI } from './checks/level3/termini-divergenti.js';
+import { CONTRASTO_ASSISTITO_DEFINITION } from './checks/level4/contrasto-assistito.js';
 import type { CheckDefinition } from './types.js';
 
 export const CHECK_DEFINITIONS: readonly CheckDefinition[] = [
@@ -21,13 +22,14 @@ export const CHECK_DEFINITIONS: readonly CheckDefinition[] = [
   ATTUAZIONE_MANCANTE.definition,
   FONTE_SECONDARIA_SU_PRIMARIA.definition,
   TERMINI_DIVERGENTI.definition,
+  CONTRASTO_ASSISTITO_DEFINITION,
 ];
 
 export function checkById(id: string): CheckDefinition | null {
   return CHECK_DEFINITIONS.find((c) => c.id === id) ?? null;
 }
 
-export function checksByLevel(level: 1 | 2 | 3): CheckDefinition[] {
+export function checksByLevel(level: 1 | 2 | 3 | 4): CheckDefinition[] {
   return CHECK_DEFINITIONS.filter((c) => c.level === level);
 }
 
@@ -38,4 +40,5 @@ export {
   ATTUAZIONE_MANCANTE,
   FONTE_SECONDARIA_SU_PRIMARIA,
   TERMINI_DIVERGENTI,
+  CONTRASTO_ASSISTITO_DEFINITION,
 };

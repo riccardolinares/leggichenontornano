@@ -41,6 +41,7 @@ export {
 } from './snapshot/index.js';
 export type {
   SnapshotAct,
+  SnapshotAnalisiAssistita,
   SnapshotAnomaly,
   SnapshotArticle,
   SnapshotCheckMetric,

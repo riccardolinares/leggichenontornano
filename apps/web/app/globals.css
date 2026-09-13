@@ -1372,3 +1372,60 @@ a.griglia-cifre__voce:focus-visible .griglia-cifre__etichetta {
 .piede__sostegno .azioni {
   margin: 0;
 }
+
+/* ---------- Confronto assistito ---------- */
+
+/*
+ * Deve distinguersi **senza essere letto**. Ovunque altrove nella scheda si
+ * legge un campo del dataset o un testo di legge citato alla lettera; qui c'è
+ * il ragionamento di un modello, e chi scorre la pagina deve accorgersene dal
+ * colore prima che dalle parole.
+ *
+ * Ocra e non rosso: l'ocra in questo sito vuol dire «area grigia, da leggere
+ * con attenzione», ed è esattamente la cosa giusta da dire qui.
+ */
+.assistita {
+  margin: 2.4rem 0;
+  padding: 1.4rem 1.5rem;
+  background: var(--ocra-velo);
+  border: 1px solid var(--ocra);
+  border-radius: 3px;
+  max-width: 46rem;
+}
+
+.assistita__titolo {
+  margin: 0 0 0.8rem;
+  font-size: 1.02rem;
+  font-family: var(--grottesco);
+}
+
+.assistita__cosa {
+  margin: 0 0 1rem;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--inchiostro-tenue);
+}
+
+.assistita__confidenza {
+  margin: 0 0 1rem;
+  font-size: 0.92rem;
+}
+
+.assistita__confidenza--bassa strong {
+  color: var(--ossido);
+}
+
+.assistita__ragionamento {
+  margin: 0 0 1rem;
+  padding-left: 1rem;
+  border-left: 3px solid var(--ocra);
+  font-family: var(--serif);
+  font-size: 1.02rem;
+  line-height: 1.55;
+}
+
+.assistita__modello {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--inchiostro-debole);
+}

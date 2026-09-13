@@ -324,6 +324,10 @@ model Anomaly {
   /// Criteri di risoluzione applicabili (specialità, posteriorità, gerarchia).
   resolutions   Json
   severity      String    @default("media")
+  /// Solo per il livello 4: il confronto fatto da un modello, con confidenza e
+  /// citazioni letterali già verificate contro i testi. `null` su ogni altro
+  /// livello, e la sua assenza dice che in quella scheda non c'è prosa generata.
+  assistita     Json?
   /// Stato di conoscenza del corpus al momento del calcolo.
   computedAt    DateTime  @default(now())
   knownAt       DateTime  @default(now())

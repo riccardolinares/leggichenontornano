@@ -80,6 +80,10 @@ export async function exportSnapshot(opts: ExportOptions): Promise<SnapshotManif
     severity: a.severity,
     published: a.published,
     computedAt: a.computedAt.toISOString(),
+    // Il campo viaggia nel dataset come sta nel database: chi lo rilegge deve
+    // poter distinguere una segnalazione assistita da una deterministica senza
+    // dedurlo dal livello.
+    ...(a.assistita ? { assistita: a.assistita as never } : {}),
   }));
 
   // Gli atti citati da qualunque anomalia, anche da quelle in coda: la pagina

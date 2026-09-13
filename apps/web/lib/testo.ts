@@ -67,15 +67,24 @@ export function percorsoAnomalia(id: string): string {
   return `/anomalia/${encodeURIComponent(id)}`;
 }
 
-/** Etichetta del livello della tassonomia. */
+/**
+ * Etichetta del livello della tassonomia.
+ *
+ * Il livello 4 dice «confronto assistito» e non «livello 4»: il numero da solo
+ * suggerisce che sia il più avanzato, mentre quello che il lettore deve capire
+ * è che lì il confronto l'ha fatto un modello e non una query. Sono due gradi
+ * di fiducia diversi, e vanno detti diversamente.
+ */
 export function livello(n: number): string {
   switch (n) {
     case 1:
       return 'Livello 1 — deterministico';
     case 2:
       return 'Livello 2 — gerarchia e competenza';
-    default:
+    case 3:
       return 'Livello 3 — estrazione e query';
+    default:
+      return 'Confronto assistito da un modello';
   }
 }
 

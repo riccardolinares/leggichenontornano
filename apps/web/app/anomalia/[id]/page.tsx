@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { checkById } from '@leggichenontornano/engine';
+import { AnalisiAssistita } from '@/components/analisi-assistita';
 import { Condivisione } from '@/components/condivisione';
 import { BarraVigenze, type Finestra } from '@/components/vigenze';
 import { REPO_URL, SITE_URL, dataset } from '@/lib/dataset';
@@ -153,6 +154,12 @@ export default async function SchedaAnomalia({ params }: Props) {
         </h2>
         <p className="pratica">{anomalia.plainLanguage}</p>
       </section>
+
+      {/* Il confronto assistito, quando c'è, sta **prima** dei testi originali.
+          È l'informazione che qualifica tutto quello che viene dopo: chi legge
+          deve sapere che qui a confrontare è stato un modello prima di leggere
+          la conclusione, non dopo. */}
+      {anomalia.assistita ? <AnalisiAssistita analisi={anomalia.assistita} /> : null}
 
       {/* 2. I testi originali, sopra ai campi estratti: l'utente verifica
              l'estrazione prima di valutare il verdetto. */}
