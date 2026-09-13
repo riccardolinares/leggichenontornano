@@ -9,15 +9,7 @@
  *   antinomia-engine contatore
  *   antinomia-engine controlli
  */
-import {
-  disconnectPrisma,
-  exportSnapshot,
-  getPrisma,
-  readJson,
-  snapshotPath,
-  writeJson,
-  type SnapshotVertical,
-} from '@antinomia/corpus';
+import { disconnectPrisma, exportSnapshot, getPrisma } from '@antinomia/corpus';
 import { buildNationalCounter, computeMetrics } from './metrics.js';
 import { CHECK_DEFINITIONS } from './registry.js';
 import { recordReview, sampleForReview, type ReviewVerdict } from './review/queue.js';
@@ -223,22 +215,9 @@ async function main(): Promise<number> {
         ...(flags.has('limite') ? { limite: Number(flags.get('limite')) } : {}),
         onProgress: (m) => process.stdout.write(`  ${m}\n`),
       });
-      // Il verticale finisce nel dataset insieme alle proposizioni: il sito deve
-      // poter dire quali atti il livello 3 ha davvero confrontato, non «appalti».
-      if (!flags.has('senza-scrittura')) {
-        const dir = process.env.ANTINOMIA_SNAPSHOT ?? 'data/snapshot';
-        const file = snapshotPath(dir, 'verticals');
-        const esistenti = readJson<SnapshotVertical[]>(file, []).filter(
-          (v) => v.vertical !== report.verticale,
-        );
-        writeJson(
-          file,
-          [...esistenti, report.verticale_pubblicato].sort((a, b) =>
-            a.vertical < b.vertical ? -1 : a.vertical > b.vertical ? 1 : 0,
-          ),
-        );
-        process.stdout.write(`  verticale scritto in ${file}\n`);
-      }
+      // Il verticale è già nel database, scritto dall'estrazione. Nel dataset ci
+      // finisce con `esporta`, come ogni altra tabella: scriverlo qui a mano
+      // significava che un'esportazione verso un'altra cartella lo perdeva.
       process.stdout.write(
         [
           '',

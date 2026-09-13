@@ -127,3 +127,23 @@ jobs:
           node packages/corpus/dist/cli.js stats
           node packages/engine/dist/cli.js run --oggi 2026-01-01
           node packages/engine/dist/cli.js metriche
+
+      # Il dataset esportato deve essere completo **ovunque** lo si scriva.
+      # Finché `verticali.json` veniva prodotto da un comando diverso
+      # dall'esportazione, una destinazione che non fosse `data/snapshot` lo
+      # perdeva — e il dataset completo pubblicato come artefatto ne era privo
+      # senza che niente lo segnalasse.
+      - name: Il dataset esportato contiene tutti i file previsti
+        run: |
+          node packages/engine/dist/cli.js esporta --dest /tmp/dataset-prova
+          mancanti=0
+          for f in acts.jsonl versions.jsonl articles.jsonl relations.jsonl \
+                   anomalies.jsonl pronunce.jsonl verticali.json metrics.json manifest.json; do
+            if [ -e "/tmp/dataset-prova/$f" ]; then
+              echo "  ok       $f"
+            else
+              echo "  MANCANTE $f"
+              mancanti=$((mancanti + 1))
+            fi
+          done
+          [ "$mancanti" -eq 0 ] || { echo "::error::$mancanti file mancanti nel dataset esportato"; exit 1; }

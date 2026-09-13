@@ -24,6 +24,7 @@ import {
   type SnapshotManifest,
   type SnapshotConcordanza,
   type SnapshotPronuncia,
+  type SnapshotVertical,
   type SnapshotRelation,
   type SnapshotVersion,
 } from './types.js';
@@ -249,6 +250,24 @@ export async function exportSnapshot(opts: ExportOptions): Promise<SnapshotManif
   const concordanza: SnapshotConcordanza[] =
     pronunce.length > 0 ? (await verificaDichiarazioni()).perConfidenza : [];
 
+  // I verticali escono da qui come tutto il resto, così un dataset esportato
+  // altrove non è mai privo del confine che il livello 3 si è dato.
+  const verticali: SnapshotVertical[] = (
+    await prisma.verticale.findMany({ orderBy: { vertical: 'asc' } })
+  ).map((v) => ({
+    vertical: v.vertical,
+    label: v.label,
+    roots: v.roots,
+    missingRoots: v.missingRoots,
+    acts: v.acts,
+    expansion: v.expansion,
+    concepts: v.concepts,
+    propositions: v.propositions,
+    propositionsWithConcept: v.propositionsWithConcept,
+    extractor: v.extractor,
+    computedAt: v.computedAt,
+  }));
+
   const manifest: SnapshotManifest = {
     formatVersion: 1,
     generatedAt: knownAt.toISOString(),
@@ -285,6 +304,7 @@ export async function exportSnapshot(opts: ExportOptions): Promise<SnapshotManif
   writeJsonl(snapshotPath(opts.dir, 'relations'), relations);
   writeJsonl(snapshotPath(opts.dir, 'anomalies'), anomalies);
   writeJsonl(snapshotPath(opts.dir, 'pronunce'), pronunce);
+  writeJson(snapshotPath(opts.dir, 'verticals'), verticali);
 
   // Parquet accanto al JSONL, dalla stessa esportazione: le due forme non
   // possono divergere perché sono la stessa cosa scritta due volte.

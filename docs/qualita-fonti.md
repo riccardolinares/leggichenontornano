@@ -10,7 +10,7 @@ sta fra un dataset pubblico e un'affermazione pubblica. Ogni caso qui sotto è
 stato trovato eseguendo il motore sul corpus vero e leggendo le segnalazioni una
 per una — non ipotizzato a tavolino.
 
-Gli ultimi cinque casi (§8-§12) **non sono difetti della fonte: sono nostri**.
+Gli ultimi sei casi (§8-§13) **non sono difetti della fonte: sono nostri**.
 Stanno qui lo stesso, perché si sono manifestati allo stesso modo — leggendo
 l'output — e perché un progetto che elenca gli errori altrui e tace i propri
 non è quello che vogliamo essere.
@@ -277,6 +277,35 @@ intero, quando invece resta in vigore con un contenuto diverso.
 **Cosa facciamo.** Il confine finale sta su ciascuna alternativa che lo
 sopporta, non sul gruppo. Il caso è in `packages/corpus/test/consulta.test.ts`,
 con il testo reale che lo ha rivelato.
+
+---
+
+## 13. Un pezzo del dataset scritto da un comando diverso dagli altri
+
+**Cosa succede.** `verticali.json` — l'elenco degli atti su cui il confronto
+semantico lavora davvero — lo scriveva il comando di estrazione, direttamente
+nella cartella dello snapshot. Tutto il resto del dataset usciva invece
+dall'esportazione, che legge dal database.
+
+**Cosa produceva.** Due cose, entrambe silenziose. `esporta --dest altrove`
+produceva un dataset **senza quel file**: il dataset completo pubblicato come
+artefatto era incompleto, e nessuno lo segnalava. E la pipeline quotidiana non
+rieseguiva l'estrazione, quindi il file versionato continuava a dichiarare una
+data che non corrispondeva più al corpus.
+
+È il difetto più imbarazzante dell'elenco, perché contraddice una frase scritta
+in cima al modulo dello snapshot: «sito e dataset non possono divergere perché
+sono la stessa cosa letta due volte». Lo erano, tranne per un file.
+
+**Cosa facciamo.** Il verticale sta nel database come ogni altra tabella e
+finisce nel dataset con `esporta`. La pipeline quotidiana riesegue
+l'estrazione per ogni vocabolario in `data/vocabolari/`, tollerando che un
+verticale non si possa calcolare — un verticale in meno non è una pipeline
+rotta. Un passo della verifica controlla che il dataset esportato contenga
+tutti i file previsti, ovunque lo si scriva.
+
+Codice: `packages/corpus/src/snapshot/export.ts`,
+`packages/engine/src/estrazione.ts`.
 
 ---
 
