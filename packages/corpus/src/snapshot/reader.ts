@@ -14,6 +14,7 @@ import type {
   SnapshotArticle,
   SnapshotCheckMetric,
   SnapshotCounter,
+  SnapshotVertical,
   SnapshotManifest,
   SnapshotRelation,
   SnapshotVersion,
@@ -28,6 +29,7 @@ export interface SnapshotData {
   metrics: SnapshotCheckMetric[];
   manifest: SnapshotManifest | null;
   counter?: SnapshotCounter | null;
+  verticals?: SnapshotVertical[];
 }
 
 export class SnapshotReader {
@@ -68,6 +70,7 @@ export class SnapshotReader {
       metrics: readJson<SnapshotCheckMetric[]>(snapshotPath(dir, 'metrics'), []),
       manifest: readJson<SnapshotManifest | null>(snapshotPath(dir, 'manifest'), null),
       counter: readJson<SnapshotCounter | null>(snapshotPath(dir, 'counter'), null),
+      verticals: readJson<SnapshotVertical[]>(snapshotPath(dir, 'verticals'), []),
     });
   }
 
@@ -174,6 +177,11 @@ export class SnapshotReader {
   /** Il contatore nazionale, quando la pipeline lo ha generato. */
   counter(): SnapshotCounter | null {
     return this.data.counter ?? null;
+  }
+
+  /** I verticali del layer semantico, con il confine per atti che si sono dati. */
+  verticals(): SnapshotVertical[] {
+    return this.data.verticals ?? [];
   }
 
   metric(checkId: string): SnapshotCheckMetric | null {

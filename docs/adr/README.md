@@ -16,3 +16,4 @@ Formato: [MADR](https://adr.github.io/madr/) semplificato.
 | [0006](0006-postgres-ricorsivo-niente-neo4j.md) | Il grafo sta in PostgreSQL, attraversato con recursive CTE | Accettata |
 | [0007](0007-store-bitemporale.md)             | Store bitemporale: vigenza e conoscenza                   | Accettata |
 | [0008](0008-url-come-prodotto.md)             | Gli URL sono il prodotto                                  | Accettata |
+| [0009](0009-il-verticale-e-un-elenco-di-atti.md) | Il verticale è un elenco di atti, non di parole            | Accettata |

@@ -31,6 +31,11 @@ Prima di tutto il resto, perché è la parte che qualifica tutto il resto.
   ([ADR 0004](docs/adr/0004-niente-voto-cittadino.md)).
 - **Assenza di segnale ≠ norma coerente.** Detto esplicitamente
   nell'interfaccia, su ogni pagina dell'indice.
+- **Il confronto semantico non copre tutta la legislazione**, e non copre nemmeno
+  tutta la legislazione dei domini che tratta. Ogni dominio dichiara l'elenco
+  degli atti su cui lavora, e quell'elenco è pubblicato sulla pagina **Dati** e
+  nel dataset (`verticali.json`): si può contare
+  ([ADR 0009](docs/adr/0009-il-verticale-e-un-elenco-di-atti.md)).
 
 ## La soglia di pubblicazione
 
@@ -115,6 +120,16 @@ node packages/engine/dist/cli.js metriche
 node packages/engine/dist/cli.js esporta --dest data/snapshot --solo-anomalie --campione 20
 ```
 
+I controlli di livello 3 richiedono un passo in più, il verticale:
+
+```bash
+# Estrae le proposizioni deontiche dagli atti del dominio dichiarato nel
+# vocabolario. Senza ANTHROPIC_API_KEY usa l'estrattore a regole e funziona
+# lo stesso, con recall più basso e dichiarato.
+node packages/engine/dist/cli.js estrai --vocabolario data/vocabolari/appalti.json
+node packages/engine/dist/cli.js run --verticale appalti
+```
+
 L'API pubblica si alza con o senza database:
 
 ```bash
@@ -159,11 +174,14 @@ risposta dell'API. Non è nel footer in grigio chiaro.
 
 ---
 
-## Gli errori delle fonti che abbiamo trovato
+## Gli errori che abbiamo trovato leggendo l'output
 
 Gli open data di Normattiva hanno irregolarità che, prese per buone, producono
 segnalazioni che **sembrano errori del legislatore e sono errori di marcatura**.
-Ne abbiamo trovate sette, tutte eseguendo il motore sul corpus vero e leggendo le
+Ne abbiamo trovate sette. Altre due erano nostre, e sono le più istruttive: il
+confronto semantico delimitato dalle parole invece che dagli atti, e un «stesso
+soggetto» che confrontava concetti trovati in qualunque punto della frase. Tutte
+e nove sono venute fuori eseguendo il motore sul corpus vero e leggendo le
 segnalazioni una per una. Sono documentate in
 [docs/qualita-fonti.md](docs/qualita-fonti.md), con cosa producevano e cosa
 facciamo adesso.
@@ -185,6 +203,7 @@ Gli [ADR](docs/adr) registrano le decisioni prese e il perché. Le principali:
 - [0006](docs/adr/0006-postgres-ricorsivo-niente-neo4j.md) — PostgreSQL e recursive CTE
 - [0007](docs/adr/0007-store-bitemporale.md) — store bitemporale
 - [0008](docs/adr/0008-url-come-prodotto.md) — gli URL sono il prodotto
+- [0009](docs/adr/0009-il-verticale-e-un-elenco-di-atti.md) — il verticale è un elenco di atti, non di parole
 
 Altri documenti: [METODO.md](METODO.md),
 [docs/gold-standard.md](docs/gold-standard.md),

@@ -98,7 +98,16 @@ export class RuleBasedExtractor implements DeonticExtractor {
       if (!mode) continue;
 
       const subject = extractSubject(sentence, mode);
-      const concept = index.resolve(subject) ?? index.resolve(sentence);
+      // Il concetto del soggetto si risolve **solo sul soggetto**. Ripiegare
+      // sull'intera frase sembrava recall gratuito e non lo era: la regola
+      // pubblicata del controllo di livello 3 dice «stesso soggetto», e con il
+      // ripiego diventava «le due frasi nominano lo stesso concetto da qualche
+      // parte». Sul corpus reale questo accoppiava l'obbligo del garante di
+      // comunicare entro trenta giorni (d.P.R. 207/2010, art. 133) con il
+      // termine di operatività della garanzia (d.lgs. 163/2006, art. 113), solo
+      // perché entrambe le frasi nominano la stazione appaltante. Il concetto
+      // della frase resta, ma nel campo che gli spetta: `scope`.
+      const concept = index.resolve(subject);
       const deadline = DEADLINE_RE.exec(sentence);
       const consequence = CONSEQUENCE_RE.exec(sentence);
 

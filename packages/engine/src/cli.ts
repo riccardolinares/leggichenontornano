@@ -9,11 +9,21 @@
  *   antinomia-engine contatore
  *   antinomia-engine controlli
  */
-import { disconnectPrisma, exportSnapshot, getPrisma } from '@antinomia/corpus';
+import {
+  disconnectPrisma,
+  exportSnapshot,
+  getPrisma,
+  readJson,
+  snapshotPath,
+  writeJson,
+  type SnapshotVertical,
+} from '@antinomia/corpus';
 import { buildNationalCounter, computeMetrics } from './metrics.js';
 import { CHECK_DEFINITIONS } from './registry.js';
 import { recordReview, sampleForReview, type ReviewVerdict } from './review/queue.js';
 import { allMandates, buildViewFromDatabase, runEngine } from './index.js';
+import { estraiVerticale } from './estrazione.js';
+import { importaGold, valutaGold } from './gold.js';
 
 const USAGE = `antinomia-engine — motore delle anomalie
 
@@ -25,6 +35,14 @@ Comandi:
   contatore               contatore nazionale dei giorni di ritardo
   controlli               elenco dei controlli con le loro regole
   esporta                 esporta il dataset con le metriche calcolate
+  estrai                  estrae le proposizioni deontiche di un verticale
+  gold importa <file>     importa annotazioni del gold standard (JSONL)
+  gold valuta             confronta il gold standard con le segnalazioni prodotte
+
+Opzioni di estrai:
+  --vocabolario <file>    es. data/vocabolari/appalti.json (obbligatorio)
+  --limite <n>            numero massimo di commi da esaminare
+  --senza-scrittura       estrae senza scrivere nel database
 
 Opzioni di esporta:
   --dest <cartella>       destinazione (default data/snapshot)
@@ -40,6 +58,8 @@ Opzioni di run:
   --limite <n>            massimo di segnalazioni per controllo
   --senza-scrittura       calcola senza scrivere nel database
   --con-commi             carica anche i commi (serve ai controlli di livello 3)
+  --verticale <nome>      attiva un verticale semantico, es. appalti
+  --vocabolario <file>    vocabolario del verticale attivato
 `;
 
 function parseArgs(argv: readonly string[]): { positional: string[]; flags: Map<string, string | true> } {
@@ -74,6 +94,19 @@ async function main(): Promise<number> {
         ...(flags.has('limite') ? { limitPerCheck: Number(flags.get('limite')) } : {}),
         persist: !flags.has('senza-scrittura'),
         withProvisions: flags.has('con-commi'),
+        ...(flags.has('verticale')
+          ? {
+              verticali: [
+                {
+                  verticale: String(flags.get('verticale')),
+                  vocabolario: String(
+                    flags.get('vocabolario') ??
+                      `data/vocabolari/${String(flags.get('verticale'))}.json`,
+                  ),
+                },
+              ],
+            }
+          : {}),
         onProgress: (m) => process.stdout.write(`  ${m}\n`),
       });
       process.stdout.write('\nSegnalazioni per controllo:\n');
@@ -170,6 +203,95 @@ async function main(): Promise<number> {
       });
       process.stdout.write(`${JSON.stringify(manifest.counts, null, 2)}\n`);
       return 0;
+    }
+
+    case 'estrai': {
+      const vocabolario = flags.get('vocabolario');
+      if (typeof vocabolario !== 'string') {
+        process.stderr.write('Serve --vocabolario, es. data/vocabolari/appalti.json\n');
+        return 2;
+      }
+      const report = await estraiVerticale({
+        vocabolario,
+        persist: !flags.has('senza-scrittura'),
+        ...(flags.has('limite') ? { limite: Number(flags.get('limite')) } : {}),
+        onProgress: (m) => process.stdout.write(`  ${m}\n`),
+      });
+      // Il verticale finisce nel dataset insieme alle proposizioni: il sito deve
+      // poter dire quali atti il livello 3 ha davvero confrontato, non «appalti».
+      if (!flags.has('senza-scrittura')) {
+        const dir = process.env.ANTINOMIA_SNAPSHOT ?? 'data/snapshot';
+        const file = snapshotPath(dir, 'verticals');
+        const esistenti = readJson<SnapshotVertical[]>(file, []).filter(
+          (v) => v.vertical !== report.verticale,
+        );
+        writeJson(file, [...esistenti, report.verticale_pubblicato].sort((a, b) =>
+          a.vertical < b.vertical ? -1 : a.vertical > b.vertical ? 1 : 0,
+        ));
+        process.stdout.write(`  verticale scritto in ${file}\n`);
+      }
+      process.stdout.write(
+        [
+          '',
+          `verticale:     ${report.verticale}`,
+          `estrattore:    ${report.estrattore}`,
+          `atti nel corpus: ${report.attiCorpus}`,
+          ...(report.radiciAssenti.length > 0
+            ? [`radici assenti:  ${report.radiciAssenti.length} (il verticale copre meno atti)`]
+            : []),
+          `commi:         ${report.commiEsaminati}`,
+          `proposizioni:  ${report.proposizioni}`,
+          `con concetto:  ${report.conConcetto} (le uniche confrontabili)`,
+          `durata:        ${(report.durataMs / 1000).toFixed(1)}s`,
+          '',
+        ].join('\n'),
+      );
+      return 0;
+    }
+
+    case 'gold': {
+      const sotto = positional[1];
+      if (sotto === 'importa') {
+        const file = positional[2];
+        if (!file) {
+          process.stderr.write('Uso: gold importa <file.jsonl>\n');
+          return 2;
+        }
+        const esito = await importaGold(file);
+        process.stdout.write(
+          `${esito.importate} voci importate, ${esito.totali} nel gold standard.\n`,
+        );
+        return 0;
+      }
+      if (sotto === 'valuta') {
+        const rapporto = await valutaGold();
+        if (rapporto.totali === 0) {
+          process.stdout.write(
+            'Il gold standard e\' vuoto. Senza annotazioni non c\'e\' niente da misurare:\n' +
+              'vedi docs/gold-standard.md per le quattro fonti da cui prenderle.\n',
+          );
+          return 0;
+        }
+        process.stdout.write(
+          `Recall complessivo: ${(rapporto.recall * 100).toFixed(1)}% ` +
+            `(${rapporto.trovate}/${rapporto.totali})\n\n`,
+        );
+        for (const r of rapporto.perControllo) {
+          process.stdout.write(
+            `  ${r.checkId.padEnd(36)} ${r.trovate}/${r.attese}  ${(r.recall * 100).toFixed(1)}%\n`,
+          );
+        }
+        const perse = rapporto.esiti.filter((e) => !e.trovata);
+        if (perse.length > 0) {
+          process.stdout.write('\nNon intercettate:\n');
+          for (const e of perse.slice(0, 20)) {
+            process.stdout.write(`  [${e.sourceKind}] ${e.sourceRef}: ${e.summary}\n`);
+          }
+        }
+        return 0;
+      }
+      process.stderr.write('Uso: gold importa <file> | gold valuta\n');
+      return 2;
     }
 
     case 'controlli': {

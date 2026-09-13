@@ -10,6 +10,11 @@ sta fra un dataset pubblico e un'affermazione pubblica. Ogni caso qui sotto è
 stato trovato eseguendo il motore sul corpus vero e leggendo le segnalazioni una
 per una — non ipotizzato a tavolino.
 
+Gli ultimi due casi (§8 e §9) **non sono difetti della fonte: sono nostri**.
+Stanno qui lo stesso, perché si sono manifestati allo stesso modo — leggendo
+l'output — e perché un progetto che elenca gli errori altrui e tace i propri
+non è quello che vogliamo essere.
+
 ---
 
 ## 1. La narrativa della modifica nomina un atto diverso dall'ancoraggio
@@ -167,6 +172,49 @@ contano davvero contro l'attacco: la **profondità** di annidamento e la lunghez
 massima di una singola espansione.
 
 Codice: `packages/akn-parser/src/xml.ts`.
+
+---
+
+## 8. Le parole del dominio non delimitano il dominio
+
+**Cosa succede.** Non è un difetto della fonte: è un difetto nostro, scoperto
+leggendo la fonte. Il layer semantico attivava il confronto su ogni comma che
+contenesse una forma del vocabolario del verticale. Ma «concessione»,
+«collaudo», «bando», «lavori pubblici» sono italiano giuridico comune.
+
+**Cosa produceva.** Coppie fra il codice della navigazione del 1942 e il codice
+della strada, presentate come divergenze di termini in materia di appalti. Su
+questo corpus, 210 segnalazioni di livello 3 di cui quasi nessuna in materia.
+
+**Cosa facciamo.** Ogni verticale dichiara il proprio corpus per URN e
+l'estrazione legge solo quegli atti. Il vocabolario resta, per distinguere
+fattispecie **dentro** un dominio già delimitato. Vedi
+[ADR 0009](adr/0009-il-verticale-e-un-elenco-di-atti.md).
+
+Codice: `packages/engine/src/deontic/vocabulary.ts`, `data/vocabolari/*.json`.
+
+---
+
+## 9. «Stesso soggetto» che non era il soggetto
+
+**Cosa succede.** L'estrattore a regole risolveva il concetto del soggetto sul
+soggetto della frase e, se non trovava niente, **ripiegava sull'intera frase**.
+Sembrava recall gratuito.
+
+**Cosa produceva.** La regola pubblicata del controllo di livello 3 dice «stesso
+soggetto»; con il ripiego diventava «le due frasi nominano lo stesso concetto da
+qualche parte». Il risultato più chiaro: l'obbligo del *garante* di comunicare
+entro trenta giorni (d.P.R. 207/2010, art. 133) accoppiato al termine di
+operatività della *garanzia* (d.lgs. 163/2006, art. 113), perché entrambe le
+frasi nominano la stazione appaltante.
+
+**Cosa facciamo.** Il concetto del soggetto si risolve solo sul soggetto. Il
+concetto della frase resta, nel campo che gli spetta (`scope`). La divergenza
+fra regola pubblicata e codice eseguito è il difetto che questo progetto non può
+permettersi: se la regola sotto la scheda non è la query che gira, la scheda
+mente.
+
+Codice: `packages/engine/src/deontic/rule-based.ts`.
 
 ---
 

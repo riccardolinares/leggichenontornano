@@ -83,7 +83,38 @@ export interface ExtractionInput {
 export interface Vocabulary {
   vertical: string;
   label: string;
+  /** Gli atti che costituiscono il dominio. Vedi `VocabularyCorpus`. */
+  corpus: VocabularyCorpus;
   concepts: VocabularyConcept[];
+}
+
+/**
+ * Il confine del verticale, dichiarato per atti.
+ *
+ * Un verticale **non** è un elenco di parole. Nell'italiano giuridico quasi
+ * nessuna forma di una parola sola appartiene a un dominio solo: «concessione»
+ * sta nel codice dei contratti pubblici e nel codice della navigazione del 1942,
+ * «collaudo» negli appalti e nel codice della strada, «lavori pubblici» in un
+ * secolo di leggi di conversione. Finché il layer semantico si attivava su
+ * qualunque comma contenente una di quelle forme, confrontava norme di materie
+ * diverse — in silenzio, e in quantità.
+ *
+ * Il confine sta quindi negli atti: `radici` le dichiara una persona che
+ * conosce la materia, l'espansione le allarga in modo deterministico passando
+ * dal grafo delle relazioni tipizzate. Nessun testo, nessun modello.
+ */
+export interface VocabularyCorpus {
+  /** URN degli atti fondativi del dominio, dichiarati a mano. */
+  radici: string[];
+  /**
+   * Tipi di relazione che fanno entrare un atto nel verticale, risalendo verso
+   * le radici. `RINVIA` non deve comparire qui: rinviare a una norma è
+   * comunissimo e non rende un atto un atto di quel dominio.
+   */
+  espansione: string[];
+  note?: string;
+  radiciNote?: string;
+  espansioneNote?: string;
 }
 
 export interface VocabularyConcept {

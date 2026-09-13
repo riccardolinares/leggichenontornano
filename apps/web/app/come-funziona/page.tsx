@@ -120,6 +120,15 @@ export default function ComeFunziona() {
           livello 2 applica regole sui metadati di fonte e competenza. Il livello 3 si attiva
           soltanto sui domini dotati di un vocabolario controllato.
         </p>
+        <p>
+          E non su tutta la legislazione di quei domini: ogni dominio dichiara{' '}
+          <strong>l’elenco degli atti</strong> su cui il confronto lavora, perché le parole non
+          bastano a delimitare una materia. «Concessione» sta nel codice dei contratti pubblici e
+          nel codice della navigazione del 1942; «collaudo» negli appalti e nel collaudo dei
+          veicoli. Finché abbiamo attivato il confronto su ogni norma che contenesse una di quelle
+          parole, ha accostato materie che non c’entrano niente. L’elenco degli atti di ciascun
+          dominio è pubblicato nella pagina <Link href="/dati">Dati</Link>: si può contare.
+        </p>
       </section>
 
       <section className="sezione" aria-labelledby="soglia">

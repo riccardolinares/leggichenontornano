@@ -19,7 +19,10 @@ import {
   MODIFICA_AD_ATTO_ABROGATO,
   RINVIO_AD_ARTICOLO_INESISTENTE,
   RINVIO_AD_ATTO_ABROGATO,
+  TERMINI_DIVERGENTI,
 } from './registry.js';
+import { caricaProposizioni } from './estrazione.js';
+import { VocabularyIndex, loadVocabulary } from './deontic/vocabulary.js';
 import type { AnomalyFinding } from './types.js';
 
 export interface RunOptions {
@@ -31,6 +34,12 @@ export interface RunOptions {
   persist?: boolean;
   /** Se `true`, carica anche i commi (servono ai controlli di livello 3). */
   withProvisions?: boolean;
+  /**
+   * Verticali semantici da valutare, come coppie verticale/vocabolario.
+   * Senza, i controlli di livello 3 non girano: e' corretto, perche' senza
+   * vocabolario controllato non sono in grado di girare bene.
+   */
+  verticali?: ReadonlyArray<{ verticale: string; vocabolario: string }>;
   onProgress?: (message: string) => void;
 }
 
@@ -234,6 +243,31 @@ export async function runEngine(opts: RunOptions = {}): Promise<RunReport> {
   }
   findings.length = 0;
   findings.push(...uniche);
+
+  // Livello 3: gira solo sui verticali attivi, cioè quelli con un vocabolario
+  // controllato. Senza vocabolario due token uguali non sono due cose uguali, e
+  // il confronto produrrebbe falsi positivi in massa (ADR 0005).
+  for (const { verticale, vocabolario } of opts.verticali ?? []) {
+    const proposizioni = await caricaProposizioni(verticale);
+    if (proposizioni.length === 0) {
+      log(`verticale «${verticale}»: nessuna proposizione estratta, livello 3 non eseguito`);
+      continue;
+    }
+    const prodotte = deduplica(
+      TERMINI_DIVERGENTI.run(
+        {
+          propositions: proposizioni,
+          vocabulary: new VocabularyIndex(loadVocabulary(vocabolario)),
+          acts: view.acts,
+        },
+        ctx,
+      ),
+    );
+    byCheck[TERMINI_DIVERGENTI.definition.id] =
+      (byCheck[TERMINI_DIVERGENTI.definition.id] ?? 0) + prodotte.length;
+    findings.push(...prodotte);
+    log(`${TERMINI_DIVERGENTI.definition.id} su «${verticale}»: ${prodotte.length}`);
+  }
 
   const tallies = await loadReviewTallies();
   const decisions = CHECK_DEFINITIONS.map((d) => evaluateGate(d, tallies.get(d.id)));

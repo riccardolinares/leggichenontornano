@@ -98,6 +98,33 @@ export interface SnapshotCheckMetric {
   reason: string;
 }
 
+/**
+ * Un verticale del layer semantico, con il confine che si è dato.
+ *
+ * Sta nel dataset perché la copertura del livello 3 è un limite del prodotto, e
+ * i limiti del prodotto devono essere leggibili senza fidarsi di noi: qui ci
+ * sono gli URN esatti degli atti confrontati, e il lettore può contarli.
+ */
+export interface SnapshotVertical {
+  vertical: string;
+  label: string;
+  /** URN degli atti fondativi, dichiarati a mano. */
+  roots: string[];
+  /** Radici dichiarate che il corpus ingerito non contiene. */
+  missingRoots: string[];
+  /** Tutti gli atti su cui il livello 3 ha effettivamente lavorato. */
+  acts: string[];
+  /** Tipi di relazione che allargano il corpus di un passo. */
+  expansion: string[];
+  /** Concetti del vocabolario controllato. */
+  concepts: number;
+  /** Proposizioni estratte, e quante hanno un concetto (le uniche confrontabili). */
+  propositions: number;
+  propositionsWithConcept: number;
+  extractor: string;
+  computedAt: string;
+}
+
 export interface SnapshotManifest {
   /** Versione del formato del dataset. */
   formatVersion: 1;

@@ -1,0 +1,38 @@
+[
+  {
+    "vertical": "appalti",
+    "label": "Appalti e contratti pubblici",
+    "roots": [
+      "urn:nir:stato:decreto.legislativo:2023-03-31;36",
+      "urn:nir:stato:decreto.legislativo:2016-04-18;50",
+      "urn:nir:stato:decreto.legislativo:2006-04-12;163",
+      "urn:nir:stato:decreto.del.presidente.della.repubblica:2010-10-05;207",
+      "urn:nir:stato:legge:2010-08-13;136",
+      "urn:nir:stato:legge:1994-02-11;109",
+      "urn:nir:stato:decreto.del.presidente.della.repubblica:1999-12-21;554",
+      "urn:nir:stato:decreto.del.presidente.della.repubblica:2000-01-25;34",
+      "urn:nir:stato:decreto.legislativo:2002-08-20;190"
+    ],
+    "missingRoots": [
+      "urn:nir:stato:legge:1994-02-11;109",
+      "urn:nir:stato:decreto.del.presidente.della.repubblica:1999-12-21;554",
+      "urn:nir:stato:decreto.del.presidente.della.repubblica:2000-01-25;34",
+      "urn:nir:stato:decreto.legislativo:2002-08-20;190"
+    ],
+    "acts": [
+      "urn:nir:stato:decreto.del.presidente.della.repubblica:2010-10-05;207",
+      "urn:nir:stato:decreto.legislativo:2006-04-12;163",
+      "urn:nir:stato:decreto.legislativo:2016-04-18;50",
+      "urn:nir:stato:decreto.legislativo:2023-03-31;36",
+      "urn:nir:stato:legge:2010-08-13;136"
+    ],
+    "expansion": [
+      "ATTUA"
+    ],
+    "concepts": 33,
+    "propositions": 9285,
+    "propositionsWithConcept": 1702,
+    "extractor": "regole/1.0",
+    "computedAt": "2026-09-13"
+  }
+]

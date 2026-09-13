@@ -18,6 +18,7 @@ export const SNAPSHOT_FILES = {
   metrics: 'metrics.json',
   manifest: 'manifest.json',
   counter: 'contatore.json',
+  verticals: 'verticali.json',
 } as const;
 
 export function writeJsonl(path: string, rows: readonly unknown[]): void {

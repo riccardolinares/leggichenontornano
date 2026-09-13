@@ -19,6 +19,7 @@ export default function Dati() {
   const metriche = reader.data.metrics;
   const pubblicati = metriche.filter((m) => m.published);
   const fermi = metriche.filter((m) => !m.published);
+  const verticali = reader.verticals();
   const contatore = reader.counter();
 
   return (
@@ -160,6 +161,82 @@ export default function Dati() {
         ) : null}
       </section>
 
+      {verticali.length > 0 ? (
+        <section className="sezione" aria-labelledby="verticali">
+          <h2 id="verticali" className="sezione__titolo">
+            Fin dove arriva il confronto semantico
+          </h2>
+          <p>
+            I controlli di livello 3 confrontano il contenuto delle norme, e non possono farlo su
+            tutto: nell’italiano giuridico «concessione» sta nel codice dei contratti pubblici e
+            nel codice della navigazione, «collaudo» negli appalti e nel collaudo dei veicoli.
+            Ogni dominio dichiara quindi <strong>l’elenco degli atti</strong> su cui il confronto
+            lavora. Qui sotto c’è quell’elenco, per intero.
+          </p>
+          {verticali.map((v) => (
+            <div key={v.vertical} style={{ marginBottom: '2rem' }}>
+              <h3>{v.label}</h3>
+              <p>
+                {numero(v.acts.length)} atti, {numero(v.concepts)} concetti nel vocabolario,{' '}
+                {numero(v.propositions)} proposizioni estratte da <code>{v.extractor}</code>, di cui{' '}
+                {numero(v.propositionsWithConcept)} ricondotte a un concetto: sono le uniche che
+                entrano in un confronto.
+              </p>
+              <Tabella didascalia={`Gli atti su cui il confronto semantico del dominio «${v.label}» ha effettivamente lavorato.`}>
+                <thead>
+                  <tr>
+                    <th scope="col">Atto</th>
+                    <th scope="col">Come è entrato nel dominio</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {v.acts.map((urn) => (
+                    <tr key={urn}>
+                      <th scope="row" style={{ fontWeight: 400 }}>
+                        <Link href={`/norma/${encodeURIComponent(urn)}`}>
+                          {dataset().act(urn)?.title.slice(0, 90) ?? urn}
+                        </Link>
+                        <br />
+                        <code>{urn}</code>
+                      </th>
+                      <td>
+                        {v.roots.includes(urn)
+                          ? 'dichiarato a mano come atto fondativo del dominio'
+                          : `aggiunto dal grafo: ${v.expansion.join(' o ').toLowerCase()} un atto fondativo`}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Tabella>
+              {v.missingRoots.length > 0 ? (
+                <div className="niente-segnale" style={{ marginTop: '1rem' }}>
+                  <p style={{ marginBottom: 0 }}>
+                    <strong>
+                      {numero(v.missingRoots.length)} atti fondativi dichiarati non sono nel corpus
+                      che abbiamo scaricato
+                    </strong>{' '}
+                    e quindi non vengono confrontati:{' '}
+                    {v.missingRoots.map((u) => (
+                      <code key={u} style={{ marginRight: '0.5rem' }}>
+                        {u}
+                      </code>
+                    ))}
+                    . La copertura di questo dominio è corrispondentemente più bassa.
+                  </p>
+                </div>
+              ) : null}
+            </div>
+          ))}
+          <div className="niente-segnale">
+            <p style={{ marginBottom: 0 }}>
+              Una divergenza fra un atto di questo elenco e una norma che ne sta fuori{' '}
+              <strong>oggi non la vediamo</strong>. È una scelta: preferiamo non vederla piuttosto
+              che pubblicarla insieme a duecento accostamenti fra materie diverse.
+            </p>
+          </div>
+        </section>
+      ) : null}
+
       <section className="sezione" aria-labelledby="scarica">
         <h2 id="scarica" className="sezione__titolo">
           Scaricare il dataset
@@ -185,6 +262,9 @@ export default function Dati() {
           </li>
           <li>
             <code>anomalies.jsonl</code> — le segnalazioni, pubblicate e in coda
+          </li>
+          <li>
+            <code>verticali.json</code> — i domini del confronto semantico e i loro confini
           </li>
           <li>
             <code>metrics.json</code> e <code>manifest.json</code> — precisione e provenienza

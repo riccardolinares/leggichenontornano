@@ -115,6 +115,30 @@ Per questo il layer semantico si attiva **un verticale alla volta**, ognuno con
 il suo vocabolario di poche centinaia di concetti (`data/vocabolari/`). Il layer
 deterministico, al contrario, gira su tutto il corpus fin dall'inizio.
 
+### 4.3 Il verticale è un elenco di atti
+
+Il vocabolario da solo non basta a delimitare un dominio, e averlo creduto ha
+prodotto duecento segnalazioni sbagliate prima che ce ne accorgessimo. Il motivo
+è che nell'italiano giuridico quasi nessuna parola di una forma sola appartiene
+a un dominio solo: «concessione» sta nel codice dei contratti pubblici e nel
+codice della navigazione, «collaudo» negli appalti e nel collaudo dei veicoli,
+«lavori pubblici» in un secolo di leggi di conversione. Attivare il confronto su
+qualunque comma che contenga una di quelle forme significa confrontare norme di
+materie diverse, in silenzio.
+
+Ogni verticale dichiara quindi il proprio confine **per atti**, con gli URN delle
+norme fondative del dominio, e l'estrazione legge solo i commi di quegli atti.
+Il confine si allarga di un passo verso i regolamenti che *attuano* quelle norme,
+e non oltre: un atto che *modifica* un codice è quasi sempre un omnibus, e la sua
+modifica sta già dentro il testo multivigente del codice.
+
+Il prezzo è dichiarato: **il recall del livello 3 è limitato dalle radici
+dichiarate.** Una divergenza fra il codice dei contratti pubblici e la legge sul
+procedimento amministrativo oggi non la vediamo. Preferiamo non vederla piuttosto
+che vederla insieme a duecento coppie inventate.
+
+Vedi [ADR 0009](docs/adr/0009-il-verticale-e-un-elenco-di-atti.md).
+
 ## 5. Validazione e gold standard
 
 Servono metriche reali, non impressioni. Quattro fonti pubbliche di anomalie già

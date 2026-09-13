@@ -48,4 +48,5 @@ export type {
   SnapshotManifest,
   SnapshotRelation,
   SnapshotVersion,
+  SnapshotVertical,
 } from './snapshot/index.js';

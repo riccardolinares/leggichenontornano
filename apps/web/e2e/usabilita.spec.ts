@@ -44,6 +44,26 @@ test.describe('vincoli non negoziabili', () => {
     await expect(page.getByText(/85%/).first()).toBeVisible();
   });
 
+  test('la pagina Dati elenca gli atti su cui il confronto semantico lavora davvero', async ({
+    page,
+  }) => {
+    // La copertura del livello 3 è un limite del prodotto. Dichiararlo con una
+    // frase generica («soltanto sui domini dotati di vocabolario») non basta:
+    // il lettore deve poter contare gli atti. Vedi ADR 0009.
+    await page.goto('/dati');
+    const sezione = page.getByRole('region', { name: /fin dove arriva il confronto semantico/i });
+    await expect(sezione).toBeVisible();
+    const urn = sezione.locator('code', { hasText: /^urn:nir:/ });
+    expect(await urn.count()).toBeGreaterThan(0);
+    await expect(sezione.getByText(/oggi non la vediamo/i)).toBeVisible();
+  });
+
+  test('«Come funziona» dice perché il confronto semantico non copre tutto', async ({ page }) => {
+    await page.goto('/come-funziona');
+    const testo = (await page.locator('main').textContent()) ?? '';
+    expect(testo).toMatch(/elenco degli atti/i);
+  });
+
   test('la home dice che assenza di segnale non significa norma coerente', async ({ page }) => {
     await page.goto('/');
     const testo = (await page.locator('main').textContent()) ?? '';

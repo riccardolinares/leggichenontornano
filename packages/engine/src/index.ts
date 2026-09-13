@@ -22,6 +22,8 @@ export * from './registry.js';
 export * from './run.js';
 export * from './metrics.js';
 export * from './review/queue.js';
+export * from './estrazione.js';
+export * from './gold.js';
 export * from './checks/helpers.js';
 export {
   extractMandates,
