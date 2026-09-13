@@ -29,7 +29,7 @@ export default function Image() {
         cifra: numero(contatore.totalDaysLate),
         unita: 'giorni',
         titolo: `di ritardo sui termini che la legge si era data per ${numero(contatore.mandates)} provvedimenti attuativi.`,
-        nota: 'Misura termini scaduti, non attuazioni mancate — la differenza conta.',
+        nota: 'Conta i termini scaduti: il decreto può essere arrivato in ritardo.',
       }),
       size,
     );
