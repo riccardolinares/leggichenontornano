@@ -15,7 +15,12 @@ import {
   urnAtto,
 } from '@/lib/testo';
 import { Tabella } from '@/components/tabella';
-import { datiStrutturatiSegnalazione, metadatiPagina } from '@/lib/seo';
+import {
+  bloccoDatiStrutturati,
+  datiStrutturatiBriciole,
+  datiStrutturatiSegnalazione,
+  metadatiPagina,
+} from '@/lib/seo';
 
 export const dynamic = 'force-static';
 
@@ -118,6 +123,14 @@ export default async function SchedaAnomalia({ params }: Props) {
             pubblicataIl: anomalia.computedAt,
           }),
         }}
+      />
+      <script
+        {...bloccoDatiStrutturati(
+          datiStrutturatiBriciole([
+            { nome: 'Segnalazioni', percorso: '/' },
+            { nome: anomalia.title, percorso: `/anomalia/${encodeURIComponent(anomalia.id)}` },
+          ]),
+        )}
       />
       <nav aria-label="Percorso" style={{ fontSize: '0.85rem', marginBottom: '1.2rem' }}>
         <Link href="/">Segnalazioni</Link> <span aria-hidden="true">›</span>{' '}

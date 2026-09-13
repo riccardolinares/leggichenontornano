@@ -4,7 +4,12 @@ import type { Metadata } from 'next';
 import { checkById } from '@leggichenontornano/engine';
 import { articolo, articoli, type Sezione } from '@/lib/blog';
 import { REPO_URL, SITE_URL, dataset } from '@/lib/dataset';
-import { datiStrutturatiArticolo, metadatiPagina } from '@/lib/seo';
+import {
+  bloccoDatiStrutturati,
+  datiStrutturatiArticolo,
+  datiStrutturatiBriciole,
+  metadatiPagina,
+} from '@/lib/seo';
 import { Condivisione } from '@/components/condivisione';
 import { Tabella } from '@/components/tabella';
 import {
@@ -92,6 +97,14 @@ export default async function Approfondimento({ params }: Props) {
         }}
       />
 
+      <script
+        {...bloccoDatiStrutturati(
+          datiStrutturatiBriciole([
+            { nome: 'Approfondimenti', percorso: '/blog' },
+            { nome: a.titolo, percorso: `/blog/${a.slug}` },
+          ]),
+        )}
+      />
       <nav aria-label="Percorso" style={{ fontSize: '0.85rem', marginBottom: '1.2rem' }}>
         <Link href="/blog">Approfondimenti</Link> <span aria-hidden="true">›</span>{' '}
         <span>{data(a.data)}</span>

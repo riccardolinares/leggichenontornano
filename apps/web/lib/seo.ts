@@ -159,3 +159,91 @@ export function datiStrutturatiArticolo(opzioni: {
     publisher: { '@type': 'Organization', name: NOME_SITO, url: SITE_URL },
   });
 }
+
+/**
+ * Le briciole di pane, in forma leggibile da una macchina.
+ *
+ * È l'unico dato strutturato che i motori di ricerca usano in modo visibile:
+ * al posto dell'URL nudo, nei risultati compare il percorso. Su un sito i cui
+ * URL contengono un URN:NIR — cioè una riga di due punti e punti e virgola —
+ * la differenza fra «leggichenontornano.it › Pronunce › Sentenza n. 251/2001»
+ * e l'URL vero è tutta.
+ */
+export function datiStrutturatiBriciole(voci: Array<{ nome: string; percorso: string }>): string {
+  return JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: voci.map((v, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: v.nome,
+      item: `${SITE_URL}${v.percorso}`,
+    })),
+  });
+}
+
+/**
+ * Un indice: una pagina che è soprattutto un elenco di altre pagine.
+ *
+ * `CollectionPage` con `numberOfItems` dice a un motore di ricerca che questa
+ * pagina non è il contenuto ma la strada per arrivarci — ed è la differenza
+ * fra indicizzare l'indice al posto delle schede e indicizzarli entrambi per
+ * quello che sono.
+ */
+export function datiStrutturatiElenco(opzioni: {
+  titolo: string;
+  descrizione: string;
+  percorso: string;
+  quanti: number;
+}): string {
+  const url = `${SITE_URL}${opzioni.percorso}`;
+  return JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: opzioni.titolo,
+    description: opzioni.descrizione,
+    url,
+    inLanguage: 'it-IT',
+    isPartOf: { '@type': 'WebSite', name: NOME_SITO, url: SITE_URL },
+    mainEntity: { '@type': 'ItemList', numberOfItems: opzioni.quanti },
+  });
+}
+
+/**
+ * Una pagina che riporta un documento pubblico: una decisione, un controllo.
+ *
+ * `Article` e non `Legislation`: `Legislation` descriverebbe la norma, e questa
+ * pagina non è la norma — è quello che noi ne riportiamo. La distinzione è la
+ * stessa che il sito fa in ogni pagina fra il testo ufficiale e la nostra
+ * elaborazione.
+ */
+export function datiStrutturatiDocumento(opzioni: {
+  titolo: string;
+  descrizione: string;
+  percorso: string;
+  dataPubblicazione?: string | null;
+  licenza?: string;
+}): string {
+  const url = `${SITE_URL}${opzioni.percorso}`;
+  return JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: opzioni.titolo,
+    description: opzioni.descrizione,
+    url,
+    mainEntityOfPage: url,
+    inLanguage: 'it-IT',
+    isAccessibleForFree: true,
+    license: opzioni.licenza ?? 'https://creativecommons.org/licenses/by/4.0/',
+    ...(opzioni.dataPubblicazione ? { datePublished: opzioni.dataPubblicazione.slice(0, 10) } : {}),
+    publisher: { '@type': 'Organization', name: NOME_SITO, url: SITE_URL },
+  });
+}
+
+/** Un blocco `<script type="application/ld+json">` già pronto da inserire. */
+export function bloccoDatiStrutturati(json: string): {
+  type: 'application/ld+json';
+  dangerouslySetInnerHTML: { __html: string };
+} {
+  return { type: 'application/ld+json', dangerouslySetInnerHTML: { __html: json } };
+}

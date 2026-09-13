@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { dataset } from '@/lib/dataset';
-import { metadatiPagina } from '@/lib/seo';
+import { bloccoDatiStrutturati, datiStrutturatiElenco, metadatiPagina } from '@/lib/seo';
 import { Tabella } from '@/components/tabella';
 import { data, numero, percorsoPronuncia, titoloPronuncia } from '@/lib/testo';
 
@@ -28,6 +28,17 @@ export default function Corte() {
 
   return (
     <div className="contenitore">
+      <script
+        {...bloccoDatiStrutturati(
+          datiStrutturatiElenco({
+            titolo: 'Le pronunce della Corte costituzionale',
+            descrizione:
+              'Le dichiarazioni di illegittimità costituzionale che colpiscono le norme del corpus.',
+            percorso: '/corte',
+            quanti: pronunce.length,
+          }),
+        )}
+      />
       <h1>Le pronunce della Corte costituzionale</h1>
       <p className="apertura">
         {numero(pronunce.length)} decision

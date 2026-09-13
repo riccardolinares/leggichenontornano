@@ -2,7 +2,12 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { dataset } from '@/lib/dataset';
-import { metadatiPagina } from '@/lib/seo';
+import {
+  bloccoDatiStrutturati,
+  datiStrutturatiBriciole,
+  datiStrutturatiDocumento,
+  metadatiPagina,
+} from '@/lib/seo';
 import {
   data,
   nomeNorma,
@@ -68,6 +73,25 @@ export default async function Pronuncia({ params }: Props) {
 
   return (
     <article className="contenitore">
+      <script
+        {...bloccoDatiStrutturati(
+          datiStrutturatiDocumento({
+            titolo: titoloPronuncia(pronuncia),
+            descrizione: pronuncia.dispositivo.slice(0, 300),
+            percorso: percorsoPronuncia(pronuncia.ecli),
+            dataPubblicazione: pronuncia.dataDeposito,
+            licenza: 'https://creativecommons.org/licenses/by-sa/3.0/it/',
+          }),
+        )}
+      />
+      <script
+        {...bloccoDatiStrutturati(
+          datiStrutturatiBriciole([
+            { nome: 'Pronunce della Corte', percorso: '/corte' },
+            { nome: titoloPronuncia(pronuncia), percorso: percorsoPronuncia(pronuncia.ecli) },
+          ]),
+        )}
+      />
       <nav aria-label="Percorso" style={{ fontSize: '0.85rem', marginBottom: '1.2rem' }}>
         <Link href="/corte">Pronunce della Corte</Link> <span aria-hidden="true">›</span>{' '}
         <span>{titoloPronuncia(pronuncia)}</span>

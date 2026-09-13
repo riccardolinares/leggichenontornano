@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { articoli } from '@/lib/blog';
 import { dataset } from '@/lib/dataset';
-import { metadatiPagina } from '@/lib/seo';
+import { bloccoDatiStrutturati, datiStrutturatiElenco, metadatiPagina } from '@/lib/seo';
 import { data, percorsoAnomalia } from '@/lib/testo';
 
 /*
@@ -32,6 +32,16 @@ export default function Blog() {
 
   return (
     <div className="contenitore">
+      <script
+        {...bloccoDatiStrutturati(
+          datiStrutturatiElenco({
+            titolo: 'Approfondimenti',
+            descrizione: 'Un approfondimento al giorno su una legge che non torna.',
+            percorso: '/blog',
+            quanti: elenco.length,
+          }),
+        )}
+      />
       <h1>Approfondimenti</h1>
       <p className="apertura">
         Una scheda di segnalazione dice cosa risulta dai testi. Non dice perché dovrebbe importare a

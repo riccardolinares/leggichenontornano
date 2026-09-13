@@ -3,7 +3,12 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { CHECK_DEFINITIONS, THRESHOLD, checkById } from '@leggichenontornano/engine';
 import { dataset } from '@/lib/dataset';
-import { metadatiPagina } from '@/lib/seo';
+import {
+  bloccoDatiStrutturati,
+  datiStrutturatiBriciole,
+  datiStrutturatiDocumento,
+  metadatiPagina,
+} from '@/lib/seo';
 import {
   classeGravita,
   data,
@@ -70,6 +75,23 @@ export default async function PaginaControllo({ params }: Props) {
 
   return (
     <div className="contenitore">
+      <script
+        {...bloccoDatiStrutturati(
+          datiStrutturatiDocumento({
+            titolo: controllo.label,
+            descrizione: controllo.description,
+            percorso: `/controllo/${controllo.id}`,
+          }),
+        )}
+      />
+      <script
+        {...bloccoDatiStrutturati(
+          datiStrutturatiBriciole([
+            { nome: 'Segnalazioni', percorso: '/' },
+            { nome: controllo.label, percorso: `/controllo/${controllo.id}` },
+          ]),
+        )}
+      />
       <nav aria-label="Percorso" style={{ fontSize: '0.85rem', marginBottom: '1.2rem' }}>
         <Link href="/">Segnalazioni</Link> <span aria-hidden="true">›</span>{' '}
         <span>{controllo.label}</span>
