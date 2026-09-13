@@ -7,6 +7,7 @@ import {
   data,
   livello,
   numero,
+  numeroDecimale,
   percorsoAnomalia,
   percorsoNorma,
   urnAtto,
@@ -45,24 +46,61 @@ export default async function Home({ searchParams }: Props) {
   const manifest = reader.data.manifest;
   const metriche = reader.data.metrics;
   const sottoSoglia = metriche.filter((m) => !m.published && m.found > 0);
+  const contatore = reader.counter();
+
+  /* I numeri dell'apertura, ricavati dal dataset a ogni generazione.
+     Scriverli a mano sarebbe più semplice e sarebbe il modo più rapido di
+     ritrovarsi una cifra falsa sulla home il giorno in cui il corpus cambia. */
+  const attiColpiti = new Set(tutte.flatMap((a) => a.urns.map((u) => u.split('~')[0]))).size;
+  const annoPiuVecchio = tutte.reduce((max, a) => {
+    const m = /abrogato da (\d+) anni/.exec(a.title);
+    return m ? Math.max(max, Number(m[1])) : max;
+  }, 0);
+  const anniMediPerMandato = contatore
+    ? Math.round((contatore.totalDaysLate / contatore.mandates / 365.25) * 10) / 10
+    : 0;
 
   return (
     <div className="contenitore">
-      {/* La home apre con una frase che dice cosa contiene il sito, non con un
-          indovinello e non con una griglia di metriche. */}
+      {/* La home apre con una frase, non con un cruscotto. I numeri ci sono, e
+          sono i più duri che abbiamo, ma stanno **dentro le frasi**: una griglia
+          di metriche si guarda e non si legge, e il piano la esclude.
+
+          Tutti i numeri qui sotto sono calcolati dal dataset, non scritti a
+          mano. Se il corpus cambia, cambiano — ed è l'unico modo perché una
+          cifra sulla home resti vera. */}
       <h1>Le leggi che non tornano</h1>
       <p className="apertura">
-        Questo sito raccoglie punti in cui la legislazione italiana non torna: norme modificate dopo
-        essere state abrogate, rinvii che non trovano destinazione, adempimenti con termini diversi
-        per la stessa cosa. Ogni segnalazione mostra i testi originali, la regola che l’ha trovata e
-        i suoi limiti.
+        <strong className="cifra">{numero(tutte.length)}</strong> punti in cui la legislazione
+        italiana non torna: atti ancora in vigore che rinviano a leggi cancellate, modifiche a norme
+        che non esistono più, adempimenti con due termini diversi per la stessa cosa. Ogni
+        segnalazione mostra i testi originali, la regola che l’ha trovata e i suoi limiti.
       </p>
 
+      {/* Il colpo che fa notizia, e che regge: sono atti di oggi, non reperti. */}
+      {attiColpiti > 0 ? (
+        <p className="colpo">
+          <strong>{numero(attiColpiti)} atti tuttora in vigore</strong> rinviano a una norma che è
+          stata abrogata. Il rinvio più vecchio punta a una legge cancellata{' '}
+          <strong>{annoPiuVecchio} anni fa</strong>: chi la applica oggi deve ricostruire da sé
+          quale disciplina si sia messa al suo posto.
+        </p>
+      ) : null}
+
+      {contatore && contatore.mandates > 0 ? (
+        <p className="colpo">
+          <strong>{numero(contatore.mandates)} provvedimenti attuativi</strong> promessi da una
+          legge hanno un termine scaduto: in media da{' '}
+          <strong>{numeroDecimale(anniMediPerMandato)} anni</strong>.{' '}
+          <Link href="/dati">Cosa misura davvero questo numero</Link> — misura termini scaduti, non
+          attuazioni mancate, e la differenza conta.
+        </p>
+      ) : null}
+
       {manifest ? (
-        <p style={{ fontSize: '0.9rem', color: 'var(--inchiostro-debole)' }}>
-          Corpus: {numero(manifest.counts.acts)} atti, {numero(manifest.counts.versions)} versioni,{' '}
-          {numero(manifest.counts.relations)} relazioni fra norme. Ultimo aggiornamento{' '}
-          {data(manifest.generatedAt.slice(0, 10))}.{' '}
+        <p className="riga-corpus">
+          Su un corpus di {numero(manifest.counts.acts)} atti e {numero(manifest.counts.relations)}{' '}
+          relazioni fra norme, aggiornato al {data(manifest.generatedAt.slice(0, 10))}.{' '}
           <Link href="/dati">Dati e precisione di ogni controllo</Link>.
         </p>
       ) : null}

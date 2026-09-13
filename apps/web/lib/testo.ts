@@ -96,3 +96,17 @@ export function percentuale(value: number | null): string {
 export function numero(value: number): string {
   return new Intl.NumberFormat('it-IT').format(value);
 }
+
+/**
+ * Un numero con i decimali, all'italiana: virgola, non punto.
+ *
+ * Interpolare un numero JavaScript direttamente in una pagina italiana produce
+ * «14.2 anni», che a un lettore italiano non sembra un decimale: sembra un
+ * errore, e un errore di forma su una cifra fa dubitare della cifra.
+ */
+export function numeroDecimale(value: number, decimali = 1): string {
+  return new Intl.NumberFormat('it-IT', {
+    minimumFractionDigits: decimali,
+    maximumFractionDigits: decimali,
+  }).format(value);
+}
