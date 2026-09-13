@@ -246,7 +246,20 @@ test.describe('vincoli non negoziabili', () => {
    * ammorbidita: allargare l'elenco delle forme per far passare un caso
    * spegnerebbe il controllo su tutti gli altri.
    */
-  const ECCEZIONI: Array<{ frase: RegExp; perche: string }> = [];
+  const ECCEZIONI: Array<{ frase: RegExp; perche: string }> = [
+    {
+      /* L'informativa privacy traduce gli articoli 15-21 del Regolamento in
+         frasi fra virgolette, e quelle frasi le scrive **chi ci contatta**:
+         «Cosa avete di mio?», «correggetelo», «Cancellatelo», «Fermatevi
+         finché non chiariamo». Lì il plurale è la forma giusta, perché a
+         essere in due o più siamo noi. Riscriverle al singolare farebbe dire
+         a chi legge una cosa che non dice: non si scrive a una persona sola,
+         si scrive a un progetto. */
+      frase:
+        /«(?:Cosa avete di mio\?|Questo dato è sbagliato, correggetelo|Cancellatelo|Fermatevi[^»]*|Datemelo[^»]*|Non voglio)»/g,
+      perche: 'sono le frasi che chi legge scrive a noi, non quelle che noi scriviamo a chi legge',
+    },
+  ];
 
   test('dà del tu a chi legge, su ogni pagina', async ({ page }) => {
     const colti: string[] = [];
