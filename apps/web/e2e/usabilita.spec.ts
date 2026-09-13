@@ -255,10 +255,13 @@ test.describe('scheda anomalia', () => {
       expect(risposta.status(), `anteprima di ${percorso}`).toBe(200);
       const byte = await risposta.body();
       expect([...byte.subarray(0, 4)]).toEqual([0x89, 0x50, 0x4e, 0x47]);
-      viste.add(byte.length.toString());
+      // Il contenuto, non la lunghezza: due PNG diversi possono pesare uguale,
+      // e un test che confronta le dimensioni fallirebbe — o passerebbe — per
+      // ragioni che non hanno niente a che vedere con quello che verifica.
+      viste.add(byte.toString('base64'));
     }
     // Quattro pagine, quattro immagini diverse: se una sola cornice finisse
-    // ovunque, il numero di byte coinciderebbe e questo test lo direbbe.
+    // ovunque, i byte coinciderebbero e questo test lo direbbe.
     expect(viste.size).toBe(4);
   });
 

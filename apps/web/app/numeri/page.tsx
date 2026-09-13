@@ -10,6 +10,7 @@ import {
   percorsoNorma,
   percorsoPronuncia,
   titoloPronuncia,
+  urnAtto,
 } from '@/lib/testo';
 
 /*
@@ -53,15 +54,22 @@ export default function Numeri() {
   const pubblicate = reader.publishedAnomalies();
   const conosciutoAl = (manifest?.knownAt ?? new Date().toISOString()).slice(0, 10);
 
+  /* Gli URN di una segnalazione possono portare una partizione (`~art3`): il
+     tipo lo consente anche dove i dati attuali non lo fanno. Contarli così
+     come sono conterebbe due volte lo stesso atto citato a due articoli, e
+     produrrebbe collegamenti a `/norma/<urn~art3>` che il lettore non
+     riconosce. Si normalizza sempre all'atto. */
   const rinvii = pubblicate.filter((a) => a.checkId === 'rinvio-ad-atto-abrogato');
-  const attiRinvianti = new Set(rinvii.map((a) => a.urns[0]).filter((u): u is string => !!u)).size;
+  const attiRinvianti = new Set(
+    rinvii.map((a) => (a.urns[0] ? urnAtto(a.urns[0]) : null)).filter((u): u is string => !!u),
+  ).size;
 
   /* Il bersaglio più richiamato: una legge cancellata che decine di atti in
      vigore continuano a citare. È il numero che si capisce senza spiegazioni. */
   const perBersaglio = new Map<string, Set<string>>();
   for (const a of rinvii) {
-    const bersaglio = a.urns[1];
-    const sorgente = a.urns[0];
+    const bersaglio = a.urns[1] ? urnAtto(a.urns[1]) : null;
+    const sorgente = a.urns[0] ? urnAtto(a.urns[0]) : null;
     if (!bersaglio || !sorgente) continue;
     const insieme = perBersaglio.get(bersaglio) ?? new Set<string>();
     insieme.add(sorgente);
