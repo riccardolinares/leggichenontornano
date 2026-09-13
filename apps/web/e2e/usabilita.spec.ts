@@ -1047,6 +1047,23 @@ test.describe('robustezza', () => {
     await expect(page.locator('h1')).toBeVisible();
   });
 
+  test('il vecchio indirizzo della pagina MCP risponde ancora, e porta a /mcp', async ({
+    page,
+  }) => {
+    // ADR 0008: un indirizzo pubblicato non si rompe. `/assistente` è stato
+    // citato e indicizzato prima che la pagina prendesse il nome con cui la si
+    // cerca, e deve continuare a portare dove porta oggi.
+    const rinvio = await page.request.fetch('/assistente', { maxRedirects: 0 });
+    // 308 e non 302: il trasloco è definitivo, e va detto agli indici.
+    expect(rinvio.status()).toBe(308);
+    expect(rinvio.headers()['location']).toContain('/mcp');
+
+    // E seguendolo da browser si arriva davvero alla pagina, non a un vicolo.
+    await page.goto('/assistente');
+    await expect(page).toHaveURL(/\/mcp$/);
+    await expect(page.locator('h1')).toContainText('MCP');
+  });
+
   test('il sito si legge su un telefono senza scorrimento orizzontale', async ({ page }) => {
     await page.setViewportSize({ width: 360, height: 740 });
     for (const percorso of percorsiDaVerificare()) {

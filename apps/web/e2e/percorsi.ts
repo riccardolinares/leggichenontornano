@@ -122,7 +122,7 @@ export function percorsiDaVerificare(): Percorso[] {
     { nome: 'grafo delle leggi', url: '/grafo' },
     { nome: 'elenco delle norme', url: '/norme' },
     { nome: 'elenco delle pronunce', url: '/corte' },
-    { nome: 'assistente', url: '/assistente' },
+    { nome: 'mcp', url: '/mcp' },
     { nome: 'come funziona', url: '/come-funziona' },
     { nome: 'dati', url: '/dati' },
     { nome: 'stampa', url: '/stampa' },

@@ -153,7 +153,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   <h2>Usare il progetto</h2>
                   <ul>
                     <li>
-                      <Link href="/assistente">Nel tuo assistente (MCP)</Link>
+                      <Link href="/mcp">MCP: nel tuo assistente</Link>
                     </li>
                     <li>
                       <Link href="/dati">Dati e precisione</Link>
