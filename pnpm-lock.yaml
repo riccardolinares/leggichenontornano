@@ -54,6 +54,9 @@ importers:
       '@leggichenontornano/engine':
         specifier: workspace:*
         version: link:../../packages/engine
+      '@leggichenontornano/redazione':
+        specifier: workspace:*
+        version: link:../../packages/redazione
       next:
         specifier: ^15.5.4
         version: 15.5.25(@playwright/test@1.63.0)(@types/node@22.20.2)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
@@ -173,6 +176,28 @@ importers:
       zod:
         specifier: ^3.24.1
         version: 3.25.76
+    devDependencies:
+      typescript:
+        specifier: ^5.7.2
+        version: 5.9.3
+      vitest:
+        specifier: ^2.1.8
+        version: 2.1.9(@types/node@22.20.2)
+
+  packages/redazione:
+    dependencies:
+      '@anthropic-ai/sdk':
+        specifier: ^0.71.0
+        version: 0.71.2(zod@3.25.76)
+      '@leggichenontornano/akn-parser':
+        specifier: workspace:*
+        version: link:../akn-parser
+      '@leggichenontornano/corpus':
+        specifier: workspace:*
+        version: link:../corpus
+      '@leggichenontornano/engine':
+        specifier: workspace:*
+        version: link:../engine
     devDependencies:
       typescript:
         specifier: ^5.7.2

@@ -1,0 +1,71 @@
+name: Approfondimento del giorno
+
+# Un articolo al giorno a partire da una segnalazione.
+#
+# Il lavoro è volutamente fragile in un verso solo: se la verifica rifiuta
+# l'articolo, la Action fallisce e non si pubblica niente. Saltare un giorno
+# costa infinitamente meno che pubblicare una frase che i fatti non
+# sostengono — la prima cosa la nota il manutentore, la seconda la nota il
+# lettore che ci credeva.
+#
+# Senza `ANTHROPIC_API_KEY` la Action non fallisce: dice che la redazione non è
+# configurata ed esce con successo, così un fork non diventa rosso per una cosa
+# che non deve fare.
+
+on:
+  schedule:
+    # 05:30 UTC: l'articolo è pronto prima che qualcuno si svegli, e la
+    # pubblicazione sui canali (che è un altro workflow, alle 09:00) lo trova
+    # già online.
+    - cron: '30 5 * * *'
+  workflow_dispatch:
+    inputs:
+      prova:
+        description: 'Solo prova: stampa l’articolo senza scriverlo'
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: approfondimento
+  cancel-in-progress: false
+
+jobs:
+  scrivi:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @leggichenontornano/corpus exec prisma generate
+      - run: pnpm run build
+
+      - name: Scrivi l’approfondimento
+        env:
+          # Assoluto, come negli altri workflow: un percorso relativo regge
+          # finché nessuno cambia la cartella di lavoro, e poi legge un dataset
+          # vuoto senza dirlo.
+          LCNT_SNAPSHOT: ${{ github.workspace }}/data/snapshot
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          node packages/redazione/dist/cli.js scrivi \
+            ${{ github.event.inputs.prova == 'false' && ' ' || '--prova' }}
+
+      - name: Pubblica l’articolo
+        if: github.event.inputs.prova != 'true'
+        run: |
+          if git diff --quiet -- data/blog; then
+            echo "Nessun articolo nuovo da pubblicare."
+            exit 0
+          fi
+          git config user.name "redazione leggichenontornano"
+          git config user.email "info@leggichenontornano.it"
+          git add data/blog
+          git commit -m "Approfondimento del $(date -u +%Y-%m-%d)"
+          git push

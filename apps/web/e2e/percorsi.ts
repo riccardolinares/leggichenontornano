@@ -1,4 +1,4 @@
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 
 /**
@@ -90,9 +90,21 @@ export function primaPronuncia(): string | null {
   return jsonl<{ ecli: string }>('pronunce.jsonl')[0]?.ecli ?? null;
 }
 
+/** Uno degli articoli del blog, se ce n'è: la pagina ha una forma sua. */
+export function primoApprofondimento(): string | null {
+  const cartella = process.env['LCNT_BLOG'] ?? join(process.cwd(), '..', '..', 'data', 'blog');
+  if (!existsSync(cartella)) return null;
+  const file = readdirSync(cartella)
+    .filter((f) => f.endsWith('.json'))
+    .sort()
+    .at(-1);
+  return file ? file.replace(/\.json$/, '') : null;
+}
+
 export function percorsiDaVerificare(): Percorso[] {
   const percorsi: Percorso[] = [
     { nome: 'home', url: '/' },
+    { nome: 'indice del blog', url: '/blog' },
     { nome: 'numeri', url: '/numeri' },
     { nome: 'elenco delle norme', url: '/norme' },
     { nome: 'elenco delle pronunce', url: '/corte' },
@@ -108,6 +120,11 @@ export function percorsiDaVerificare(): Percorso[] {
   const controllo = primoControlloConEsito();
   if (controllo) {
     percorsi.push({ nome: 'pagina di un controllo', url: `/controllo/${controllo}` });
+  }
+
+  const approfondimento = primoApprofondimento();
+  if (approfondimento) {
+    percorsi.push({ nome: 'approfondimento', url: `/blog/${approfondimento}` });
   }
 
   const pronuncia = primaPronuncia();

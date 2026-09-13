@@ -1136,3 +1136,40 @@ a.griglia-cifre__voce:focus-visible .griglia-cifre__etichetta {
   line-height: 1.4;
   color: var(--inchiostro-tenue);
 }
+
+/* ---------- Approfondimenti ---------- */
+
+/*
+ * La firma sta in alto, prima del testo, e non in fondo.
+ *
+ * Chi legge deve sapere **prima** chi ha scritto le parole che sta per
+ * leggere. Una nota in coda a un articolo generato la trova solo chi arriva in
+ * fondo, cioè chi si è già fatto un'idea.
+ */
+.firma {
+  max-width: var(--misura);
+  margin: 1.2rem 0 2rem;
+  padding: 0.9rem 1.1rem;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--inchiostro-tenue);
+  background: var(--carta-incisa);
+  border-left: 3px solid var(--ocra);
+}
+
+/*
+ * Il dossier: la metà della pagina che non scrive nessuno.
+ *
+ * Separato da una riga netta e con un fondo appena diverso, perché il confine
+ * fra «prosa» e «campi del dataset» sia visibile senza doverlo leggere.
+ */
+.dossier {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 2px solid var(--bordo-forte);
+}
+
+.dossier h3 {
+  margin-top: 1.8rem;
+  font-size: 1.02rem;
+}

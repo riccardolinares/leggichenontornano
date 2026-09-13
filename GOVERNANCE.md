@@ -27,6 +27,14 @@ campi da un comma alla volta e non vede mai due norme insieme. `AnomalyFinding`
 non ha un campo in cui possa entrare una spiegazione generata, e non deve
 acquisirlo.
 
+Dal 2026 un modello scrive anche gli articoli del blog, e questo **non** è
+un'eccezione a quella regola: riceve una scheda di fatti già stabiliti da query
+deterministiche e ci scrive attorno, un controllo automatico rifiuta l'articolo
+se contiene una cifra o una citazione che la scheda non sostiene, e la firma in
+cima alla pagina dice chi ha scritto le parole. Le condizioni esatte, e cosa
+resta vietato, stanno in
+[ADR 0010](docs/adr/0010-il-modello-scrive-attorno-ai-fatti.md).
+
 **I limiti si pubblicano.** Quello che il progetto non sa, non copre o non ha
 ancora verificato sta sul sito, non in una nota a piè di pagina del repository:
 l'elenco degli atti su cui il confronto semantico lavora davvero, quante

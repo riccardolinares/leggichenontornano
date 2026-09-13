@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 
 const VOCI = [
   { href: '/', label: 'Segnalazioni' },
+  { href: '/blog', label: 'Approfondimenti' },
   { href: '/numeri', label: 'I numeri' },
   { href: '/norme', label: 'Norme' },
   { href: '/corte', label: 'Consulta' },

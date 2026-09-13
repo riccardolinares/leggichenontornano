@@ -62,7 +62,11 @@ Non è burocrazia: sono i vincoli che tengono in piedi il progetto.
 1. **Nessun percorso di codice che chieda a un modello linguistico se due norme
    si contraddicono.** Il modello estrae campi da un comma alla volta e non vede
    mai due norme insieme. `AnomalyFinding` non ha un campo in cui possa entrare
-   una spiegazione generata, e non deve acquisirlo.
+   una spiegazione generata, e non deve acquisirlo. Il blog è l'unico posto in
+   cui un modello scrive prosa, e lo fa solo attorno a fatti che ha ricevuto
+   già stabiliti, con un controllo che rifiuta quello che i fatti non
+   sostengono: le condizioni sono in
+   [ADR 0010](docs/adr/0010-il-modello-scrive-attorno-ai-fatti.md).
 2. **Nessuna prosa generata nel sito.** Titoli e spiegazioni in lingua comune
    vengono da template di proprietà del singolo controllo.
 3. **Nessuno scraping** del portale di consultazione di Normattiva. Si usano le

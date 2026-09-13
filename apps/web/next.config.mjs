@@ -8,6 +8,7 @@ const nextConfig = {
     '@leggichenontornano/engine',
     '@leggichenontornano/api',
     '@leggichenontornano/akn-parser',
+    '@leggichenontornano/redazione',
   ],
   poweredByHeader: false,
   eslint: { ignoreDuringBuilds: true },

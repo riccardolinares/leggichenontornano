@@ -18,6 +18,7 @@
     "@leggichenontornano/api": "workspace:*",
     "@leggichenontornano/corpus": "workspace:*",
     "@leggichenontornano/engine": "workspace:*",
+    "@leggichenontornano/redazione": "workspace:*",
     "next": "^15.5.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
