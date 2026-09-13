@@ -84,16 +84,15 @@ export default function PaginaGrafoVivo() {
       <h1>La mappa viva delle leggi</h1>
       <p className="apertura">
         Le stesse {numero(nodi.length)} norme e gli stessi {numero(archi.length)} collegamenti della{' '}
-        <Link href="/grafo">mappa ferma</Link>, con la simulazione accesa: qui le leggi si
-        sistemano da sole sotto gli occhi, e si possono prendere e tirare. Chi tira un perno vede in
-        un gesto quanta parte dell’ordinamento gli sta appesa.
+        <Link href="/grafo">mappa ferma</Link>, con la simulazione accesa: qui le leggi si sistemano
+        da sole sotto gli occhi, e si possono prendere e tirare. Chi tira un perno vede in un gesto
+        quanta parte dell’ordinamento gli sta appesa.
       </p>
 
       <p className="riga-corpus">
         {numero(nodi.length)} norme e {numero(archi.length)} collegamenti, che riassumono{' '}
-        {numero(g.relazioni)} relazioni del dataset; {numero(rotti)} finiscono su{' '}
-        {numero(morti)} testi che non sono più in vigore. Corpus aggiornato al{' '}
-        {data(g.conosciutoAl)}.
+        {numero(g.relazioni)} relazioni del dataset; {numero(rotti)} finiscono su {numero(morti)}{' '}
+        testi che non sono più in vigore. Corpus aggiornato al {data(g.conosciutoAl)}.
       </p>
 
       <GrafoVivo nodi={nodi} archi={archi} famiglie={g.famiglie} />

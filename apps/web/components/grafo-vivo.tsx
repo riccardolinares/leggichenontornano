@@ -73,8 +73,7 @@ type Istanza = import('force-graph').default<NodoTela, ArcoTela>;
  */
 function tavolozza(): Record<string, string> {
   const stile = getComputedStyle(document.documentElement);
-  const leggi = (nome: string, riserva: string) =>
-    stile.getPropertyValue(nome).trim() || riserva;
+  const leggi = (nome: string, riserva: string) => stile.getPropertyValue(nome).trim() || riserva;
   return {
     /* Il carattere serve alla tela risolto: dentro un `canvas` la proprietà
        `font` non conosce le variabili CSS, e una `var()` non applicata manda
