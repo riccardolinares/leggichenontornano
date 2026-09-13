@@ -77,6 +77,14 @@ in [docs/qualita-fonti.md](docs/qualita-fonti.md).
 
 ### Corretto
 
+- **Le pagine delle pronunce rispondevano 404 in produzione, tutte e
+  cinquantacinque.** Stavano su `/corte/ECLI%3AIT%3ACOST%3A2026%3A121`, e un
+  percorso che contiene i due punti non arrivava mai alla pagina: in locale
+  funzionava, quindi nessun test lo vedeva. L'indirizzo ora è la citazione —
+  `/corte/sentenza-121-2026` — che è anche l'unica forma che qualcuno può
+  leggere al telefono (ADR 0017). I vecchi indirizzi reindirizzano in modo
+  permanente, l'ECLI resta nel dataset e scritto in pagina, e un test chiede
+  che **ogni** pronuncia del dataset abbia una pagina che risponde.
 - **L'integrazione continua non era mai partita.** `pnpm` era dichiarato due
   volte — nel workflow e in `packageManager` — e l'azione si rifiutava di
   scegliere. Il badge era rosso dal primo commit e nessuno dei passi

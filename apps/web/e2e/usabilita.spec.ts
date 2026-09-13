@@ -1,5 +1,7 @@
+import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 import {
+  PERCORSI_LEGALI,
   normaConPiuVersioni,
   normaConPronuncia,
   percorsiDaVerificare,
@@ -8,7 +10,9 @@ import {
   primoApprofondimento,
   primoControlloConEsito,
   primaPronuncia,
+  tuttePronunce,
 } from './percorsi';
+import { percorsoPronuncia } from '../lib/testo';
 
 /**
  * Verifiche di usabilità e di contenuto.
@@ -100,12 +104,30 @@ test.describe('vincoli non negoziabili', () => {
     await expect(primoH2).toHaveText(/su cosa potete contare/i);
   });
 
-  test('la home apre con una frase, non con un cruscotto di metriche', async ({ page }) => {
+  test('nessuna cifra della home sta lì da sola', async ({ page }) => {
+    /*
+     * La home adesso apre con le cifre: il muro di testo che c'era prima era
+     * corretto e non lo leggeva nessuno. Quello che non deve diventare è un
+     * cruscotto — sei riquadri con dei numeri dentro, che si guardano senza
+     * capire cosa dicono.
+     *
+     * Il vincolo che resta, e che questo test difende, è che **ogni cifra
+     * porti con sé la frase che dice cosa misura** e il collegamento al posto
+     * dove è spiegata con il suo limite accanto.
+     */
     await page.goto('/');
-    const apertura = page.locator('.apertura');
-    await expect(apertura).toBeVisible();
-    const testo = (await apertura.textContent()) ?? '';
-    expect(testo.length).toBeGreaterThan(120);
+    const voci = page.locator('.cifre-forti__voce');
+    const quante = await voci.count();
+    expect(quante).toBeGreaterThan(0);
+
+    for (let i = 0; i < quante; i++) {
+      const voce = voci.nth(i);
+      const frase = (await voce.locator('.cifre-forti__frase').textContent()) ?? '';
+      expect(frase.trim().length, 'una cifra senza la frase che dice cosa misura').toBeGreaterThan(
+        20,
+      );
+      await expect(voce.getByRole('link')).toHaveAttribute('href', /\S/);
+    }
   });
 
   test('la pagina Dati mostra anche i controlli ancora in lavorazione', async ({ page }) => {
@@ -173,13 +195,13 @@ test.describe('vincoli non negoziabili', () => {
     expect(testo).toMatch(/termini scaduti(,| e) non attuazioni mancate/i);
   });
 
-  test('la home dice che l’indice è quello trovato finora, e che il corpus cresce', async ({
-    page,
-  }) => {
-    await page.goto('/');
+  test('l’indice dice che è quello trovato finora, e che il corpus cresce', async ({ page }) => {
+    // Sta su `/segnalazioni` insieme all'elenco completo: è lì che qualcuno
+    // rischia di leggerlo come una mappa di tutto quello che non torna nella
+    // legge italiana. Detto in positivo informa uguale e invita a tornare, ma
+    // deve esserci.
+    await page.goto('/segnalazioni');
     const testo = (await page.locator('main').textContent()) ?? '';
-    // L'informazione che conta è che l'indice non sia una mappa completa. Detta
-    // in positivo informa uguale e invita a tornare, ma deve esserci.
     expect(testo).toMatch(/trovato finora|corpus (si allarga|cresce)/i);
   });
 });
@@ -296,14 +318,14 @@ test.describe('scheda anomalia', () => {
   test('la pagina dichiara un canonical assoluto, e i parametri non ne creano di nuovi', async ({
     page,
   }) => {
-    await page.goto('/');
-    const canonicalHome = await page.locator('link[rel="canonical"]').getAttribute('href');
-    expect(canonicalHome).toMatch(/^https?:\/\//);
+    await page.goto('/segnalazioni');
+    const canonicalIndice = await page.locator('link[rel="canonical"]').getAttribute('href');
+    expect(canonicalIndice).toMatch(/^https?:\/\//);
 
     // Il filtro è un parametro dello stesso indice, non una pagina concorrente.
-    await page.goto('/?tipo=rinvio-ad-atto-abrogato');
+    await page.goto('/segnalazioni?tipo=rinvio-ad-atto-abrogato');
     const canonicalFiltro = await page.locator('link[rel="canonical"]').getAttribute('href');
-    expect(canonicalFiltro).toBe(canonicalHome);
+    expect(canonicalFiltro).toBe(canonicalIndice);
   });
 
   test('i dati strutturati dichiarano un dataset con licenza e fonte', async ({ page }) => {
@@ -391,15 +413,19 @@ test.describe('il grafo', () => {
   });
 
   test('il disegno è identico a ogni caricamento', async ({ page }) => {
-    // Il layout è precalcolato server-side: se due richieste danno due SVG
-    // diversi, qualcosa lo sta calcolando nel browser.
+    /* Il layout è precalcolato server-side: se due richieste danno due SVG
+       diversi, qualcosa lo sta calcolando nel browser.
+       Il disegno si cerca **dentro `.grafo`**, non come primo `svg` della
+       pagina: da quando la testata ha il selettore del tema, il primo `svg`
+       è l'icona del sole o della luna, che cambia per forza a seconda del
+       tema risolto — e il test falliva misurando la cosa sbagliata. */
     const url = `/norma/${encodeURIComponent(norma!)}`;
     await page.goto(url);
-    const grafo = page.locator('svg').first();
+    const grafo = page.locator('.grafo svg').first();
     if ((await grafo.count()) === 0) test.skip();
     const primo = await grafo.innerHTML();
     await page.reload();
-    expect(await page.locator('svg').first().innerHTML()).toBe(primo);
+    expect(await page.locator('.grafo svg').first().innerHTML()).toBe(primo);
   });
 
   test('la stessa informazione è disponibile anche in tabella', async ({ page }) => {
@@ -477,6 +503,90 @@ test.describe('pronunce della Corte costituzionale', () => {
     const testo = (await page.locator('main').textContent()) ?? '';
     expect(testo).toMatch(/Corte costituzionale/);
     expect(testo).toMatch(/CC BY-SA 3\.0/);
+  });
+});
+
+/**
+ * Gli indirizzi delle pronunce.
+ *
+ * Questi test esistono per un guasto arrivato in produzione senza che niente
+ * suonasse: le pagine delle pronunce stavano su `/corte/<ecli>`, in locale
+ * rispondevano, e in produzione rispondevano 404 tutte e cinquantacinque,
+ * perché il routing dei file non ritrova un percorso con i due punti. C'era un
+ * test sulla prima pronuncia dell'elenco — e passava, perché girava in locale.
+ *
+ * La verifica che conta non è «lo slug è quello che mi aspetto»: è che ogni
+ * pronuncia del dataset abbia una pagina raggiungibile, e che nessun indirizzo
+ * contenga caratteri codificati. La prima dice che il sito funziona, la seconda
+ * impedisce di rimetterci dentro la causa.
+ */
+test.describe('gli indirizzi delle pronunce', () => {
+  const pronunce = tuttePronunce();
+  const indirizzi = pronunce.map((p) => percorsoPronuncia(p, pronunce));
+
+  test.skip(pronunce.length === 0, 'nessuna pronuncia nel dataset');
+
+  test('ogni pronuncia del dataset ha la sua pagina, e risponde', async ({ request }) => {
+    const rotte: string[] = [];
+    for (const indirizzo of indirizzi) {
+      // Senza seguire i redirect: l'indirizzo canonico deve essere servito
+      // direttamente, non fare un giro prima di arrivare.
+      const risposta = await request.get(indirizzo, { maxRedirects: 0 });
+      if (risposta.status() !== 200) rotte.push(`${indirizzo} → ${risposta.status()}`);
+    }
+    expect(rotte, 'pronunce senza una pagina che risponde').toEqual([]);
+    expect(indirizzi).toHaveLength(pronunce.length);
+  });
+
+  test('nessun indirizzo contiene caratteri codificati', () => {
+    // Un `%3A` qui dentro è esattamente il difetto di prima. La regola vale su
+    // tutti e cinquantacinque, non sul primo.
+    const codificati = indirizzi.filter((i) => /%[0-9a-f]{2}/i.test(i));
+    expect(codificati, 'indirizzi con caratteri percent-encoded').toEqual([]);
+    // E nemmeno caratteri che un browser codificherebbe da sé.
+    expect(indirizzi.filter((i) => encodeURI(i) !== i)).toEqual([]);
+  });
+
+  test('due pronunce non finiscono mai allo stesso indirizzo', () => {
+    // Se numero, anno e tipologia smettessero di identificarne una sola, se ne
+    // accorge questo test — non la produzione, che servirebbe una pagina al
+    // posto di un'altra senza dirlo a nessuno.
+    expect(new Set(indirizzi).size).toBe(pronunce.length);
+  });
+
+  test('il vecchio indirizzo con l’ECLI porta al nuovo, in modo permanente', async ({
+    request,
+  }) => {
+    for (const pronuncia of pronunce.slice(0, 3)) {
+      const vecchio = `/corte/${encodeURIComponent(pronuncia.ecli)}`;
+      const risposta = await request.get(vecchio, { maxRedirects: 0 });
+      expect(risposta.status(), `redirect da ${vecchio}`).toBe(308);
+      expect(risposta.headers()['location']).toContain(percorsoPronuncia(pronuncia, pronunce));
+    }
+  });
+
+  test('dall’indice si arriva alla decisione, e il dispositivo c’è', async ({ page }) => {
+    await page.goto('/corte');
+    const collegamento = page.locator('tbody th a').first();
+    const href = await collegamento.getAttribute('href');
+    expect(href, 'nessun collegamento nell’indice delle pronunce').toBeTruthy();
+    expect(href!).not.toMatch(/%[0-9a-f]{2}/i);
+
+    // Il link c'era anche prima, e portava a un errore: è così che il guasto è
+    // arrivato in produzione senza che nessuno se ne accorgesse. Qui si segue
+    // davvero, e si guarda che in fondo ci sia il dispositivo.
+    const risposta = await page.goto(href!);
+    expect(risposta?.status()).toBe(200);
+    const sezione = page.getByRole('region', { name: /dispositivo/i });
+    await expect(sezione).toBeVisible();
+    const dispositivo = sezione.locator('.prova__testo').first();
+    expect(((await dispositivo.textContent()) ?? '').length).toBeGreaterThan(40);
+  });
+
+  test('l’ECLI resta scritto in pagina: è l’identificatore, non l’indirizzo', async ({ page }) => {
+    const pronuncia = pronunce[0]!;
+    await page.goto(percorsoPronuncia(pronuncia, pronunce));
+    await expect(page.getByText(pronuncia.ecli, { exact: false }).first()).toBeVisible();
   });
 });
 
@@ -594,7 +704,7 @@ test.describe('dati strutturati', () => {
   test('le pagine di dettaglio portano le briciole di pane', async ({ page }) => {
     const percorsi = [
       anomalia ? `/anomalia/${encodeURIComponent(anomalia.id)}` : null,
-      pronuncia ? `/corte/${encodeURIComponent(pronuncia)}` : null,
+      pronuncia ? percorsoPronuncia(pronuncia, tuttePronunce()) : null,
       controllo ? `/controllo/${controllo}` : null,
       approfondimento ? `/blog/${approfondimento}` : null,
     ].filter((p): p is string => p !== null);
@@ -719,8 +829,8 @@ test.describe('la mappa delle leggi', () => {
     // grafo che cambia a ogni caricamento non si può citare.
     const leggi = async () => {
       await page.goto('/grafo');
-      await page.waitForSelector('.grafo__tela circle');
-      return page.locator('.grafo__tela circle').first().getAttribute('cx');
+      await page.waitForSelector('.grafo__nodi circle');
+      return page.locator('.grafo__nodi circle').first().getAttribute('cx');
     };
     const prima = await leggi();
     const dopo = await leggi();
@@ -728,28 +838,79 @@ test.describe('la mappa delle leggi', () => {
     expect(dopo).toBe(prima);
   });
 
+  test('ci sono tutte le norme e tutti i tipi di legame, non solo i buchi', async ({ page }) => {
+    /*
+     * La prima versione teneva solo i rinvii che partivano da una norma in
+     * vigore, e il risultato era un disegno in cui si vedevano due sole leggi:
+     * tutto il resto era grigio indistinto. Questo test difende la correzione —
+     * il grafo deve mostrare **come le leggi si tengono**, e per farlo servono
+     * tutte le norme e tutte le famiglie di legame, ciascuna con il suo colore.
+     */
+    await page.goto('/grafo');
+    await page.waitForSelector('.grafo__nodi circle');
+
+    expect(await page.locator('.grafo__nodi circle').count()).toBeGreaterThan(150);
+    expect(await page.locator('.grafo__archi line').count()).toBeGreaterThan(1000);
+
+    // Più di un colore fra gli archi: con un colore solo il disegno direbbe
+    // che tutti i legami sono la stessa cosa, e non lo sono.
+    const colori = new Set(
+      await page
+        .locator('.grafo__archi line')
+        .evaluateAll((righe) => righe.map((r) => r.getAttribute('stroke') ?? '')),
+    );
+    expect(colori.size, 'gli archi hanno un colore solo').toBeGreaterThan(2);
+
+    // Il menù offre le famiglie per quello che fanno, non per il nome interno
+    // della relazione nel database.
+    const opzioni = await page.locator('#grafo-legame option').allTextContents();
+    expect(opzioni.join(' ')).toMatch(/rimanda a/i);
+    expect(opzioni.join(' ')).not.toMatch(/RINVIA/);
+  });
+
+  test('il disegno si può ingrandire, e le norme non si spostano', async ({ page }) => {
+    await page.goto('/grafo');
+    await page.waitForSelector('.grafo__nodi circle');
+    const primoNodo = page.locator('.grafo__nodi circle').first();
+    const xPrima = await primoNodo.getAttribute('cx');
+
+    const vista = page.locator('.grafo__vista');
+    await expect(vista).toHaveAttribute('transform', /scale\(1\)/);
+
+    await page.getByRole('button', { name: 'Avvicina' }).click();
+    await expect(vista).not.toHaveAttribute('transform', /scale\(1\)/);
+
+    /* La condizione di ADR 0012: avvicinarsi cambia il **punto di vista**, non
+       il disegno. Le coordinate dei nodi restano quelle calcolate dal server —
+       se cambiassero, la pagina smetterebbe di essere citabile. */
+    expect(await primoNodo.getAttribute('cx')).toBe(xPrima);
+
+    await page.getByRole('button', { name: 'Tutto il grafo' }).click();
+    await expect(vista).toHaveAttribute('transform', /scale\(1\)/);
+  });
+
   test('i filtri finiscono nell’URL, e un link li riapre', async ({ page }) => {
     await page.goto('/grafo');
-    await page.waitForSelector('.grafo__tela circle');
-    const tutti = await page.locator('.grafo__tela line').count();
+    await page.waitForSelector('.grafo__nodi circle');
+    const tutti = await page.locator('.grafo__archi line').count();
 
-    await page.getByLabel(/solo i collegamenti a norme cancellate/i).check();
+    await page.getByLabel(/solo i collegamenti a norme che non ci sono più/i).check();
     await expect(page).toHaveURL(/rotti=1/);
-    const soloRotti = await page.locator('.grafo__tela line').count();
+    const soloRotti = await page.locator('.grafo__archi line').count();
     expect(soloRotti).toBeLessThan(tutti);
 
     // Il link condiviso deve riaprire esattamente quella vista.
     await page.goto('/grafo?rotti=1');
-    await page.waitForSelector('.grafo__tela circle');
-    await expect(page.getByLabel(/solo i collegamenti a norme cancellate/i)).toBeChecked();
-    expect(await page.locator('.grafo__tela line').count()).toBe(soloRotti);
+    await page.waitForSelector('.grafo__nodi circle');
+    await expect(page.getByLabel(/solo i collegamenti a norme che non ci sono più/i)).toBeChecked();
+    expect(await page.locator('.grafo__archi line').count()).toBe(soloRotti);
   });
 
   test('il disegno dice cosa mostra a chi non lo vede, e i numeri stanno anche in tabella', async ({
     page,
   }) => {
     await page.goto('/grafo');
-    const tela = page.locator('.grafo__tela');
+    const tela = page.locator('.grafo__tela-contenitore');
     const etichetta = await tela.getAttribute('aria-label');
     // Non «grafo a nodi»: l'etichetta deve contenere il dato.
     expect(etichetta).toMatch(/\d+ norme/);
@@ -769,6 +930,116 @@ test.describe('la mappa delle leggi', () => {
   });
 });
 
+test.describe('testata', () => {
+  test('il tema si sceglie, e la scelta resta fra una pagina e l’altra', async ({ page }) => {
+    await page.goto('/');
+    const radice = page.locator('html');
+
+    // Senza scelta il tema è quello del sistema: il contesto di prova è
+    // chiaro, quindi la radice deve dire «chiaro».
+    await expect(radice).toHaveAttribute('data-theme', 'light');
+
+    await page.getByRole('button', { name: /tema/i }).click();
+    await page.getByRole('menuitemcheckbox', { name: 'Scuro' }).click();
+    await expect(radice).toHaveAttribute('data-theme', 'dark');
+
+    // Il fondo deve cambiare davvero: l'attributo da solo non prova che il CSS
+    // lo stia ascoltando, ed è esattamente l'errore che si fa spostando i
+    // colori dentro o fuori una media query.
+    const fondo = await page
+      .locator('body')
+      .evaluate((el) => window.getComputedStyle(el).backgroundColor);
+    expect(fondo).not.toBe('rgb(245, 246, 244)');
+
+    // La scelta vale per il sito, non per la pagina.
+    await page.goto('/numeri');
+    await expect(radice).toHaveAttribute('data-theme', 'dark');
+  });
+
+  test('la scelta esplicita vince sul sistema', async ({ browser }) => {
+    // Il caso che una media query da sola non copre: sistema scuro, ma chi
+    // legge ha chiesto il chiaro.
+    const contesto = await browser.newContext({ colorScheme: 'dark' });
+    const pagina = await contesto.newPage();
+    await pagina.goto('/');
+    await expect(pagina.locator('html')).toHaveAttribute('data-theme', 'dark');
+
+    await pagina.getByRole('button', { name: /tema/i }).click();
+    await pagina.getByRole('menuitemcheckbox', { name: 'Chiaro' }).click();
+    await expect(pagina.locator('html')).toHaveAttribute('data-theme', 'light');
+    const fondo = await pagina
+      .locator('body')
+      .evaluate((el) => window.getComputedStyle(el).backgroundColor);
+    expect(fondo, 'il sistema scuro sta ancora vincendo sulla scelta').toBe('rgb(245, 246, 244)');
+    await contesto.close();
+  });
+
+  test('il menù del tema si usa da tastiera', async ({ page }) => {
+    await page.goto('/');
+    await page.getByRole('button', { name: /tema/i }).focus();
+    await page.keyboard.press('Enter');
+    await expect(page.getByRole('menuitemcheckbox', { name: 'Chiaro' })).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(page.getByRole('menuitemcheckbox', { name: 'Chiaro' })).toHaveCount(0);
+    // Il fuoco torna da dove era partito: chi naviga da tastiera non deve
+    // ricominciare dall'inizio della pagina.
+    await expect(page.getByRole('button', { name: /tema/i })).toBeFocused();
+  });
+
+  test('la testata porta al codice sorgente', async ({ page }) => {
+    await page.goto('/');
+    const codice = page.locator('.testata').getByRole('link', { name: /codice del progetto/i });
+    await expect(codice).toBeVisible();
+    await expect(codice).toHaveAttribute('href', /github\.com/);
+  });
+});
+
+test.describe('home', () => {
+  test('sopra la piega ci sono le cifre, non un muro di testo', async ({ page }) => {
+    // 820 px è uno schermo da portatile: quello che sta qui dentro è tutto
+    // quello su cui si può contare per fermare chi arriva.
+    await page.setViewportSize({ width: 1200, height: 820 });
+    await page.goto('/');
+
+    const cifre = page.locator('.cifre-forti__voce');
+    expect(await cifre.count(), 'le cifre dell’apertura non ci sono').toBeGreaterThanOrEqual(3);
+
+    for (const voce of await cifre.all()) {
+      const riquadro = await voce.boundingBox();
+      expect(riquadro!.y, 'una cifra dell’apertura cade sotto la piega').toBeLessThan(820);
+      // Ogni cifra porta dove è spiegata con il suo limite accanto: un numero
+      // che non si può verificare è uno slogan.
+      await expect(voce.getByRole('link')).toHaveAttribute('href', /./);
+    }
+
+    // La riga di apertura è una, non cinque paragrafi.
+    const apertura = await page.locator('.apertura-forte__riga').textContent();
+    expect(apertura!.trim().length, 'l’apertura è tornata a essere un tema').toBeLessThan(160);
+  });
+
+  test('la home mostra le ultime trovate, non l’indice intero', async ({ page }) => {
+    await page.goto('/');
+    const schede = page.locator('.elenco .scheda');
+    const quante = await schede.count();
+    expect(quante).toBeGreaterThan(0);
+    expect(quante, 'la home è tornata a essere l’elenco completo').toBeLessThanOrEqual(8);
+
+    await page.getByRole('link', { name: /Tutte le .* segnalazioni/ }).click();
+    await expect(page).toHaveURL(/\/segnalazioni$/);
+    expect(await page.locator('.elenco .scheda').count()).toBeGreaterThan(quante);
+  });
+
+  test('i vecchi link filtrati della home continuano a funzionare', async ({ page }) => {
+    // Gli URL sono il prodotto (ADR 0008): `/?tipo=` era pubblicato, e deve
+    // riaprire la stessa vista dove adesso vive.
+    const risposta = await page.request.fetch('/?tipo=rinvio-ad-atto-abrogato', {
+      maxRedirects: 0,
+    });
+    expect(risposta.status()).toBe(308);
+    expect(risposta.headers()['location']).toContain('/segnalazioni?tipo=rinvio-ad-atto-abrogato');
+  });
+});
+
 test.describe('robustezza', () => {
   test('un URL inesistente risponde con la pagina «non trovata», non con un errore', async ({
     page,
@@ -776,6 +1047,23 @@ test.describe('robustezza', () => {
     const risposta = await page.goto('/anomalia/inesistente-12345');
     expect(risposta?.status()).toBe(404);
     await expect(page.locator('h1')).toBeVisible();
+  });
+
+  test('il vecchio indirizzo della pagina MCP risponde ancora, e porta a /mcp', async ({
+    page,
+  }) => {
+    // ADR 0008: un indirizzo pubblicato non si rompe. `/assistente` è stato
+    // citato e indicizzato prima che la pagina prendesse il nome con cui la si
+    // cerca, e deve continuare a portare dove porta oggi.
+    const rinvio = await page.request.fetch('/assistente', { maxRedirects: 0 });
+    // 308 e non 302: il trasloco è definitivo, e va detto agli indici.
+    expect(rinvio.status()).toBe(308);
+    expect(rinvio.headers()['location']).toContain('/mcp');
+
+    // E seguendolo da browser si arriva davvero alla pagina, non a un vicolo.
+    await page.goto('/assistente');
+    await expect(page).toHaveURL(/\/mcp$/);
+    await expect(page.locator('h1')).toContainText('MCP');
   });
 
   test('il sito si legge su un telefono senza scorrimento orizzontale', async ({ page }) => {
@@ -923,5 +1211,179 @@ test.describe('grafici', () => {
     }
 
     await contesto.close();
+  });
+});
+
+test.describe('pagine legali', () => {
+  /*
+   * Le pagine legali sono le uniche del sito in cui una frase sbagliata è un
+   * problema legale e non un refuso. Questi test legano quelle frasi a come il
+   * sito è fatto davvero: se il sito cambia e una pagina resta indietro, la
+   * build si ferma.
+   */
+
+  test('rispondono tutte, e portano in cima la data della loro revisione', async ({ page }) => {
+    for (const percorso of PERCORSI_LEGALI) {
+      const risposta = await page.goto(percorso);
+      expect(risposta?.status(), percorso).toBe(200);
+      await expect(page.locator('h1'), percorso).toBeVisible();
+      // La data viene dall'elenco in `lib/legale.ts`: in pagina deve arrivarci
+      // scritta per esteso, non in ISO e non «di recente».
+      await expect(
+        page.locator('.legale-data, .legale-indice small').first(),
+        percorso,
+      ).toContainText(/Ultimo aggiornamento: \d{1,2} [a-zà-ù]+ \d{4}/i);
+    }
+  });
+
+  test('nessuna violazione WCAG 2.1 AA su ciascuna', async ({ page }) => {
+    /* L'audit gira su tutto il sito in `accessibilita.spec.ts`, e queste
+       pagine sono nel suo elenco. È ripetuto qui perché la promessa deve
+       stare attaccata alle pagine: toglierle da quell'elenco non può
+       spegnere l'audit senza che nessuno se ne accorga. */
+    for (const percorso of PERCORSI_LEGALI) {
+      await page.goto(percorso);
+      const risultato = await new AxeBuilder({ page })
+        .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
+        .analyze();
+      const dettaglio = risultato.violations
+        .map((v) => `[${v.impact}] ${v.id}: ${v.help}`)
+        .join('\n');
+      expect(dettaglio, `Violazioni su ${percorso}:\n${dettaglio}`).toBe('');
+    }
+  });
+
+  test('gli indirizzi all’inglese non si rompono: 308 verso le rotte italiane', async ({
+    request,
+    baseURL,
+  }) => {
+    const coppie = [
+      ['/legal/terms', '/legal/termini'],
+      ['/legal/privacy-policy', '/legal/privacy'],
+      ['/legal/cookie-policy', '/legal/cookie'],
+    ];
+    for (const [inglese, italiano] of coppie) {
+      const risposta = await request.get(`${baseURL}${inglese}`, { maxRedirects: 0 });
+      // Permanente: la destinazione non cambierà, e un 302 lascerebbe il
+      // vecchio indirizzo negli indici per sempre.
+      expect(risposta.status(), inglese).toBe(308);
+      expect(risposta.headers()['location'], inglese).toContain(italiano!);
+    }
+  });
+
+  test('seguendo un indirizzo all’inglese si arriva alla pagina italiana', async ({ page }) => {
+    await page.goto('/legal/terms');
+    expect(new URL(page.url()).pathname).toBe('/legal/termini');
+    await expect(page.locator('h1')).toHaveText(/termini di servizio/i);
+  });
+
+  test('la pagina sui cookie dice il vero: dopo una visita il browser non ha niente addosso', async ({
+    page,
+    context,
+  }) => {
+    /*
+     * È il test che vale più di tutti gli altri di questo gruppo: lega una
+     * frase di una pagina legale a un fatto verificabile. Una cookie policy
+     * che elenca cookie inesistenti — o che tace su cookie esistenti — è una
+     * bugia, e qui non può diventarlo di nascosto.
+     *
+     * Si visitano le pagine da cui un cookie potrebbe arrivare: la home, il
+     * modulo che parla con il server, e la pagina che fa la promessa.
+     */
+    await page.goto('/');
+    await page.goto('/segnala');
+    await page.goto('/legal/cookie');
+
+    const cookie = await context.cookies();
+    expect(
+      cookie.map((c) => `${c.name} (${c.domain})`).join(', '),
+      'Il sito ha posto un cookie: la pagina /legal/cookie dice che non ne pone nessuno, ' +
+        'e adesso dice il falso. Va aggiornata la pagina, o tolto quello che pone il cookie.',
+    ).toBe('');
+
+    // La pagina deve dirlo in apertura, non in fondo dopo tre paragrafi.
+    await expect(page.locator('.apertura')).toContainText(/non pone cookie/i);
+  });
+
+  test('l’informativa dice, prima di tutto il resto, che la segnalazione diventa pubblica', async ({
+    page,
+  }) => {
+    await page.goto('/legal/privacy');
+    const avviso = page.locator('.niente-segnale').first();
+    await expect(avviso).toBeVisible();
+    await expect(avviso).toContainText(/issue pubblica/i);
+    // Chi scrive nel modulo deve trovarci il collegamento: l'informazione
+    // serve mentre si decide se scrivere, non dopo.
+    await page.goto('/segnala');
+    await expect(page.locator('.segnala__nota').getByRole('link')).toHaveAttribute(
+      'href',
+      '/legal/privacy',
+    );
+  });
+
+  test('l’informativa nomina chi tratta i dati e dove stanno', async ({ page }) => {
+    await page.goto('/legal/privacy');
+    const testo = (await page.locator('main').textContent()) ?? '';
+    // I due fornitori, per nome: senza il nome non si possono valutare.
+    expect(testo).toMatch(/Vercel/);
+    expect(testo).toMatch(/GitHub/);
+    // La regione europea è un fatto del progetto, dichiarato in vercel.json.
+    expect(testo).toMatch(/fra1/);
+    expect(testo).toMatch(/Francoforte/);
+    // I diritti, e chi ascolta un reclamo.
+    expect(testo).toMatch(/art\. 15|articoli dal 15/i);
+    expect(testo).toMatch(/Garante per la protezione dei dati personali/i);
+    // Il titolare va nominato: finché non lo è, resta il segnaposto in chiaro.
+    expect(testo).toMatch(/titolare del trattamento/i);
+  });
+
+  test('il disclaimer dice quale testo fa fede e cosa non dice l’assenza di una segnalazione', async ({
+    page,
+  }) => {
+    await page.goto('/legal/disclaimer');
+    const testo = (await page.locator('main').textContent()) ?? '';
+    expect(testo).toMatch(/Gazzetta Ufficiale/);
+    expect(testo).toMatch(/prevale in caso di discordanza/i);
+    expect(testo).toMatch(/non fornisce consulenza legale/i);
+    // La cautela più importante del sito, per esteso.
+    expect(testo).toMatch(/non è per questo una norma coerente/i);
+    expect(testo).toMatch(/termini scaduti, non attuazioni mancate/i);
+  });
+
+  test('i termini elencano le licenze con cui il progetto si è impegnato', async ({ page }) => {
+    await page.goto('/legal/termini');
+    const testo = (await page.locator('main').textContent()) ?? '';
+    expect(testo).toMatch(/EUPL 1\.2/);
+    expect(testo).toMatch(/CC BY 4\.0/);
+    expect(testo).toMatch(/CC BY-SA 3\.0/);
+  });
+
+  test('il piede porta alle pagine legali da qualunque pagina', async ({ page }) => {
+    for (const percorso of ['/', '/dati', '/legal/privacy']) {
+      await page.goto(percorso);
+      const voce = page.locator('footer.piede a[href="/legal"]');
+      await expect(voce, percorso).toHaveCount(1);
+      await expect(voce, percorso).toBeVisible();
+    }
+  });
+
+  test('l’indice le elenca tutte, e la mappa del sito pure', async ({ page }) => {
+    await page.goto('/legal');
+    for (const percorso of PERCORSI_LEGALI.filter((p) => p !== '/legal')) {
+      await expect(page.locator(`.legale-indice a[href="${percorso}"]`), percorso).toHaveCount(1);
+    }
+    await page.goto('/mappa');
+    for (const percorso of PERCORSI_LEGALI) {
+      await expect(page.locator(`.mappa a[href="${percorso}"]`), percorso).toHaveCount(1);
+    }
+  });
+
+  test('la sitemap le contiene', async ({ request, baseURL }) => {
+    const risposta = await request.get(`${baseURL}/sitemap.xml`);
+    expect(risposta.status()).toBe(200);
+    const xml = await risposta.text();
+    for (const percorso of PERCORSI_LEGALI) {
+      expect(xml, percorso).toContain(`${percorso}</loc>`);
+    }
   });
 });

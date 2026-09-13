@@ -1,7 +1,14 @@
 import { ImageResponse } from 'next/og';
 import { cornice, DIMENSIONE, FONTE_CONSULTA, OG, TIPO_IMMAGINE } from '@/lib/og';
 import { dataset } from '@/lib/dataset';
-import { data, nomeNorma, numero, titoloPronuncia } from '@/lib/testo';
+import {
+  data,
+  nomeNorma,
+  numero,
+  pronunciaDaSlug,
+  slugPronuncia,
+  titoloPronuncia,
+} from '@/lib/testo';
 
 /*
  * L'anteprima di una decisione della Corte.
@@ -16,16 +23,14 @@ export const size = DIMENSIONE;
 export const contentType = TIPO_IMMAGINE;
 
 export function generateStaticParams() {
-  return dataset()
-    .pronunce()
-    .map((p) => ({ ecli: encodeURIComponent(p.ecli) }));
+  const tutte = dataset().pronunce();
+  return tutte.map((p) => ({ pronuncia: slugPronuncia(p, tutte) }));
 }
 
-export default async function Image({ params }: { params: Promise<{ ecli: string }> }) {
-  const { ecli } = await params;
-  const decoded = decodeURIComponent(ecli);
+export default async function Image({ params }: { params: Promise<{ pronuncia: string }> }) {
+  const { pronuncia: segmento } = await params;
   const reader = dataset();
-  const pronuncia = reader.pronuncia(decoded);
+  const pronuncia = pronunciaDaSlug(segmento, reader.pronunce());
 
   if (!pronuncia) {
     return new ImageResponse(
@@ -39,7 +44,7 @@ export default async function Image({ params }: { params: Promise<{ ecli: string
     );
   }
 
-  const colpite = reader.attiColpitiDa(decoded);
+  const colpite = reader.attiColpitiDa(pronuncia.ecli);
   const unSoloAtto = colpite.length === 1 && colpite[0];
 
   return new ImageResponse(

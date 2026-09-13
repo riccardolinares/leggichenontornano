@@ -1,5 +1,8 @@
 import { dataset } from './dataset';
 import { nomeNorma } from './testo';
+import { FAMIGLIA_DI, type ArcoGrafo, type Grafo, type NodoGrafo } from './grafo-tipi';
+
+export * from './grafo-tipi';
 
 /**
  * Il grafo delle leggi in vigore, con le sue coordinate.
@@ -23,44 +26,13 @@ import { nomeNorma } from './testo';
  * più**, che è l'unica cosa che questo disegno deve far vedere in un secondo.
  */
 
-export interface NodoGrafo {
-  urn: string;
-  nome: string;
-  /** Quanti archi tocca: decide il raggio. */
-  grado: number;
-  /** `true` se l'atto non è più in vigore: sono i buchi verso cui puntano gli altri. */
-  abrogato: boolean;
-  /** Quante segnalazioni pubblicate lo coinvolgono. */
-  segnalazioni: number;
-  /** `true` se punta ad almeno una norma abrogata. */
-  puntaAlVuoto: boolean;
-  x: number;
-  y: number;
-}
-
-export interface ArcoGrafo {
-  da: string;
-  a: string;
-  tipo: string;
-  /** Quante relazioni distinte stanno dietro questo arco. */
-  peso: number;
-  /** `true` se il bersaglio non è più in vigore. */
-  rotto: boolean;
-}
-
-export interface Grafo {
-  nodi: NodoGrafo[];
-  archi: ArcoGrafo[];
-  tipi: string[];
-  /** Dimensioni della tela su cui le coordinate sono calcolate. */
-  larghezza: number;
-  altezza: number;
-  /** Data del dataset da cui il disegno è stato calcolato. */
-  conosciutoAl: string;
-}
-
-const LARGHEZZA = 1000;
-const ALTEZZA = 700;
+/* La tela è grande perché il disegno è grande: duecento nodi e millecinquecento
+   archi su mille pixel diventano una palla di lana. Le coordinate sono
+   arbitrarie — l'SVG si adatta alla larghezza disponibile — ma il rapporto fra
+   la tela e la distanza a riposo degli archi decide quanto il disegno respira,
+   ed è quello che queste due costanti governano. */
+const LARGHEZZA = 1600;
+const ALTEZZA = 1100;
 
 /**
  * Generatore pseudocasuale con seme.
@@ -94,20 +66,32 @@ export function grafo(): Grafo {
   const reader = dataset();
   const atti = reader.data.acts;
   const perUrn = new Map(atti.map((a) => [a.urn, a]));
-  const inVigore = new Set(atti.filter((a) => !a.abrogated).map((a) => a.urn));
 
   /* Gli archi sono a livello di **atto**: le versioni e le partizioni non sono
-     nodi. Il piano chiedeva le leggi in vigore collegate fra loro, non la
-     cronologia delle loro modifiche — che è un'altra cosa e ha già una pagina
-     sua, il lettore norma. */
+     nodi. Qui interessa come le leggi si tengono fra loro, non la cronologia
+     delle modifiche di ciascuna — che è un'altra cosa e ha già una pagina sua,
+     il lettore norma.
+
+     Non si filtra più niente. La prima versione teneva solo i rinvii che
+     partivano da una norma in vigore, e il risultato era un disegno in cui
+     l'unica cosa visibile erano due atti abrogati: tutto il resto era grigio
+     indistinto, perché il colore segnava una cosa sola e quella cosa nel
+     corpus capita due volte. Un grafo delle leggi deve far vedere **come le
+     leggi si tengono**, e quello si vede solo se ci sono tutte e se ogni tipo
+     di legame ha il suo colore. Quanti nodi e quanti archi restano fuori è una
+     domanda a cui la pagina deve saper rispondere, non una scelta silenziosa
+     del codice. */
   const archiPerChiave = new Map<string, ArcoGrafo>();
+  let relazioni = 0;
   for (const r of reader.data.relations) {
     const da = r.sourceUrn.split('~')[0]!;
     const a = r.targetUrn.split('~')[0]!;
     if (da === a) continue;
-    // La sorgente deve essere una norma viva: un rinvio fatto da un atto
-    // abrogato a un altro atto abrogato non riguarda nessuno, oggi.
-    if (!inVigore.has(da) || !perUrn.has(a)) continue;
+    const famiglia = FAMIGLIA_DI[r.type];
+    // Un tipo di relazione che non sappiamo disegnare non si disegna a caso:
+    // finirebbe nel colore di qualcun altro e direbbe una cosa falsa.
+    if (!famiglia) continue;
+    relazioni++;
 
     const chiave = `${da}|${a}|${r.type}`;
     const esistente = archiPerChiave.get(chiave);
@@ -119,7 +103,15 @@ export function grafo(): Grafo {
       da,
       a,
       tipo: r.type,
+      famiglia,
       peso: 1,
+      /* «Rotto» vuol dire una cosa sola: **il bersaglio non è più in vigore**.
+         Ci avevo messo dentro anche le declaratorie di illegittimità, ed era
+         un errore che si vede solo guardando il risultato: una pronuncia della
+         Corte è un fatto normale e frequente, e contandola fra i legami rotti
+         il disegno diventava rosso quasi ovunque. Il rosso che segna tutto non
+         segna niente — è esattamente l'obiezione per cui ADR 0003 non voleva
+         questo grafo. Le declaratorie hanno il colore della loro famiglia. */
       rotto: perUrn.get(a)?.abrogated ?? false,
     });
   }
@@ -132,24 +124,33 @@ export function grafo(): Grafo {
     }
   }
 
-  const grado = new Map<string, number>();
+  const uscenti = new Map<string, number>();
+  const entranti = new Map<string, number>();
   const puntaAlVuoto = new Set<string>();
   for (const arco of archi) {
-    grado.set(arco.da, (grado.get(arco.da) ?? 0) + 1);
-    grado.set(arco.a, (grado.get(arco.a) ?? 0) + 1);
+    uscenti.set(arco.da, (uscenti.get(arco.da) ?? 0) + 1);
+    entranti.set(arco.a, (entranti.get(arco.a) ?? 0) + 1);
     if (arco.rotto) puntaAlVuoto.add(arco.da);
   }
 
-  const nodi: NodoGrafo[] = [...grado.keys()].map((urn) => ({
+  const urnDeiNodi = new Set([...uscenti.keys(), ...entranti.keys()]);
+  const nodi: NodoGrafo[] = [...urnDeiNodi].map((urn) => ({
     urn,
     nome: nomeNorma(urn),
-    grado: grado.get(urn) ?? 0,
+    grado: (uscenti.get(urn) ?? 0) + (entranti.get(urn) ?? 0),
+    uscenti: uscenti.get(urn) ?? 0,
+    entranti: entranti.get(urn) ?? 0,
     abrogato: perUrn.get(urn)?.abrogated ?? false,
+    fuoriCorpus: !perUrn.has(urn),
     segnalazioni: segnalazioniPerAtto.get(urn) ?? 0,
     puntaAlVuoto: puntaAlVuoto.has(urn),
     x: 0,
     y: 0,
   }));
+
+  /* L'ordine di disegno è l'ordine di lettura: i nodi più collegati stanno
+     sopra gli altri, così un perno non finisce coperto da una foglia. */
+  nodi.sort((a, b) => a.grado - b.grado);
 
   disponi(nodi, archi);
 
@@ -157,6 +158,8 @@ export function grafo(): Grafo {
     nodi,
     archi,
     tipi: [...new Set(archi.map((a) => a.tipo))].sort(),
+    famiglie: [...new Set(archi.map((a) => a.famiglia))].sort(),
+    relazioni,
     larghezza: LARGHEZZA,
     altezza: ALTEZZA,
     conosciutoAl: (reader.data.manifest?.knownAt ?? new Date().toISOString()).slice(0, 10),
@@ -192,21 +195,26 @@ function disponi(nodi: NodoGrafo[], archi: ArcoGrafo[]): void {
   // la simulazione impiega molto più tempo a sciogliersi.
   for (let i = 0; i < n; i++) {
     const angolo = (i / n) * Math.PI * 2;
-    const raggio = 200 + casuale() * 120;
+    const raggio = 320 + casuale() * 180;
     x[i] = LARGHEZZA / 2 + Math.cos(angolo) * raggio;
     y[i] = ALTEZZA / 2 + Math.sin(angolo) * raggio;
   }
 
-  const PASSI = 500;
-  /* Repulsione alta e molle lunghe. Con millecinquecento archi su
-     centocinquanta nodi la tentazione delle molle è di schiacciare tutto in una
-     palla, e una palla non fa vedere niente: quello che deve emergere è che due
-     nodi stanno al centro e tutti gli altri ci puntano contro. */
-  const REPULSIONE = 30000;
-  const MOLLA = 0.01;
-  const CENTRO = 0.0035;
+  const PASSI = 700;
+  /* Repulsione alta e molle lunghe. Con millecinquecento archi su duecento nodi
+     la tentazione delle molle è di schiacciare tutto in una palla, e una palla
+     non fa vedere niente: quello che deve emergere è la **forma** — pochi perni
+     fittissimi al centro, e attorno le norme che li tirano in ballo.
+
+     I valori sono tarati sul dataset di oggi guardando il risultato, non
+     dedotti: una simulazione a forze non ha parametri «giusti», ha parametri
+     che su un certo grafo producono un disegno leggibile. Se il corpus cresce
+     di un ordine di grandezza vanno ritarati, e il disegno ripensato. */
+  const REPULSIONE = 46000;
+  const MOLLA = 0.009;
+  const CENTRO = 0.0026;
   /** Lunghezza a riposo di un arco: sotto si respingono, sopra si attirano. */
-  const RIPOSO = 170;
+  const RIPOSO = 210;
 
   for (let passo = 0; passo < PASSI; passo++) {
     const raffreddamento = 1 - passo / PASSI;
@@ -282,13 +290,19 @@ function disponi(nodi: NodoGrafo[], archi: ArcoGrafo[]): void {
     minY = Math.min(minY, y[i]!);
     maxY = Math.max(maxY, y[i]!);
   }
-  const margine = 40;
+  const margine = 60;
   const scala = Math.min(
     (LARGHEZZA - margine * 2) / Math.max(maxX - minX, 1),
     (ALTEZZA - margine * 2) / Math.max(maxY - minY, 1),
   );
+  /* La scala conserva le proporzioni, quindi su un asse avanza dello spazio:
+     va diviso in due. Senza, il disegno si appoggia all'angolo in alto a
+     sinistra e metà tela resta vuota — che in un'immagine condivisa si legge
+     come un errore di ritaglio. */
+  const avanzoX = LARGHEZZA - margine * 2 - (maxX - minX) * scala;
+  const avanzoY = ALTEZZA - margine * 2 - (maxY - minY) * scala;
   for (let i = 0; i < n; i++) {
-    nodi[i]!.x = Math.round((margine + (x[i]! - minX) * scala) * 10) / 10;
-    nodi[i]!.y = Math.round((margine + (y[i]! - minY) * scala) * 10) / 10;
+    nodi[i]!.x = Math.round((margine + avanzoX / 2 + (x[i]! - minX) * scala) * 10) / 10;
+    nodi[i]!.y = Math.round((margine + avanzoY / 2 + (y[i]! - minY) * scala) * 10) / 10;
   }
 }

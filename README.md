@@ -13,7 +13,7 @@ lì: [le segnalazioni](https://leggichenontornano.it),
 [i numeri](https://leggichenontornano.it/numeri) con quello che non dicono,
 [le norme del corpus](https://leggichenontornano.it/norme),
 [le pronunce della Consulta](https://leggichenontornano.it/corte),
-[il progetto dentro il tuo assistente](https://leggichenontornano.it/assistente) e
+[il progetto dentro il tuo assistente](https://leggichenontornano.it/mcp) e
 [i dati con la precisione misurata](https://leggichenontornano.it/dati) di ogni
 controllo — compresi quelli che non pubblichiamo.
 
@@ -381,7 +381,9 @@ progetto valgono anche lì: nessuno strumento chiede un giudizio, il testo
 originale viene prima dei campi estratti, e una ricerca vuota dice che il corpus
 è parziale invece di lasciar credere che la norma non esista.
 
-Istruzioni e configurazioni per ogni client: [`packages/mcp`](packages/mcp).
+Istruzioni e configurazioni per ogni client: [`packages/mcp`](packages/mcp), o la
+pagina [leggichenontornano.it/mcp](https://leggichenontornano.it/mcp) per chi non
+apre una repository.
 
 ---
 

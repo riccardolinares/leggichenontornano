@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { CHECK_DEFINITIONS } from '@leggichenontornano/engine';
 import { articoli } from '@/lib/blog';
 import { SITE_URL, dataset } from '@/lib/dataset';
+import { PAGINE_LEGALI } from '@/lib/legale';
 import { metadatiPagina } from '@/lib/seo';
 import { numero, percorsoPronuncia, titoloPronuncia } from '@/lib/testo';
 
@@ -45,8 +46,8 @@ export default function Mappa() {
           <h2 id="m-leggere">Da leggere</h2>
           <ul>
             <li>
-              <Link href="/">Le segnalazioni</Link> — {numero(pubblicate.length)} punti in cui la
-              legislazione non torna, con i testi e la regola che li ha trovati
+              <Link href="/segnalazioni">Le segnalazioni</Link> — {numero(pubblicate.length)} punti
+              in cui la legislazione non torna, con i testi e la regola che li ha trovati
             </li>
             <li>
               <Link href="/numeri">I numeri</Link> — le cifre più dure che il dataset sostiene
@@ -97,7 +98,7 @@ export default function Mappa() {
           <h2 id="m-usare">Da usare</h2>
           <ul>
             <li>
-              <Link href="/assistente">Dentro il tuo assistente</Link> — collega Claude o Codex al
+              <Link href="/mcp">MCP, dentro il tuo assistente</Link> — collega Claude o Codex al
               corpus, tre righe di configurazione
             </li>
             <li>
@@ -114,13 +115,28 @@ export default function Mappa() {
           </ul>
         </section>
 
+        <section aria-labelledby="m-legali">
+          <h2 id="m-legali">Le pagine legali</h2>
+          <ul>
+            {PAGINE_LEGALI.map((p) => (
+              <li key={p.percorso}>
+                <Link href={p.percorso}>{p.titolo}</Link> — {p.sommario}
+              </li>
+            ))}
+            <li>
+              <Link href="/legal">Tutte insieme</Link> — l’indice, con la data di revisione di
+              ciascuna
+            </li>
+          </ul>
+        </section>
+
         {pronunce.length > 0 ? (
           <section aria-labelledby="m-pronunce">
             <h2 id="m-pronunce">Le decisioni più recenti</h2>
             <ul>
               {pronunce.slice(0, 10).map((p) => (
                 <li key={p.ecli}>
-                  <Link href={percorsoPronuncia(p.ecli)}>{titoloPronuncia(p)}</Link>
+                  <Link href={percorsoPronuncia(p, pronunce)}>{titoloPronuncia(p)}</Link>
                 </li>
               ))}
             </ul>

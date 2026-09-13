@@ -81,6 +81,7 @@ export async function exportSnapshot(opts: ExportOptions): Promise<SnapshotManif
     severity: a.severity,
     published: a.published,
     computedAt: a.computedAt.toISOString(),
+    firstSeenAt: a.firstSeenAt.toISOString(),
     // Il campo viaggia nel dataset come sta nel database: chi lo rilegge deve
     // poter distinguere una segnalazione assistita da una deterministica senza
     // dedurlo dal livello.

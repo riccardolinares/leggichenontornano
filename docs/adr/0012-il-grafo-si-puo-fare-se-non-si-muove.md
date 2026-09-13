@@ -37,14 +37,42 @@ seme**, un numero **fisso** di passi e un raffreddamento lineare. Non si ferma
 veloce la macchina. Nel browser arrivano coordinate già calcolate: stesso
 dataset, stesso disegno, per chiunque e per sempre.
 
-**2. Nel browser non gira nessuna simulazione.** Il componente disegna, filtra
-ed evidenzia. I filtri nascondono nodi e archi senza ricalcolare le posizioni:
-chi filtra mantiene la mappa mentale che si era fatto.
+**2. Nel browser non gira nessuna simulazione.** Il componente disegna, filtra,
+evidenzia e lascia avvicinare. I filtri nascondono nodi e archi senza
+ricalcolare le posizioni: chi filtra mantiene la mappa mentale che si era fatto.
 
-**3. Il colore non è decorazione.** Il rosso segna una cosa sola — i
-collegamenti verso norme che non esistono più, e i nodi che li tirano. È
-l'informazione per cui la pagina esiste, ed è l'unica che il disegno deve
-trasmettere senza parole.
+Lo zoom e lo spostamento **non sono un'eccezione a questa regola**, e vale la
+pena dire perché. Cambiano il punto di vista, non il disegno: due persone che
+aprono lo stesso link vedono le stesse norme nelle stesse posizioni, una delle
+due ci sta più vicino. È la differenza fra guardare una mappa con la lente e
+disegnarne un'altra. E senza, la mappa è leggibile come forma e illeggibile
+come contenuto: duecento nomi in una schermata non si leggono, e la domanda «e
+quella lì quale sarebbe?» resta senza risposta. Un test verifica che le
+coordinate dei nodi non cambino quando ci si avvicina.
+
+Stessa cosa per l'animazione d'ingresso: anima la **comparsa**, non le
+posizioni. Duecento nodi che appaiono tutti insieme sono una macchia; facendo
+salire prima i fili e poi i punti, l'occhio legge prima la trama — che è
+l'ordine giusto. Chi ha chiesto meno movimento al sistema operativo non ne
+vede nessuno.
+
+**3. Il colore non è decorazione.** Ogni famiglia di legame ha il suo — la
+norma ne rimanda un'altra, la riscrive, la cancella, l'attua — e il **rosso è
+riservato a una cosa sola**: il bersaglio non è più in vigore. Ci avevo messo
+dentro anche le declaratorie di illegittimità, ed era un errore che si vede
+solo guardando il risultato: una pronuncia della Corte è un fatto normale e
+frequente, e contandola fra i legami rotti il disegno diventava rosso quasi
+ovunque. Un rosso che segna tutto non segna niente, ed è esattamente
+l'obiezione per cui [ADR 0003](0003-niente-grafo-force-directed.md) non voleva
+questo grafo.
+
+Il disegno mostra **tutte** le norme e **tutte** le relazioni fra atti: la
+prima versione teneva solo i rinvii che partivano da una norma in vigore, e il
+risultato era una mappa in cui si vedevano due sole leggi. Un grafo delle leggi
+deve far vedere come le leggi si tengono, e quello si vede solo se ci sono
+tutte. Le norme di cui non abbiamo ancora il testo ci sono lo stesso, disegnate
+vuote: il collegamento esiste, e promettere un testo che non abbiamo sarebbe la
+bugia più facile da fare con un disegno.
 
 **4. Sotto il disegno ci sono i numeri.** Una tabella con le norme cancellate e
 quante norme vive le richiamano ancora. Non è un ripiego per l'accessibilità: un
