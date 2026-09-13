@@ -21,6 +21,7 @@ export default function Dati() {
   const fermi = metriche.filter((m) => !m.published);
   const verticali = reader.verticals();
   const revisioni = metriche.reduce((n, m) => n + m.reviewed, 0);
+  const concordanza = manifest?.concordanzaPronunce ?? [];
   const contatore = reader.counter();
 
   return (
@@ -159,6 +160,44 @@ export default function Dati() {
             <strong>Non significa che la legislazione italiana sia coerente</strong>: significa che
             nessuna regola ha ancora superato la soglia sul corpus che abbiamo.
           </p>
+        ) : null}
+
+        {concordanza.length > 0 ? (
+          <>
+            <h3 style={{ marginTop: '2rem' }}>Una misura che non dipende da noi</h3>
+            <p>
+              Le dichiarazioni di illegittimità costituzionale le leggiamo dai dispositivi
+              pubblicati dalla Corte. <strong>Normattiva annota gli stessi eventi</strong> in coda
+              all’articolo colpito, e nessuna delle due fonti deriva dall’altra: confrontarle
+              misura quanto leggiamo bene, senza chiedere il parere di nessuno.
+            </p>
+            <Tabella didascalia="Accordo fra le declaratorie lette dai dispositivi della Corte costituzionale e le note di aggiornamento scritte da Normattiva negli atti colpiti.">
+              <thead>
+                <tr>
+                  <th scope="col">Confidenza dell’arco</th>
+                  <th scope="col">Archi</th>
+                  <th scope="col">Confermati da Normattiva</th>
+                  <th scope="col">Accordo</th>
+                </tr>
+              </thead>
+              <tbody>
+                {concordanza.map((c) => (
+                  <tr key={c.confidence}>
+                    <th scope="row" style={{ fontWeight: 400 }}>{c.confidence}</th>
+                    <td>{numero(c.archi)}</td>
+                    <td>{numero(c.confermate)}</td>
+                    <td>{percentuale(c.accordo)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </Tabella>
+            <p style={{ fontSize: '0.9rem', color: 'var(--inchiostro-tenue)' }}>
+              Un disaccordo non prova che la lettura sia sbagliata: la nota può stare su un altro
+              articolo dello stesso atto, o mancare dalla versione che abbiamo ingerito. Il numero
+              è una conferma, non una condanna — ed è per questo che gli archi a bassa confidenza
+              restano a bassa confidenza.
+            </p>
+          </>
         ) : null}
 
         <h3 style={{ marginTop: '2rem' }}>Cosa manca ancora</h3>

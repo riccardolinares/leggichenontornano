@@ -281,6 +281,45 @@ con il testo reale che lo ha rivelato.
 
 ---
 
+## Un controllo che abbiamo deciso di non scrivere
+
+Vale la pena registrare anche questo, perché la tentazione era forte.
+
+Con le declaratorie della Corte costituzionale nel grafo, il controllo ovvio è:
+«questo comma è stato dichiarato illegittimo e il testo multivigente lo pubblica
+ancora come vigente». Sul corpus ingerito il candidato c'era, ed era di quelli
+che circolano: l'art. 2, comma 61 del d.l. 225/2010, la norma interpretativa
+sulla prescrizione degli interessi bancari, dichiarata illegittima dalla
+sentenza 78/2012 e tuttora leggibile nel testo dell'articolo.
+
+Poi abbiamo letto l'articolo per intero, e in coda c'era questo:
+
+> AGGIORNAMENTO (10) La Corte Costituzionale, con sentenza 13 - 16 febbraio
+> 2012, n. 22 […] ha dichiarato "l'illegittimita' costituzionale dell'articolo
+> 2, comma 2-quater, del decreto-legge 29 dicembre 2010, n. 225…"
+
+Normattiva **annota le declaratorie**. Non le cancella dal testo — e fa bene,
+perché il testo storico serve — ma le registra. Una segnalazione che dicesse
+«nessuno ve lo dice» sarebbe falsa, e il primo giurista che la leggesse se ne
+accorgerebbe in dieci secondi. Il controllo non esiste.
+
+Resta un problema vero, ma è di lettura, non di legge: la nota sta in fondo a un
+articolo che può essere lunghissimo, mentre il comma si legge da solo. È un
+problema che si risolve mostrando meglio, non segnalando: il lettore norma porta
+le declaratorie in una sezione propria, con le parole del dispositivo, sopra il
+grafo.
+
+E la scoperta ha prodotto qualcosa che vale più del controllo: **due fonti
+indipendenti** che dicono la stessa cosa. Il comando
+`antinomia-corpus consulta verifica` confronta ciò che abbiamo letto nei
+dispositivi della Corte con ciò che Normattiva annota negli atti colpiti.
+Sull'ingestione corrente l'accordo è **9 su 9 per gli archi ad alta
+confidenza**. Nessuna delle due fonti deriva dall'altra, quindi non è un
+controllo circolare: è l'unica precisione che possiamo misurare senza revisione
+umana, e va rimisurata a ogni aggiornamento del corpus.
+
+---
+
 ## Come segnalarci un caso nuovo
 
 Se trovate una segnalazione che dipende da un'irregolarità della fonte e non da

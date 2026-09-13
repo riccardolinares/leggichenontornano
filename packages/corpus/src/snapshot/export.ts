@@ -10,6 +10,7 @@
  *    dataset di esempio che sta nel repository è un dataset che qualcuno guarda.
  */
 import { getPrisma } from '../store/client.js';
+import { verificaDichiarazioni } from '../consulta/verifica.js';
 import { snapshotPath, writeJson, writeJsonl } from './io.js';
 import {
   ATTRIBUTION,
@@ -19,6 +20,7 @@ import {
   type SnapshotArticle,
   type SnapshotCheckMetric,
   type SnapshotManifest,
+  type SnapshotConcordanza,
   type SnapshotPronuncia,
   type SnapshotRelation,
   type SnapshotVersion,
@@ -233,6 +235,12 @@ export async function exportSnapshot(opts: ExportOptions): Promise<SnapshotManif
     url: p.url,
   }));
 
+  // La verifica incrociata viaggia con il dataset: è una misura di precisione,
+  // e una misura che resta in un terminale non serve a chi deve decidere se
+  // fidarsi di quello che legge.
+  const concordanza: SnapshotConcordanza[] =
+    pronunce.length > 0 ? (await verificaDichiarazioni()).perConfidenza : [];
+
   const manifest: SnapshotManifest = {
     formatVersion: 1,
     generatedAt: knownAt.toISOString(),
@@ -258,6 +266,7 @@ export async function exportSnapshot(opts: ExportOptions): Promise<SnapshotManif
           ]
         : []),
     ],
+    ...(concordanza.length > 0 ? { concordanzaPronunce: concordanza } : {}),
     publicationThreshold: opts.publicationThreshold ?? { minPrecision: 0.85, minSample: 30 },
     disclaimer: `${DISCLAIMER} ${ATTRIBUTION}`,
   };

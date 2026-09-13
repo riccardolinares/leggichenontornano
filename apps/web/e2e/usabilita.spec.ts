@@ -73,6 +73,18 @@ test.describe('vincoli non negoziabili', () => {
     expect(testo).toMatch(/non è ancora stato demolito da giuristi esterni/i);
   });
 
+  test('la pagina Dati mostra l’unica precisione misurata senza revisione umana', async ({
+    page,
+  }) => {
+    await page.goto('/dati');
+    const testo = (await page.locator('main').textContent()) ?? '';
+    // La verifica incrociata con le note di Normattiva c'è solo se il dataset
+    // contiene pronunce; quando c'è, deve essere leggibile e spiegata.
+    if (!/una misura che non dipende da noi/i.test(testo)) test.skip();
+    expect(testo).toMatch(/nessuna delle due fonti deriva dall’altra/i);
+    expect(testo).toMatch(/una conferma, non una condanna/i);
+  });
+
   test('la home dice che assenza di segnale non significa norma coerente', async ({ page }) => {
     await page.goto('/');
     const testo = (await page.locator('main').textContent()) ?? '';

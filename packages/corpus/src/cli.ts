@@ -21,6 +21,7 @@ import { disconnectPrisma } from './store/client.js';
 import { corpusStats } from './store/read.js';
 import { exportSnapshot } from './snapshot/export.js';
 import { ingestConsulta } from './consulta/ingest.js';
+import { verificaDichiarazioni } from './consulta/verifica.js';
 
 const USAGE = `antinomia-corpus — ingestione del corpus normativo
 
@@ -29,6 +30,7 @@ Comandi:
   fetch <nome> [opzioni]           scarica ed estrae una collezione in data/corpus/
   ingest <cartella> [opzioni]      ingerisce una collezione estratta nel database
   consulta [opzioni]               ingerisce le pronunce della Corte costituzionale
+  consulta verifica                accordo fra i dispositivi e le note di Normattiva
   export [opzioni]                 esporta il dataset derivato in JSONL
   stats                            conteggi del corpus
 
@@ -112,6 +114,33 @@ async function main(): Promise<number> {
     }
 
     case 'consulta': {
+      if (positional[1] === 'verifica') {
+        const r = await verificaDichiarazioni();
+        if (r.totali === 0) {
+          process.stdout.write('Nessuna declaratoria nel grafo: esegui prima `consulta`.\n');
+          return 0;
+        }
+        process.stdout.write(
+          [
+            '',
+            'Accordo con le note di aggiornamento di Normattiva.',
+            'Due fonti indipendenti: il dispositivo della Corte e la nota che Normattiva',
+            'scrive in coda all\'articolo colpito. L\'accordo misura la nostra lettura del',
+            'dispositivo; il disaccordo non prova che la lettura sia sbagliata, perche\' la',
+            'nota puo\' stare su un altro articolo o mancare dalla versione ingerita.',
+            '',
+            ...r.perConfidenza.map(
+              (c) =>
+                `  confidenza ${c.confidence.padEnd(6)} ${String(c.confermate).padStart(4)}/${String(c.archi).padEnd(4)}  ` +
+                `${(c.accordo * 100).toFixed(1)}% di accordo`,
+            ),
+            '',
+            `  totale            ${r.confermate}/${r.totali}`,
+            '',
+          ].join('\n'),
+        );
+        return 0;
+      }
       const periodi = flags.get('periodo');
       const rapporto = await ingestConsulta({
         ...(typeof periodi === 'string' ? { periodi: periodi.split(',') } : {}),

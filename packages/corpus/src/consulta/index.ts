@@ -13,3 +13,4 @@ export * from './pronunce.js';
 export * from './dispositivo.js';
 export * from './relazioni.js';
 export * from './ingest.js';
+export * from './verifica.js';

@@ -100,6 +100,20 @@ export interface SnapshotPronuncia {
   url: string | null;
 }
 
+/**
+ * L'accordo fra il dispositivo della Corte e la nota di Normattiva.
+ *
+ * Sta nel dataset perché è l'unica precisione misurata **senza revisione
+ * umana** che il progetto possieda, e una misura che non si pubblica non serve
+ * a chi deve decidere se fidarsi.
+ */
+export interface SnapshotConcordanza {
+  confidence: string;
+  archi: number;
+  confermate: number;
+  accordo: number;
+}
+
 export interface SnapshotCheckMetric {
   checkId: string;
   label: string;
@@ -169,6 +183,12 @@ export interface SnapshotManifest {
     retrievedAt?: string;
     sha256?: string;
   }>;
+  /**
+   * Accordo fra le declaratorie lette dai dispositivi della Corte e le note di
+   * aggiornamento che Normattiva scrive negli atti colpiti. Due fonti
+   * indipendenti: l'accordo è una misura, non un controllo circolare.
+   */
+  concordanzaPronunce?: SnapshotConcordanza[];
   /** Soglia di pubblicazione vigente, ripetuta nel dataset perché ci si possa fare affidamento. */
   publicationThreshold: { minPrecision: number; minSample: number };
   disclaimer: string;

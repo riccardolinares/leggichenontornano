@@ -134,6 +134,7 @@ Le pronunce della Corte costituzionale e la misura del recall:
 
 ```bash
 node packages/corpus/dist/cli.js consulta          # archi + gold standard
+node packages/corpus/dist/cli.js consulta verifica # accordo con le note di Normattiva
 node packages/engine/dist/cli.js gold valuta       # quanto il motore intercetta
 ```
 
@@ -169,6 +170,12 @@ organo che può farlo. La usiamo per due cose, e restano separate:
   parole del dispositivo e il collegamento al testo integrale;
 - **gold standard**, per misurare quanto il motore intercetta. Una pronuncia non
   è mai insieme input del motore e verità contro cui lo si misura.
+
+Questa fonte dà anche **l'unica precisione che possiamo misurare senza
+revisione umana**: Normattiva annota le stesse declaratorie in coda all'articolo
+colpito, e le due fonti non derivano l'una dall'altra. Sull'ingestione corrente
+l'accordo è **9 su 9** per gli archi ad alta confidenza
+(`antinomia-corpus consulta verifica`, e il numero viaggia nel dataset).
 
 Leggiamo il **dispositivo**, cioè la parte in cui la Corte scrive cosa ha
 deciso, e ne copiamo gli estremi. Non interpretiamo, non riassumiamo, non

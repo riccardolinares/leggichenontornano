@@ -5,6 +5,7 @@ import {
   parsePronunceJson,
   relazioniDaPronunce,
   toIsoDate,
+  citaLaPronuncia,
   type Pronuncia,
 } from '../src/consulta/index.js';
 
@@ -188,5 +189,35 @@ describe('formati della fonte', () => {
     );
     expect(righe).toHaveLength(1);
     expect(righe[0]?.dataDeposito).toBe('2020-01-15');
+  });
+});
+
+describe('accordo con le note di Normattiva', () => {
+  // Il testo è quello reale, dall'art. 2 del d.l. 225/2010.
+  const nota =
+    "------------- AGGIORNAMENTO (10) La Corte Costituzionale, con sentenza 13 - 16 febbraio 2012, n. 22 (in G.U. 1a s.s. 22/2/2012, n. 8) ha dichiarato \"l'illegittimita' costituzionale dell'articolo 2, comma 2-quater, del decreto-legge 29 dicembre 2010, n. 225\".";
+
+  it('riconosce la pronuncia annotata da Normattiva', () => {
+    expect(citaLaPronuncia(nota, '2012', '22')).toBe(true);
+  });
+
+  it('non si accontenta del numero: «n. 22» compare ovunque in una legge', () => {
+    expect(
+      citaLaPronuncia(
+        'Per i provvedimenti di cui alla legge 22 maggio 2010, n. 22, si applica il termine di trenta giorni.',
+        '2012',
+        '22',
+      ),
+    ).toBe(false);
+  });
+
+  it('non conferma una pronuncia diversa dello stesso anno', () => {
+    expect(citaLaPronuncia(nota, '2012', '78')).toBe(false);
+  });
+
+  it('non conferma una nota che non parla di illegittimità', () => {
+    expect(
+      citaLaPronuncia('La Corte, con sentenza 16 febbraio 2012, n. 22, ha respinto.', '2012', '22'),
+    ).toBe(false);
   });
 });
