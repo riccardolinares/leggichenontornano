@@ -74,7 +74,7 @@ in [docs/qualita-fonti.md](docs/qualita-fonti.md).
   percorso che contiene i due punti non arrivava mai alla pagina: in locale
   funzionava, quindi nessun test lo vedeva. L'indirizzo ora è la citazione —
   `/corte/sentenza-121-2026` — che è anche l'unica forma che qualcuno può
-  leggere al telefono (ADR 0013). I vecchi indirizzi reindirizzano in modo
+  leggere al telefono (ADR 0017). I vecchi indirizzi reindirizzano in modo
   permanente, l'ECLI resta nel dataset e scritto in pagina, e un test chiede
   che **ogni** pronuncia del dataset abbia una pagina che risponde.
 - **L'integrazione continua non era mai partita.** `pnpm` era dichiarato due

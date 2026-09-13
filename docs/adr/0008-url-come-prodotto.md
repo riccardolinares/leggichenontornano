@@ -1,7 +1,7 @@
 # 0008 — Gli URL sono il prodotto
 
 - **Stato:** Accettata, con una riga modificata dalla
-  [0013](0013-lindirizzo-di-una-pronuncia-si-legge-a-voce.md): l'indirizzo di
+  [0017](0017-lindirizzo-di-una-pronuncia-si-legge-a-voce.md): l'indirizzo di
   una decisione della Corte non è più il suo ECLI.
 - **Data:** 2026-09-12
 
@@ -33,7 +33,7 @@ Regole:
 
 - l'URN:NIR è la chiave primaria, in chiaro nell'URL, non un id opaco; per le
   decisioni della Corte questo ruolo l'aveva l'ECLI, e la
-  [0013](0013-lindirizzo-di-una-pronuncia-si-legge-a-voce.md) gliel'ha tolto:
+  [0017](0017-lindirizzo-di-una-pronuncia-si-legge-a-voce.md) gliel'ha tolto:
   un indirizzo che nessuno sa leggere al telefono non è citabile, che è lo
   scopo per cui questa ADR esiste;
 - la modalità confronto è un **parametro dello stesso URL**, non una pagina

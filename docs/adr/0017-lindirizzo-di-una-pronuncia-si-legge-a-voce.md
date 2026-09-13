@@ -1,4 +1,4 @@
-# 0013 — L'indirizzo di una pronuncia si legge a voce
+# 0017 — L'indirizzo di una pronuncia si legge a voce
 
 - **Stato:** Accettata
 - **Data:** 2026-09-13
@@ -27,14 +27,34 @@ motivo per cui era stato scelto — ma la 0008 parla di persone.
 
 Quello di sostanza si è visto in produzione: **tutte e cinquantacinque le
 pagine rispondevano 404.** In locale funzionavano, la build produceva i file
-giusti, la sitemap le pubblicava. Il livello che serve le pagine generate non
-ritrova un percorso che contiene i due punti — codificati o no — e l'errore
-compariva solo sul sito pubblicato. Nessun test lo vedeva: quelli che c'erano
+giusti, la sitemap le pubblicava. Nessun test lo vedeva: quelli che c'erano
 giravano in locale, dove quei percorsi funzionavano.
+
+Quello che è stato misurato sul sito pubblicato, e che va scritto per quello
+che è:
+
+- `/corte/ECLI%3AIT%3ACOST%3A2026%3A121` — la forma **codificata**, cioè
+  esattamente quella che il sito pubblicava nei propri link — risponde 404;
+- `/corte/ECLI:IT:COST:2026:121` — la stessa decisione, non codificata —
+  risponde 200;
+- `/norma/urn%3Anir%3A…`, che ha la stessa forma codificata e nasce dallo
+  stesso meccanismo, risponde 200 in tutte e due le forme.
+
+**Perché la codifica si perda per un percorso e non per l'altro non è
+accertato**, e non è stato accertato di proposito: la risposta sta dentro il
+comportamento di un fornitore, cambia senza preavviso e non è verificabile da
+qui. Scrivere una spiegazione plausibile in una ADR e presentarla come una
+causa sarebbe la stessa cosa che questo progetto rimprovera a chi pubblica una
+cifra senza dire come l'ha ottenuta.
+
+Quello che la differenza dimostra basta a decidere: un indirizzo che dipende
+dalla codifica percentuale ha un comportamento che **non riusciamo a prevedere
+dal codice**, e su cui i test locali non dicono niente. La decisione qui sotto
+toglie la codifica, non prova a governarla.
 
 I due difetti hanno la stessa radice. L'ECLI nell'indirizzo obbliga a
 codificarlo, e un indirizzo codificato è insieme illeggibile per una persona e
-fragile lungo la catena che lo serve.
+imprevedibile lungo la catena che lo serve.
 
 ## Decisione
 
@@ -102,6 +122,11 @@ Rispondono invece in due passi:
 - Negativa: la tabella degli URL pubblici cambia una riga, e i vecchi indirizzi
   vanno mantenuti finché qualcuno li usa. È il costo che la 0008 aveva già
   previsto quando ha scritto che un URL pubblicato non si rimuove.
-- Da fare: gli URN nel lettore norma (`/norma/urn%3Anir%3A…`) hanno la stessa
-  forma codificata. Qui non li tocchiamo — l'URN è la chiave primaria del
-  corpus e la 0008 su quello non cambia — ma il difetto va sorvegliato.
+- Da sorvegliare: gli URN nel lettore norma (`/norma/urn%3Anir%3A…`) hanno la
+  stessa forma codificata. **Oggi in produzione funzionano**, verificati sia
+  codificati sia in chiaro, e per questo non vengono toccati: l'URN è la chiave
+  primaria del corpus e la 0008 su quello non cambia. Ma funzionano per una
+  ragione che non sappiamo, ed è esattamente la condizione in cui si trovavano
+  le pronunce il giorno prima di rompersi. Il controllo da tenere non è una
+  riscrittura: è un test che chieda 200 per ogni norma pubblicata, come quello
+  che adesso esiste per le pronunce.
