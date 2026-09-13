@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { dataset } from '@/lib/dataset';
-import { metadatiPagina } from '@/lib/seo';
+import { bloccoDatiStrutturati, datiStrutturatiElenco, metadatiPagina } from '@/lib/seo';
 import { Tabella } from '@/components/tabella';
 import { data, nomeNorma, numero, percorsoNorma } from '@/lib/testo';
 
@@ -47,6 +47,16 @@ export default function Norme() {
 
   return (
     <div className="contenitore">
+      <script
+        {...bloccoDatiStrutturati(
+          datiStrutturatiElenco({
+            titolo: 'Le norme del corpus',
+            descrizione: 'Tutti gli atti ingeriti, con versioni, segnalazioni e stato di vigenza.',
+            percorso: '/norme',
+            quanti: atti.length,
+          }),
+        )}
+      />
       <h1>Le norme del corpus</h1>
       <p className="apertura">
         {numero(atti.length)} atti ingeriti, di cui {numero(conSegnalazioni)} coinvolti in almeno

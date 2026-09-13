@@ -6,6 +6,8 @@ import {
   primaAnomalia,
   primaNorma,
   primoApprofondimento,
+  primoControlloConEsito,
+  primaPronuncia,
 } from './percorsi';
 
 /**
@@ -521,6 +523,74 @@ test.describe('condivisione e contatti', () => {
       'href',
       /buymeacoffee\.com/,
     );
+  });
+});
+
+test.describe('dati strutturati', () => {
+  /**
+   * I dati strutturati si rompono in silenzio.
+   *
+   * Un JSON malformato, un `@type` sbagliato o un blocco sparito non si vedono
+   * guardando il sito: si vedono mesi dopo, quando qualcuno controlla perché le
+   * pagine non compaiono come dovrebbero. Questo test li legge e li valida su
+   * ogni famiglia di pagine.
+   */
+  async function tipiIn(page: import('@playwright/test').Page): Promise<string[]> {
+    const blocchi = await page.locator('script[type="application/ld+json"]').allTextContents();
+    return blocchi.flatMap((b) => {
+      const letto: unknown = JSON.parse(b);
+      const voci = Array.isArray(letto) ? letto : [letto];
+      return voci.map((v) => String((v as Record<string, unknown>)['@type']));
+    });
+  }
+
+  const anomalia = primaAnomalia();
+  const pronuncia = primaPronuncia();
+  const controllo = primoControlloConEsito();
+  const approfondimento = primoApprofondimento();
+
+  test('ogni pagina dichiara almeno il sito e il dataset', async ({ page }) => {
+    for (const percorso of ['/', '/dati', '/blog', '/norme', '/corte', '/numeri']) {
+      await page.goto(percorso);
+      const tipi = await tipiIn(page);
+      expect(tipi, `dati strutturati su ${percorso}`).toContain('WebSite');
+      expect(tipi, `dataset dichiarato su ${percorso}`).toContain('Dataset');
+    }
+  });
+
+  test('gli indici si dichiarano come indici', async ({ page }) => {
+    for (const percorso of ['/blog', '/norme', '/corte']) {
+      await page.goto(percorso);
+      expect(await tipiIn(page), `indice ${percorso}`).toContain('CollectionPage');
+    }
+  });
+
+  test('le pagine di dettaglio portano le briciole di pane', async ({ page }) => {
+    const percorsi = [
+      anomalia ? `/anomalia/${encodeURIComponent(anomalia.id)}` : null,
+      pronuncia ? `/corte/${encodeURIComponent(pronuncia)}` : null,
+      controllo ? `/controllo/${controllo}` : null,
+      approfondimento ? `/blog/${approfondimento}` : null,
+    ].filter((p): p is string => p !== null);
+
+    expect(percorsi.length).toBeGreaterThan(0);
+    for (const percorso of percorsi) {
+      await page.goto(percorso);
+      expect(await tipiIn(page), `briciole su ${percorso}`).toContain('BreadcrumbList');
+    }
+  });
+
+  test('un approfondimento dichiara chi ha scritto le parole', async ({ page }) => {
+    test.skip(!approfondimento, 'nessun articolo nel blog');
+    await page.goto(`/blog/${approfondimento}`);
+    const blocchi = await page.locator('script[type="application/ld+json"]').allTextContents();
+    const articolo = blocchi
+      .map((b) => JSON.parse(b) as Record<string, unknown>)
+      .find((v) => v['@type'] === 'BlogPosting');
+    expect(articolo, 'nessun BlogPosting').toBeTruthy();
+    // `author` non è decorativo: dice chi risponde di quelle frasi. Un articolo
+    // generato non può dichiarare come autore il progetto.
+    expect(articolo!['author']).toBeTruthy();
   });
 });
 
