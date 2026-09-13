@@ -220,10 +220,12 @@ export default function Dati() {
                 qui sopra valgono quanto quel campione.{' '}
               </>
             )}
-            Il primo lotto di segnalazioni{' '}
-            <strong>non è ancora stato demolito da giuristi esterni</strong>: è il passo previsto
-            prima del lancio pubblico, e l’incarico è «trova tutto quello che non regge», non
-            «controlla se vanno bene». Finché non sarà fatto, questa riga resta qui.
+            Le revisioni non arrivano da un comitato di esperti: arrivano da chi legge. Ogni scheda
+            mostra i testi originali, la query che l’ha prodotta e i criteri di risoluzione proprio
+            perché si possa smontarla, e il pulsante <strong>«Non è un conflitto»</strong> apre una
+            issue senza bisogno di un account. È il motivo per cui il progetto è open source: la
+            verifica non è una promessa che facciamo, è una cosa che chiunque può fare — e finché le
+            revisioni registrate sono poche, questa riga resta qui a dirlo.
           </p>
         </div>
       </section>

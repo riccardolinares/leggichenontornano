@@ -9,11 +9,12 @@ decidere — stanno in [GOVERNANCE.md](GOVERNANCE.md).
 
 ## Cerchiamo aiuto soprattutto qui
 
-**Giuristi.** Il bisogno più grande del progetto non è codice. Prima del lancio
-pubblico il primo lotto di segnalazioni va **demolito**, non validato, da due o
-tre giuristi esterni: l'incarico è «trova tutto quello che non regge», non
-«controlla se vanno bene». Si pubblica ciò che sopravvive. Finché non sarà
-fatto, il sito lo dichiara sulla pagina Dati.
+**Chi legge una segnalazione e la trova sbagliata.** È il contributo più utile
+che esista, e non richiede né titoli né codice: ogni scheda ha un pulsante «Non
+è un conflitto» che apre una issue precompilata senza bisogno di un account.
+L'incarico è «trova tutto quello che non regge», non «controlla se va bene» —
+si pubblica ciò che sopravvive, e la pagina Dati dice a che punto è ogni
+controllo.
 
 **Chi conosce una materia.** Un verticale semantico ha bisogno di qualcuno che
 sappia quali atti costituiscono un dominio. Non serve saper programmare:

@@ -29,9 +29,10 @@ acquisirlo.
 
 **I limiti si pubblicano.** Quello che il progetto non sa, non copre o non ha
 ancora verificato sta sul sito, non in una nota a piè di pagina del repository:
-l'elenco degli atti su cui il confronto semantico lavora davvero, il fatto che
-la revisione esterna dei giuristi non sia ancora stata fatta, il fatto che il
-contatore nazionale misuri termini scaduti e non attuazioni mancate.
+l'elenco degli atti su cui il confronto semantico lavora davvero, quante
+revisioni ha raccolto ogni controllo e quindi quali non hanno ancora una
+precisione misurata, il fatto che il contatore nazionale misuri termini scaduti
+e non attuazioni mancate.
 
 Una proposta che tocchi uno di questi punti non si valuta come una pull request.
 Si scrive una **ADR** che argomenti il contrario, e si discute quella.

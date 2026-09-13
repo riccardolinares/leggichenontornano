@@ -16,11 +16,14 @@ lì: [le segnalazioni](https://leggichenontornano.it),
 [i dati con la precisione misurata](https://leggichenontornano.it/dati) di ogni
 controllo — compresi quelli che non pubblichiamo.
 
-> **Online, non ancora lanciato.** Il sito si raggiunge, il codice gira e il
-> dataset si rigenera ogni giorno, ma manca il passo che viene prima del lancio
-> vero — far _demolire_ il primo lotto di segnalazioni da giuristi esterni.
-> Finché non sarà fatto, il sito lo dichiara sulla pagina Dati, e nessun numero
-> di questo repository va citato come definitivo.
+> **Le segnalazioni si controllano in pubblico.** Nessun comitato di esperti
+> decide cosa è vero prima di voi: ogni scheda mostra i testi originali, la
+> query che l'ha prodotta e i criteri di risoluzione, e ha un pulsante «Non è un
+> conflitto» che apre una issue senza bisogno di account. Un controllo pubblica
+> solo quando le revisioni registrate lo portano sopra la soglia, e la pagina
+> Dati dice in ogni momento quali controlli ci sono arrivati e quali no. È per
+> questo che il progetto è open source: la verifica non è una promessa, è una
+> cosa che chiunque può fare.
 
 > **La credibilità è il prodotto.** Una segnalazione falsa su una legge distrugge
 > più di quanto dieci segnalazioni corrette costruiscano, e il danno è

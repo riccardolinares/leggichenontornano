@@ -152,12 +152,20 @@ Costituzione — che nessuno dei controlli attuali cerca. Che il recall su quell
 fonte sia basso è un'informazione sul perimetro dei controlli, non un difetto da
 correggere gonfiando i numeri.
 
-## Prima del lancio pubblico
+## Chi fa le revisioni
 
-Il primo lotto di segnalazioni va **demolito**, non validato, da due o tre
-giuristi esterni. La differenza sta nell'incarico che si dà: «controlla se
-vanno bene» produce approvazioni, «trova tutto quello che non regge» produce
-informazione. Si pubblica ciò che sopravvive.
+Chi legge. La differenza che conta non è il titolo del revisore ma l'incarico
+che gli si dà: «controlla se vanno bene» produce approvazioni, «trova tutto
+quello che non regge» produce informazione. Ogni scheda è costruita per il
+secondo incarico — testi originali, query, criteri di risoluzione tutti in
+pagina — e il pulsante «Non è un conflitto» apre una issue senza account.
 
-Questo non è ancora stato fatto, e finché non lo sarà va detto — qui e nella
-pagina **Dati** del sito.
+Un comitato ristretto guarda un campione una volta sola. Una segnalazione
+esposta con le sue prove resta contestabile per sempre e da chiunque, compreso
+chi quella norma la applica ogni giorno e sulla sua materia ne sa più di
+qualunque revisore ingaggiato. È il motivo per cui il progetto è open source, e
+non un ripiego in attesa di qualcosa di meglio.
+
+Quante revisioni ha raccolto ogni controllo, e quindi quali hanno una
+precisione misurata e quali no, sta nella pagina **Dati** del sito. Finché sono
+poche, il sito lo dice.

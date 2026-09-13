@@ -112,7 +112,7 @@ test.describe('vincoli non negoziabili', () => {
     expect(testo).toMatch(/elenco degli atti/i);
   });
 
-  test('la pagina Dati dice che la revisione esterna non è ancora stata fatta', async ({
+  test('la pagina Dati dice chi fa le revisioni, e come contestare una scheda', async ({
     page,
   }) => {
     // docs/gold-standard.md promette che questo sia detto «qui e nella pagina
@@ -120,7 +120,8 @@ test.describe('vincoli non negoziabili', () => {
     // repository non è trasparenza.
     await page.goto('/dati');
     const testo = (await page.locator('main').textContent()) ?? '';
-    expect(testo).toMatch(/non è ancora stato demolito da giuristi esterni/i);
+    expect(testo).toMatch(/non è un conflitto/i);
+    expect(testo).toMatch(/open source/i);
   });
 
   test('la pagina Dati mostra l’unica precisione misurata senza revisione umana', async ({
