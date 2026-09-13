@@ -150,7 +150,7 @@ jobs:
           body: |
             Aggiornamento automatico del dataset derivato.
 
-            **Guardate il diff prima di unire.** Un aggiornamento che cambia
+            **Guarda il diff prima di unire.** Un aggiornamento che cambia
             molte segnalazioni di solito significa una di due cose: il corpus è
             cresciuto, oppure una regola ha iniziato a comportarsi diversamente.
             La seconda è il motivo per cui questa PR esiste invece di un push

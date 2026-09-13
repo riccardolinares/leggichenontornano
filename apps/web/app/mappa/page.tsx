@@ -108,8 +108,8 @@ export default function Mappa() {
               fa
             </li>
             <li>
-              <Link href="/segnala">Qualcosa non torna?</Link> — segnalate un problema, senza
-              bisogno di un account
+              <Link href="/segnala">Qualcosa non torna?</Link> — segnala un problema, senza bisogno
+              di un account
             </li>
           </ul>
         </section>

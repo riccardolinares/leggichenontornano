@@ -209,9 +209,9 @@ export default async function Home({ searchParams }: Props) {
             }}
           >
             <strong>Questo è quello che abbiamo trovato finora.</strong> Ogni voce è verificabile
-            riga per riga; il corpus si allarga a ogni ingestione, e con lui l’indice. Se cercate
-            una norma che qui non c’è, <Link href="/segnala">segnalatecela</Link>: è il modo più
-            rapido per farla entrare nel prossimo giro.
+            riga per riga; il corpus si allarga a ogni ingestione, e con lui l’indice. Se cerchi una
+            norma che qui non c’è, <Link href="/segnala">segnalacela</Link>: è il modo più rapido
+            per farla entrare nel prossimo giro.
           </p>
           <ol className="elenco">
             {anomalie.map((a) => (

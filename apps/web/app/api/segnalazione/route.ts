@@ -81,7 +81,7 @@ export async function POST(request: Request): Promise<NextResponse> {
 
   if (messaggio.length < 30) {
     return NextResponse.json(
-      { errore: 'Servono almeno trenta caratteri: cosa avete visto, e dove.' },
+      { errore: 'Servono almeno trenta caratteri: cosa hai visto, e dove.' },
       { status: 400 },
     );
   }
@@ -95,7 +95,7 @@ export async function POST(request: Request): Promise<NextResponse> {
     'ignoto';
   if (troppeDa(ip)) {
     return NextResponse.json(
-      { errore: 'Avete già mandato qualche segnalazione: riprovate fra poco.' },
+      { errore: 'Hai già mandato qualche segnalazione: riprova fra poco.' },
       { status: 429 },
     );
   }

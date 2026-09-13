@@ -131,6 +131,12 @@ dentro una conversazione che parla d'altro, e hanno due secondi e un pollice.
 ## 9. Come si scrive
 
 - **In italiano**, anche nel codice: nomi di funzione, commenti, messaggi.
+- **Si dà del tu.** Il sito lo legge una persona alla volta, e il voi la mette
+  in mezzo a una folla che non c'è. Vale per le pagine, per i moduli, per i
+  messaggi di errore, per i modelli di issue e per questi documenti. Fanno
+  eccezione le citazioni alla lettera — testi di legge, dispositivi della
+  Corte, licenze — che si riportano come sono. Un test end-to-end scorre le
+  pagine e fallisce se ci trova le forme del voi.
 - I commenti dicono **perché**, non cosa. Un commento che ripete la riga sotto è
   rumore; un commento che spiega quale guasto quella riga previene è
   documentazione.

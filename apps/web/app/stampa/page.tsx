@@ -24,9 +24,9 @@ export default function Stampa() {
     <div className="contenitore stretto">
       <h1>Per la stampa</h1>
       <p className="apertura">
-        Qui ci sono i numeri, il metodo e i dati grezzi da cui vengono: potete verificare ogni
-        affermazione senza passare da noi, ed è il motivo per cui potete citarla. E poi scriveteci
-        comunque — una domanda che ci obbliga a spiegarci meglio è la cosa più utile che possiate
+        Qui ci sono i numeri, il metodo e i dati grezzi da cui vengono: ogni affermazione la puoi
+        verificare senza passare da noi, ed è il motivo per cui la puoi citare. E poi scrivici
+        comunque — una domanda che ci obbliga a spiegarci meglio è la cosa più utile che tu possa
         farci.
       </p>
       <p className="azioni">
@@ -164,17 +164,17 @@ export default function Stampa() {
         </h2>
         <p>
           Il modo più rapido è aprire una issue su GitHub: è pubblica, la vede chiunque lavori al
-          progetto, e resta come traccia di cosa vi abbiamo risposto. Non serve registrarsi per
+          progetto, e resta come traccia di cosa ti abbiamo risposto. Non serve registrarsi per
           leggerla.
         </p>
         <p>
           Se la domanda riguarda una singola segnalazione, il pulsante{' '}
           <strong>«Non è un conflitto»</strong> sulla scheda apre una issue con i riferimenti già
-          dentro. Se pensate che un numero di questa pagina sia sbagliato, ditecelo: le risposte
+          dentro. Se pensi che un numero di questa pagina sia sbagliato, diccelo: le risposte
           cambiano la precisione misurata, e possono togliere un controllo dal sito.
         </p>
         <p>
-          Se preferite scrivere in privato — una domanda che non volete lasciare pubblica, una
+          Se preferisci scrivere in privato — una domanda che non vuoi lasciare pubblica, una
           richiesta di intervista, una correzione che riguarda un caso delicato — l’indirizzo è{' '}
           <a href={`mailto:${EMAIL}`}>{EMAIL}</a>.
         </p>
