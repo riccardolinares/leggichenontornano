@@ -87,8 +87,11 @@ export default async function Home({ searchParams }: Props) {
   return (
     <div className="contenitore">
       {/* La home apre con una frase, non con un cruscotto. I numeri ci sono, e
-          sono i più duri che abbiamo, ma stanno **dentro le frasi**: una griglia
-          di metriche si guarda e non si legge, e il piano la esclude.
+          sono i più duri che abbiamo, ma stanno **dentro le frasi**: qui il
+          lettore deve capire *cosa* dicono, e una griglia di metriche si guarda
+          senza leggerla. Dove invece le cifre sono omogenee e si scorrono per
+          trovarne una — la pagina «I numeri» — la griglia c'è, ed è la forma
+          giusta: la regola è generale, non è un divieto (DESIGN.md).
 
           Tutti i numeri qui sotto sono calcolati dal dataset, non scritti a
           mano. Se il corpus cambia, cambiano — ed è l'unico modo perché una

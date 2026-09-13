@@ -314,6 +314,7 @@ Istruzioni e configurazioni per ogni client: [`packages/mcp`](packages/mcp).
 |                                                |                                                                                   |
 | ---------------------------------------------- | --------------------------------------------------------------------------------- |
 | [METODO.md](METODO.md)                         | Cosa il progetto non fa, la tassonomia delle anomalie, la soglia di pubblicazione |
+| [DESIGN.md](DESIGN.md)                         | Le regole di design, e da quale principio discendono                              |
 | [CONTRIBUTING.md](CONTRIBUTING.md)             | Come contribuire, e cosa non accettiamo                                           |
 | [GOVERNANCE.md](GOVERNANCE.md)                 | Chi decide cosa, e quali decisioni nessuno può prendere                           |
 | [CHANGELOG.md](CHANGELOG.md)                   | Le versioni, e perché il numero di segnalazioni cambia                            |
