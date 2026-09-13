@@ -18,8 +18,8 @@ export default function Image() {
       ...(inCoda > 0 ? { cifra: numero(inCoda), unita: 'in coda' } : {}),
       titolo:
         inCoda > 0
-          ? 'Segnalazioni che non pubblichiamo, perché la loro precisione non è ancora misurata.'
-          : 'Quanto è grande il corpus, quanto è precisa ogni regola, e cosa non pubblichiamo.',
+          ? 'Segnalazioni in lavorazione: entrano nell’indice quando la misura di precisione è completa.'
+          : 'Quanto è grande il corpus, quanto è precisa ogni regola, e cosa sta per arrivare.',
       nota: 'Si pubblica sopra l’85% di precisione misurata su almeno 30 revisioni.',
     }),
     size,

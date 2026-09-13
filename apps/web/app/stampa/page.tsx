@@ -24,10 +24,10 @@ export default function Stampa() {
     <div className="contenitore stretto">
       <h1>Per la stampa</h1>
       <p className="apertura">
-        Qui ci sono i numeri, il metodo, i limiti dichiarati e i dati grezzi da cui vengono: potete
-        verificare ogni affermazione senza passare da noi. E poi scriveteci comunque. Una domanda
-        che ci obbliga a spiegarci meglio — o a correggere qualcosa — è la cosa più utile che
-        possiate farci.
+        Qui ci sono i numeri, il metodo e i dati grezzi da cui vengono: potete verificare ogni
+        affermazione senza passare da noi, ed è il motivo per cui potete citarla. E poi scriveteci
+        comunque — una domanda che ci obbliga a spiegarci meglio è la cosa più utile che possiate
+        farci.
       </p>
       <p className="azioni">
         <a className="bottone" href={REPO_URL}>
@@ -71,7 +71,7 @@ export default function Stampa() {
 
       <section className="sezione" aria-labelledby="numeri">
         <h2 id="numeri" className="sezione__titolo">
-          I numeri, con i loro limiti
+          I numeri, e cosa misurano esattamente
         </h2>
         {manifest ? (
           <Tabella didascalia={`Stato al ${data(manifest.generatedAt.slice(0, 10))}.`}>

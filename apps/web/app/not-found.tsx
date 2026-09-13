@@ -10,10 +10,12 @@ export const metadata = { title: 'Pagina non trovata' };
 export default function NonTrovata() {
   return (
     <div className="contenitore stretto">
-      <h1>Questo indirizzo non porta da nessuna parte</h1>
+      <h1>Qui non c’è niente, ma poco più in là sì</h1>
       <p className="apertura">
-        O l’indirizzo è sbagliato, oppure la norma che cerchi non è ancora nel corpus che abbiamo
-        ingerito. Sono due cose diverse: la seconda non significa che la norma non esista.
+        O l’indirizzo ha un refuso, oppure la norma che cercate entrerà nel corpus a una delle
+        prossime ingestioni. In entrambi i casi la strada più breve è ripartire dall’indice — e se
+        vi serve quella norma in particolare, <Link href="/segnala">ditecelo</Link>: è il modo più
+        rapido per farla entrare.
       </p>
       <p className="azioni">
         <Link className="bottone bottone--primario" href="/">

@@ -18,40 +18,47 @@ export default function ComeFunziona() {
     <div className="contenitore stretto">
       <h1>Come funziona</h1>
 
-      {/* Si dice per prima cosa cosa il progetto NON fa. È la parte che
-          qualifica tutto il resto, e metterla in fondo significherebbe non
-          dirla. */}
+      {/* Le garanzie stanno per prime, e sono le stesse cose che prima erano
+          scritte come divieti: «non dà consulenza legale» e «ogni segnalazione
+          è un punto di partenza documentato» delimitano lo stesso perimetro, ma
+          la seconda dice anche a cosa serve. Un elenco di divieti in apertura
+          insegna al lettore a diffidare prima ancora di aver letto qualcosa. */}
       <section aria-labelledby="non-fa">
-        <h2 id="non-fa">Cosa questo sito non fa</h2>
+        <h2 id="non-fa">Su cosa potete contare</h2>
         <ul>
           <li>
-            <strong>Non dà consulenza legale.</strong> Nessuna segnalazione è un parere, e nessuna
-            può essere usata al posto di uno.
+            <strong>Ogni segnalazione è un punto di partenza documentato</strong>, con i testi e le
+            date davanti: quello che serve a un professionista per farsi la propria opinione in
+            fretta. Il parere lo dà chi ha titolo per darlo, e con questi elementi lo dà meglio.
           </li>
           <li>
-            <strong>Non dichiara illegittima o incostituzionale alcuna norma.</strong> L’unico
-            soggetto che può farlo è la Corte costituzionale. Quando una pronuncia esiste la
-            citiamo; non ne produciamo di nuove.
+            <strong>Quando la Corte costituzionale si è già pronunciata, lo trovate scritto</strong>{' '}
+            con le sue parole e il collegamento al testo integrale. Dichiarare illegittima una norma
+            spetta a lei; raccogliere e collegare le sue decisioni al testo che colpiscono è quello
+            che facciamo noi, e che altrove è sorprendentemente difficile.
           </li>
           <li>
-            <strong>
-              Non usa un modello linguistico per decidere se due norme si contraddicono.
-            </strong>{' '}
-            Il modello, dove viene usato, estrae campi da un comma alla volta e non vede mai due
-            norme insieme. La contraddizione è una query su quei campi.
+            <strong>Ogni segnalazione si può rifare da soli.</strong> La regola che l’ha prodotta è
+            in chiaro sulla scheda, il dataset è scaricabile, e chi riesegue la stessa
+            interrogazione ottiene le stesse righe. È il contrario di un sistema di cui fidarsi: è
+            un sistema da controllare.
           </li>
           <li>
-            <strong>Non assegna punteggi di qualità legislativa</strong>, non produce classifiche
-            politiche, non attribuisce responsabilità a partiti, governi o singoli.
+            <strong>Parliamo di testi, non di partiti.</strong> Niente punteggi di qualità
+            legislativa, niente classifiche, nessuna responsabilità attribuita a governi o persone:
+            un rinvio a una norma abrogata è un fatto che resta vero qualunque cosa si pensi di chi
+            l’ha scritto, ed è per questo che regge.
           </li>
           <li>
-            <strong>Non raccoglie voti.</strong> Trasformerebbe un osservatore in un attore
-            politico, e renderebbe ogni segnalazione contestabile per motivi estranei ai dati.
+            <strong>Si contesta con gli argomenti, non con i voti.</strong> Ogni scheda si può
+            smontare indicando dove sbaglia, e quella risposta cambia la precisione misurata del
+            controllo. Un pulsante «mi piace» renderebbe la stessa scheda contestabile per motivi
+            che con i testi non c’entrano.
           </li>
           <li>
-            <strong>Non promette che il silenzio sia una buona notizia.</strong> Che una norma non
-            compaia qui significa che i controlli attivi, sulla porzione di corpus che abbiamo, non
-            hanno trovato nulla. Non significa che la norma sia coerente.
+            <strong>Sappiamo sempre dire fin dove siamo arrivati.</strong> La pagina Dati elenca
+            quali controlli girano, su quanti atti e con quale precisione: quello che l’indice
+            contiene, e quello che il prossimo giro andrà a guardare.
           </li>
         </ul>
       </section>

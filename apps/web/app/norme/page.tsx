@@ -10,8 +10,8 @@ import { data, nomeNorma, numero, percorsoNorma } from '@/lib/testo';
  * Il lettore norma esiste da sempre, ma ci si arrivava solo da una
  * segnalazione: un atto senza incongruenze rilevate era nel sito e
  * irraggiungibile. Questa pagina è il punto da cui si vede tutto quello che
- * abbiamo ingerito — compreso, e soprattutto, quello su cui non abbiamo trovato
- * niente.
+ * abbiamo ingerito, compreso quello su cui i controlli non hanno segnalato
+ * nulla: un atto pulito è un'informazione quanto uno che non torna.
  *
  * Ordinate per numero di segnalazioni e poi per data: chi arriva qui cerca o la
  * norma che conosce, o quella messa peggio.
@@ -65,9 +65,10 @@ export default function Norme() {
       </p>
 
       <p className="riga-corpus">
-        <strong>Il corpus è parziale per costruzione.</strong> Contiene gli atti che abbiamo
-        ingerito, non la legislazione italiana: una norma che non è in questo elenco non è per
-        questo in ordine, semplicemente non l’abbiamo guardata.{' '}
+        <strong>Questo è il corpus su cui lavoriamo oggi</strong>, e si allarga a ogni ingestione:
+        ogni atto che entra porta con sé le sue relazioni, e fa scattare i controlli anche sugli
+        atti che c’erano già. Se cercate una norma che qui non c’è,{' '}
+        <Link href="/segnala">ditecelo</Link> — è il modo più rapido per farla entrare.{' '}
         <Link href="/dati">Cosa copre il dataset</Link>.
       </p>
 

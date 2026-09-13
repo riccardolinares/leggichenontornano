@@ -11,7 +11,7 @@ export const dynamic = 'force-static';
 export const metadata = metadatiPagina({
   titolo: 'Dati e precisione',
   descrizione:
-    'Il dataset scaricabile, le licenze e la precisione misurata di ogni controllo, compresi quelli che non pubblichiamo.',
+    'Il dataset scaricabile, le licenze e la precisione misurata di ogni controllo, compresi quelli ancora in lavorazione.',
   percorso: '/dati',
 });
 
@@ -142,7 +142,7 @@ export default function Dati() {
 
         {fermi.length > 0 ? (
           <>
-            <h3 style={{ marginTop: '2rem' }}>Perché questi controlli non pubblicano</h3>
+            <h3 style={{ marginTop: '2rem' }}>Cosa sta completando la misura</h3>
             <dl>
               {fermi.map((m) => (
                 <div key={m.checkId} style={{ marginBottom: '1rem' }}>
@@ -204,7 +204,7 @@ export default function Dati() {
           </>
         ) : null}
 
-        <h3 style={{ marginTop: '2rem' }}>Cosa manca ancora</h3>
+        <h3 style={{ marginTop: '2rem' }}>Come cresce la precisione</h3>
         <div className="niente-segnale">
           <p style={{ marginBottom: 0 }}>
             {revisioni === 0 ? (

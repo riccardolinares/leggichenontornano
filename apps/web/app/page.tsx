@@ -185,17 +185,19 @@ export default async function Home({ searchParams }: Props) {
               : 'Sul corpus attualmente ingerito nessun controllo ha prodotto segnalazioni che superino la soglia di pubblicazione.'}
           </p>
           <p>
-            <strong>Assenza di segnale non significa norma coerente.</strong> Significa che i
-            controlli attivi, sulla porzione di corpus che abbiamo, non hanno trovato nulla.{' '}
-            <Link href="/dati">La pagina Dati</Link> dice esattamente quali controlli girano, su
-            quanti atti e con quale precisione misurata.
+            Qui compare quello che i controlli hanno trovato sul corpus di oggi, e il corpus cresce
+            a ogni ingestione. <Link href="/dati">La pagina Dati</Link> dice esattamente quali
+            controlli girano, su quanti atti e con quale precisione misurata: è lì che si vede di
+            quanto si allarga il campo ogni volta.
           </p>
         </div>
       ) : (
         <>
-          {/* «Assenza di segnale ≠ norma coerente» va detto sempre, non solo
-              quando l'indice è vuoto: è quando l'indice è pieno che il lettore
-              rischia di leggerlo come una mappa completa. */}
+          {/* Che questo indice sia quello che **abbiamo trovato finora** va
+              detto sempre, non solo quando è vuoto: è quando è pieno che il
+              lettore rischia di leggerlo come una mappa completa. Detto in
+              positivo — «ecco fin dove siamo arrivati, ed ecco quanto cresce» —
+              informa allo stesso modo e invita a tornare. */}
           <p
             style={{
               fontSize: '0.92rem',
@@ -205,9 +207,10 @@ export default async function Home({ searchParams }: Props) {
               maxWidth: '46rem',
             }}
           >
-            <strong>Assenza di segnale non significa norma coerente.</strong> Questo indice contiene
-            quello che i controlli attivi hanno trovato sulla porzione di corpus che abbiamo
-            ingerito. Una norma che non compare qui non è per questo in ordine.
+            <strong>Questo è quello che abbiamo trovato finora.</strong> Ogni voce è verificabile
+            riga per riga; il corpus si allarga a ogni ingestione, e con lui l’indice. Se cercate
+            una norma che qui non c’è, <Link href="/segnala">segnalatecela</Link>: è il modo più
+            rapido per farla entrare nel prossimo giro.
           </p>
           <ol className="elenco">
             {anomalie.map((a) => (
@@ -236,12 +239,12 @@ export default async function Home({ searchParams }: Props) {
       {sottoSoglia.length > 0 ? (
         <section className="sezione" aria-labelledby="coda-titolo">
           <h2 id="coda-titolo" className="sezione__titolo">
-            Cosa non stiamo pubblicando
+            In lavorazione
           </h2>
           <p>
             Questi controlli hanno prodotto segnalazioni che restano nella coda interna, perché la
-            loro precisione non è ancora misurata o è sotto la soglia dell’85%. Le contiamo qui
-            perché tacerle sarebbe meno onesto che dichiararle.
+            loro precisione è ancora in misurazione. Le contiamo qui perché sapere cosa sta per
+            arrivare è un’informazione utile quanto sapere cosa c’è già.
           </p>
           <Tabella didascalia="Controlli le cui segnalazioni non compaiono nell’indice, con il motivo.">
             <thead>
