@@ -63,6 +63,20 @@ export interface SnapshotRelation {
   origin: string;
 }
 
+/**
+ * Il confronto fatto da un modello, sulle sole segnalazioni di livello 4.
+ *
+ * Sta in un campo separato e opzionale: una segnalazione che non ce l'ha non
+ * contiene una riga di prosa generata da nessuna parte, e chi legge il dataset
+ * lo sa senza doverci credere sulla parola.
+ */
+export interface SnapshotAnalisiAssistita {
+  modello: string;
+  confidenza: 'alta' | 'media' | 'bassa';
+  ragionamento: string;
+  citazioni: unknown;
+}
+
 export interface SnapshotAnomaly {
   id: string;
   checkId: string;
@@ -78,6 +92,8 @@ export interface SnapshotAnomaly {
   severity: string;
   published: boolean;
   computedAt: string;
+  /** Presente solo sulle segnalazioni di livello 4. */
+  assistita?: SnapshotAnalisiAssistita | null;
 }
 
 /**

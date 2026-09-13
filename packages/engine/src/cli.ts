@@ -34,6 +34,7 @@ Comandi:
 Opzioni di estrai:
   --vocabolario <file>    es. data/vocabolari/appalti.json (obbligatorio)
   --limite <n>            numero massimo di commi da esaminare
+  --tutto-il-corpus       estrae da tutti gli atti ingeriti, non dal solo verticale
   --senza-scrittura       estrae senza scrivere nel database
 
 Opzioni di esporta:
@@ -212,6 +213,7 @@ async function main(): Promise<number> {
       const report = await estraiVerticale({
         vocabolario,
         persist: !flags.has('senza-scrittura'),
+        tuttoIlCorpus: flags.has('tutto-il-corpus'),
         ...(flags.has('limite') ? { limite: Number(flags.get('limite')) } : {}),
         onProgress: (m) => process.stdout.write(`  ${m}\n`),
       });
@@ -223,7 +225,7 @@ async function main(): Promise<number> {
           '',
           `verticale:     ${report.verticale}`,
           `estrattore:    ${report.estrattore}`,
-          `atti nel corpus: ${report.attiCorpus}`,
+          `atti nel corpus: ${report.attiCorpus}${flags.has('tutto-il-corpus') ? ' (tutto il corpus ingerito)' : ''}`,
           ...(report.radiciAssenti.length > 0
             ? [`radici assenti:  ${report.radiciAssenti.length} (il verticale copre meno atti)`]
             : []),

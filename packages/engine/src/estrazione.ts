@@ -1,9 +1,19 @@
 /**
  * L'estrazione deontica: dal testo dei commi alle proposizioni normalizzate.
  *
- * È il passo che attiva il layer semantico su un verticale. Gira **un dominio
- * alla volta**, perché senza il vocabolario controllato di quel dominio la
- * similarità testuale produce falsi positivi in massa (ADR 0005).
+ * Due modi di delimitare il lavoro, e servono a cose diverse.
+ *
+ * **Per verticale** (predefinito): il corpus è quello del dominio, e il
+ * vocabolario controllato riconduce i soggetti a concetti. È la modalità che
+ * alimenta il livello 3, dove due proposizioni si confrontano perché parlano
+ * dello stesso concetto — e senza vocabolario «concessione» negli appalti e
+ * «concessione» nella navigazione sarebbero la stessa cosa (ADR 0005).
+ *
+ * **Su tutto il corpus** (`tuttoIlCorpus`): si estrae da ogni atto ingerito. Le
+ * proposizioni che non ricadono in un concetto non alimentano il livello 3 e
+ * non lo inquinano; alimentano il livello 4, dove il confronto lo fa un modello
+ * che legge i due testi e non ha bisogno che parlino la stessa lingua
+ * controllata (ADR 0011).
  *
  * Il modello, dove viene usato, vede **un comma per volta** e riempie campi.
  * Non vede mai due norme insieme e non gli viene mai chiesto un giudizio. La
@@ -24,6 +34,12 @@ export interface OpzioniEstrazione {
   limite?: number;
   /** Solo i commi di questi atti. Restringe ulteriormente il corpus del verticale. */
   urn?: readonly string[];
+  /**
+   * Estrae da **tutti** gli atti ingeriti invece che dal solo corpus del
+   * verticale. Il vocabolario continua a servire per ricondurre i soggetti a
+   * concetti dove ci riesce: quello che cambia è da dove arrivano i commi.
+   */
+  tuttoIlCorpus?: boolean;
   /** Se `false`, non scrive nel database. */
   persist?: boolean;
   onProgress?: (message: string) => void;
@@ -80,26 +96,38 @@ export async function estraiVerticale(opts: OpzioniEstrazione): Promise<ReportEs
     }),
     prisma.act.findMany({ select: { urn: true } }),
   ]);
-  const corpus = espandiCorpus(
-    vocabulary,
-    relazioni.map((r) => ({
-      type: r.type as string,
-      sourceUrn: r.sourceUrn,
-      targetUrn: r.targetUrn,
-    })),
-    new Set(attiNoti.map((a) => a.urn)),
-  );
-  log(
-    `corpus del verticale: ${corpus.atti.size} atti ` +
-      `(${vocabulary.corpus.radici.length - corpus.radiciAssenti.length} radici presenti, ` +
-      `${corpus.aggiuntiDalGrafo} dal grafo)`,
-  );
-  for (const assente of corpus.radiciAssenti) {
-    log(`  radice dichiarata ma assente dal corpus scaricato: ${assente}`);
+  const tuttiGliAtti = new Set(attiNoti.map((a) => a.urn));
+
+  const corpus = opts.tuttoIlCorpus
+    ? { atti: tuttiGliAtti, radiciAssenti: [] as string[], aggiuntiDalGrafo: 0 }
+    : espandiCorpus(
+        vocabulary,
+        relazioni.map((r) => ({
+          type: r.type as string,
+          sourceUrn: r.sourceUrn,
+          targetUrn: r.targetUrn,
+        })),
+        tuttiGliAtti,
+      );
+
+  if (opts.tuttoIlCorpus) {
+    log(`corpus: tutti i ${corpus.atti.size} atti ingeriti`);
+  } else {
+    log(
+      `corpus del verticale: ${corpus.atti.size} atti ` +
+        `(${vocabulary.corpus.radici.length - corpus.radiciAssenti.length} radici presenti, ` +
+        `${corpus.aggiuntiDalGrafo} dal grafo)`,
+    );
+    for (const assente of corpus.radiciAssenti) {
+      log(`  radice dichiarata ma assente dal corpus scaricato: ${assente}`);
+    }
   }
+
   if (corpus.atti.size === 0) {
     throw new Error(
-      `nessuna radice del verticale «${vocabulary.vertical}» è presente nel corpus: scarica gli atti prima di estrarre`,
+      opts.tuttoIlCorpus
+        ? 'il corpus è vuoto: ingerisci qualche atto prima di estrarre'
+        : `nessuna radice del verticale «${vocabulary.vertical}» è presente nel corpus: scarica gli atti prima di estrarre`,
     );
   }
 
