@@ -1839,6 +1839,99 @@ a.griglia-cifre__voce:focus-visible .griglia-cifre__etichetta {
   opacity: 0.55;
 }
 
+/* ---------- La mappa viva: la simulazione nel browser ---------- */
+
+/*
+ * Il gemello che si muove di `.grafo`, a `/grafo/vivo`.
+ *
+ * Stessa tavolozza — i token `--grafo-*` sono gli stessi, e devono esserlo:
+ * due pagine dello stesso sito non possono dire due cose diverse con lo stesso
+ * colore. Cambia solo chi calcola le posizioni, e qui è il browser (ADR 0018).
+ */
+.grafo-vivo {
+  margin: 2rem 0;
+}
+
+.grafo-vivo__comandi {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1rem;
+  align-items: center;
+  margin-bottom: 0.8rem;
+}
+
+.grafo-vivo__stato {
+  margin: 0;
+  font-size: 0.92rem;
+  color: var(--inchiostro-tenue);
+}
+
+/*
+ * La tela.
+ *
+ * L'altezza minima non è estetica: la libreria legge la larghezza del
+ * contenitore al momento in cui si installa, e un riquadro alto zero le fa
+ * disegnare un grafo alto zero. Il fondo scuro è dichiarato anche qui, così
+ * durante il caricamento il riquadro è già del colore che avrà.
+ */
+.grafo-vivo__tela {
+  position: relative;
+  min-height: 26rem;
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--grafo-fondo);
+  /* Senza, il trascinamento di una norma su un telefono scorre la pagina. */
+  touch-action: none;
+}
+
+.grafo-vivo__dettaglio {
+  margin-top: 0.8rem;
+  min-height: 2.6rem;
+  padding: 0.6rem 0.8rem;
+  background: var(--carta-incisa);
+  border-radius: 3px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--inchiostro-tenue);
+}
+
+/* La legenda sta fuori dalla tela, in testo vero: dentro un canvas sarebbe
+   un'immagine di una legenda, cioè niente. */
+.grafo-vivo__legenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.2rem;
+  margin: 0.8rem 0 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--grottesco);
+  font-size: 0.82rem;
+  color: var(--inchiostro-tenue);
+}
+
+.grafo-vivo__legenda li {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.grafo-vivo__segno {
+  display: inline-block;
+  width: 1.4rem;
+  height: 0.2rem;
+  border-radius: 1px;
+}
+
+.grafo-vivo__segno--rotto {
+  height: 0.34rem;
+}
+
+@media (max-width: 30rem) {
+  .grafo-vivo__tela {
+    min-height: 22rem;
+  }
+}
+
 /* ---------- Tema e strumenti della testata ---------- */
 
 /* Il selettore del tema e il collegamento al codice stanno in coda alla riga

@@ -144,6 +144,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                       <Link href="/grafo">La mappa delle leggi</Link>
                     </li>
                     <li>
+                      <Link href="/grafo/vivo">La mappa viva</Link>
+                    </li>
+                    <li>
                       <Link href="/mappa">Mappa del sito</Link>
                     </li>
                   </ul>

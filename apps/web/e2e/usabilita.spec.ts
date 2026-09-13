@@ -1,3 +1,4 @@
+import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 import {
   normaConPiuVersioni,
@@ -839,6 +840,97 @@ test.describe('la mappa delle leggi', () => {
     await expect(
       page.locator('.piede').getByRole('link', { name: /mappa delle leggi/i }),
     ).toBeVisible();
+  });
+});
+
+test.describe('la mappa viva', () => {
+  /*
+   * La pagina gemella di `/grafo`, con la simulazione a forze che gira nel
+   * browser (ADR 0018).
+   *
+   * **Qui non si confronta il disegno fra due caricamenti.** Su `/grafo` quel
+   * confronto è il test che permette alla pagina di esistere; qui fallirebbe
+   * per costruzione, perché il punto di questa pagina è esattamente che le
+   * posizioni le calcola il browser e non sono due volte le stesse. Provare a
+   * verificarlo lo stesso significherebbe scrivere un test che contraddice la
+   * decisione che il codice sta applicando.
+   *
+   * Quello che si verifica è il resto, cioè tutto quello che non è negoziabile:
+   * la pagina risponde, la tela dice cosa contiene a chi non la vede, la stessa
+   * informazione resta leggibile in tabella, l'audit di accessibilità passa e
+   * la pagina sta dentro uno schermo da quattrocento pixel.
+   */
+
+  test('la pagina risponde, e la tela dichiara cosa contiene con le sue cifre', async ({
+    page,
+  }) => {
+    const risposta = await page.goto('/grafo/vivo');
+    expect(risposta?.status()).toBe(200);
+    await expect(page.locator('h1')).toHaveText(/mappa viva/i);
+
+    // La libreria si carica solo nel browser: la tela compare dopo.
+    const tela = page.locator('canvas[role="img"]');
+    await expect(tela).toBeVisible();
+    const etichetta = await tela.getAttribute('aria-label');
+    // Non «grafo a nodi»: l'etichetta è costruita dai dati e contiene le cifre.
+    expect(etichetta).toMatch(/\d+ norme/);
+    expect(etichetta).toMatch(/\d+ collegamenti/);
+    expect(etichetta).toMatch(/rosso/i);
+  });
+
+  test('sotto il disegno resta la tabella, e porta alle norme', async ({ page }) => {
+    /* Un canvas è invisibile a uno screen reader: se questa tabella sparisce,
+       la pagina smette di dire a metà delle persone quello che disegna. */
+    await page.goto('/grafo/vivo');
+    const tabelle = page.locator('table');
+    expect(await tabelle.count()).toBeGreaterThan(1);
+    await expect(tabelle.first()).toBeVisible();
+
+    const elenco = page.locator('table').last();
+    await expect(elenco.locator('caption')).toBeVisible();
+    // Le righe sono le norme del disegno, e ciascuna porta alla sua scheda.
+    expect(await elenco.locator('tbody tr').count()).toBeGreaterThan(150);
+    await expect(elenco.locator('tbody a[href^="/norma/"]').first()).toBeVisible();
+  });
+
+  test('l’audit di accessibilità passa, con la simulazione accesa', async ({ page }) => {
+    await page.goto('/grafo/vivo');
+    await page.locator('canvas[role="img"]').waitFor();
+    const risultato = await new AxeBuilder({ page })
+      .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
+      .analyze();
+    const dettaglio = risultato.violations
+      .map((v) => `[${v.impact}] ${v.id}: ${v.help}`)
+      .join('\n');
+    expect(dettaglio, `Violazioni su /grafo/vivo:\n${dettaglio}`).toBe('');
+  });
+
+  test('regge uno schermo da 400 px', async ({ page }) => {
+    await page.setViewportSize({ width: 400, height: 800 });
+    await page.goto('/grafo/vivo');
+    const tela = page.locator('canvas[role="img"]');
+    await expect(tela).toBeVisible();
+
+    // La tela sta dentro la finestra, e la pagina non scorre di lato.
+    const riquadro = await tela.boundingBox();
+    expect(riquadro?.width ?? 0).toBeGreaterThan(0);
+    expect(riquadro?.width ?? 0).toBeLessThanOrEqual(400);
+    const straripa = await page.evaluate(
+      () => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
+    );
+    expect(straripa, '/grafo/vivo scorre orizzontalmente a 400px').toBe(false);
+  });
+
+  test('la mappa ferma resta dov’era, e le due pagine si citano', async ({ page }) => {
+    /* ADR 0018 permette la simulazione a patto che `/grafo` non cambi: niente
+       sostituzione e niente rimando che porti via da lì. */
+    const risposta = await page.goto('/grafo');
+    expect(risposta?.status()).toBe(200);
+    expect(new URL(page.url()).pathname).toBe('/grafo');
+    await page.waitForSelector('.grafo__nodi circle');
+
+    await page.goto('/grafo/vivo');
+    await expect(page.locator('a[href="/grafo"]').first()).toBeVisible();
   });
 });
 
