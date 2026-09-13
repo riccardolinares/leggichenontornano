@@ -40,7 +40,7 @@ export const RINVIO_AD_ARTICOLO_INESISTENTE: Check<CorpusView> = {
     rule: [
       'SELECT r.sourceUrn, r.targetUrn, r.targetArticle',
       'FROM Relation r',
-      'WHERE r.type = RINVIA AND r.confidence = alta   -- solo rinvii: una modifica puo\' aggiungere',
+      "WHERE r.type = RINVIA AND r.confidence = alta   -- solo rinvii: una modifica puo' aggiungere",
       '  AND r.targetArticle IS NOT NULL',
       '  AND r.targetUrn IN (SELECT urn FROM Act)      -- l’atto è nel corpus',
       '  AND haCoperturaConsolidata(r.targetUrn, r.effectiveFrom)  -- e ne abbiamo il testo a quella data',

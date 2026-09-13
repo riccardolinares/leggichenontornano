@@ -36,7 +36,8 @@ export interface RelationRecord {
   effectiveFrom: string | null;
   evidence: string | null;
   confidence: 'alta' | 'bassa';
-  origin: 'activeModifications' | 'passiveModifications' | 'ref' | 'nota' | 'preambolo' | 'consulta';
+  origin:
+    'activeModifications' | 'passiveModifications' | 'ref' | 'nota' | 'preambolo' | 'consulta';
 }
 
 const ACTION_TO_TYPE: Record<string, RelationType> = {
@@ -137,9 +138,7 @@ export function buildRelations(act: AknAct, opts: BuildRelationsOptions = {}): R
         // Un rinvio dentro una nota redazionale resta nel grafo per la
         // navigazione, ma non è un rinvio normativo e non deve mai far scattare
         // un controllo di livello 1.
-        confidence: ref.inNote
-          ? 'bassa'
-          : referenceConfidence(ref.text, target.article !== null),
+        confidence: ref.inNote ? 'bassa' : referenceConfidence(ref.text, target.article !== null),
         origin: ref.inNote ? 'nota' : 'ref',
       });
     }
@@ -188,7 +187,9 @@ export function referenceConfidence(text: string, hasArticleTarget = false): 'al
   if (hasArticleTarget) return 'bassa';
 
   // Un rinvio che nomina la propria fonte è autoportante.
-  if (/\b(legge|decreto|codice|costituzione|regolamento|testo unico|direttiva|regio)\b/i.test(trimmed)) {
+  if (
+    /\b(legge|decreto|codice|costituzione|regolamento|testo unico|direttiva|regio)\b/i.test(trimmed)
+  ) {
     return 'alta';
   }
   // Un numero nudo, o un'enumerazione di numeri nudi, dipende dall'ancoraggio.

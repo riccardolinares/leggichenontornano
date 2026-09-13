@@ -68,12 +68,7 @@ export interface AknArticle {
 }
 
 export type ModificationKind =
-  | 'abrogazione'
-  | 'modifica'
-  | 'introduzione'
-  | 'sostituzione'
-  | 'proroga'
-  | 'altro';
+  'abrogazione' | 'modifica' | 'introduzione' | 'sostituzione' | 'proroga' | 'altro';
 
 export interface AknTextualMod {
   eId: string;
@@ -476,7 +471,12 @@ function cleanHref(href: string | undefined): string | null {
 
 function collectReferences(doc: XmlElement): AknReference[] {
   const out: AknReference[] = [];
-  const visit = (el: XmlElement, inNote: boolean, inPreamble: boolean, article: string | null): void => {
+  const visit = (
+    el: XmlElement,
+    inNote: boolean,
+    inPreamble: boolean,
+    article: string | null,
+  ): void => {
     for (const child of el.children) {
       if (child.kind !== 'element') continue;
       const nowInNote = inNote || child.localName === 'authorialNote';

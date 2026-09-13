@@ -134,10 +134,13 @@ export function readFragment(fragment: string): FragmentInfo {
   if (!fragment) return { article: null, paragraph: null, annex: null };
   const decoded = safeDecode(fragment);
   const article =
-    matchOne(decoded, /art[_.\s]*(\d+(?:[-\s](?:bis|ter|quater|quinquies|sexies|septies|octies))?)/i) ??
-    null;
+    matchOne(
+      decoded,
+      /art[_.\s]*(\d+(?:[-\s](?:bis|ter|quater|quinquies|sexies|septies|octies))?)/i,
+    ) ?? null;
   const paragraph =
-    matchOne(decoded, /(?:para|comma|com)[_.\s]*(\d+(?:[-\s](?:bis|ter|quater|quinquies))?)/i) ?? null;
+    matchOne(decoded, /(?:para|comma|com)[_.\s]*(\d+(?:[-\s](?:bis|ter|quater|quinquies))?)/i) ??
+    null;
   const annex = matchOne(decoded, /allegato\s+([A-Za-z0-9]+)/i) ?? null;
   return {
     article: article ? normalize(article) : null,

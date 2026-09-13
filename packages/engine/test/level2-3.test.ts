@@ -13,7 +13,11 @@ describe('fonte-secondaria-su-primaria', () => {
   const corpus = (extra = [] as ReturnType<typeof relation>[]) =>
     view(
       [
-        { urn: LEGGE, versions: [{ from: '1990-08-22', articles: ['1'] }], overrides: { sourceRank: 20 } },
+        {
+          urn: LEGGE,
+          versions: [{ from: '1990-08-22', articles: ['1'] }],
+          overrides: { sourceRank: 20 },
+        },
         {
           urn: REGOLAMENTO,
           versions: [{ from: '2015-03-20', articles: ['1'] }],
@@ -62,7 +66,11 @@ describe('fonte-secondaria-su-primaria', () => {
   it('non segnala fra fonti di pari rango', () => {
     const pari = view(
       [
-        { urn: LEGGE, versions: [{ from: '1990-08-22', articles: ['1'] }], overrides: { sourceRank: 20 } },
+        {
+          urn: LEGGE,
+          versions: [{ from: '1990-08-22', articles: ['1'] }],
+          overrides: { sourceRank: 20 },
+        },
         {
           urn: 'urn:nir:stato:legge:2015-03-02;40',
           versions: [{ from: '2015-03-20', articles: ['1'] }],

@@ -16,9 +16,9 @@ describe('buildRelations', () => {
   it('produce archi tipizzati e datati dalle modifiche dichiarate', () => {
     const relations = buildRelations(act, { includeReferences: false });
     expect(relations.length).toBeGreaterThan(0);
-    expect(relations.every((r) => r.sourceUrn === 'urn:nir:stato:decreto.legislativo:2006-04-11;198')).toBe(
-      true,
-    );
+    expect(
+      relations.every((r) => r.sourceUrn === 'urn:nir:stato:decreto.legislativo:2006-04-11;198'),
+    ).toBe(true);
     expect(relations.every((r) => r.effectiveFrom !== null)).toBe(true);
     expect(new Set(relations.map((r) => r.type)).size).toBeGreaterThan(0);
   });

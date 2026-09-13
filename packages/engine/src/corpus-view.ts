@@ -101,7 +101,9 @@ export class CorpusView {
       else this.versionsByAct.set(v.actUrn, [v]);
     }
     for (const list of this.versionsByAct.values()) {
-      list.sort((a, b) => (a.inForceFrom < b.inForceFrom ? -1 : a.inForceFrom > b.inForceFrom ? 1 : 0));
+      list.sort((a, b) =>
+        a.inForceFrom < b.inForceFrom ? -1 : a.inForceFrom > b.inForceFrom ? 1 : 0,
+      );
     }
     this.articlesByVersion = new Map();
     for (const a of data.articles) {

@@ -45,10 +45,7 @@ const MODE_MARKERS: Array<[RegExp, DeonticMode]> = [
     'OBBLIGO',
   ],
   [new RegExp(`\\bè\\s+onere${FINE}|\\ba\\s+pena\\s+di\\s+decadenza${FINE}`, 'i'), 'ONERE'],
-  [
-    new RegExp(`\\bpuò${FINE}|\\bpossono${FINE}|\\b(?:è|ha)\\s+facoltà${FINE}`, 'i'),
-    'POTERE',
-  ],
+  [new RegExp(`\\bpuò${FINE}|\\bpossono${FINE}|\\b(?:è|ha)\\s+facoltà${FINE}`, 'i'), 'POTERE'],
   [
     new RegExp(
       `\\bè\\s+consentit[oa]${FINE}|\\bè\\s+ammess[oa]${FINE}|\\bsono\\s+ammess[ei]${FINE}|\\bè\\s+permess[oa]${FINE}`,
@@ -62,18 +59,39 @@ const DEADLINE_RE =
   /entro\s+(?:il\s+termine\s+di\s+)?([a-zà-ù]+|\d+)\s+(giorni|giorno|mesi|mese|anni|anno)/i;
 
 const NUMBER_WORDS: Record<string, number> = {
-  un: 1, uno: 1, una: 1, due: 2, tre: 3, quattro: 4, cinque: 5, sei: 6, sette: 7,
-  otto: 8, nove: 9, dieci: 10, dodici: 12, quindici: 15, venti: 20, trenta: 30,
-  quaranta: 40, quarantacinque: 45, cinquanta: 50, sessanta: 60, novanta: 90,
-  centoventi: 120, centottanta: 180,
+  un: 1,
+  uno: 1,
+  una: 1,
+  due: 2,
+  tre: 3,
+  quattro: 4,
+  cinque: 5,
+  sei: 6,
+  sette: 7,
+  otto: 8,
+  nove: 9,
+  dieci: 10,
+  dodici: 12,
+  quindici: 15,
+  venti: 20,
+  trenta: 30,
+  quaranta: 40,
+  quarantacinque: 45,
+  cinquanta: 50,
+  sessanta: 60,
+  novanta: 90,
+  centoventi: 120,
+  centottanta: 180,
 };
 
 const CONSEQUENCE_RE =
   /\b(?:a\s+pena\s+di\s+[^.;]+|si\s+applica\s+(?:la|una)\s+sanzione[^.;]*|è\s+punit[oa][^.;]*|comporta\s+[^.;]*decadenz[^.;]*)/i;
 
-const CONDITION_RE = /\b(?:qualora|nel\s+caso\s+in\s+cui|se\s+(?!non\b)|quando|previa|a\s+condizione\s+che)\b[^.;]*/gi;
+const CONDITION_RE =
+  /\b(?:qualora|nel\s+caso\s+in\s+cui|se\s+(?!non\b)|quando|previa|a\s+condizione\s+che)\b[^.;]*/gi;
 
-const EXCEPTION_RE = /\b(?:salvo|fatt[oa]\s+salv[oa]|ad\s+eccezione\s+di|fatta\s+eccezione\s+per|tranne)\b[^.;]*/gi;
+const EXCEPTION_RE =
+  /\b(?:salvo|fatt[oa]\s+salv[oa]|ad\s+eccezione\s+di|fatta\s+eccezione\s+per|tranne)\b[^.;]*/gi;
 
 export interface RuleBasedOptions {
   /** Lunghezza minima di una frase perché valga la pena analizzarla. */
@@ -155,7 +173,10 @@ export function extractSubject(sentence: string, mode: DeonticMode): string {
     if (m !== mode) continue;
     const match = re.exec(sentence);
     if (match && match.index > 0) {
-      return sentence.slice(0, match.index).replace(/^[\s,;:]+/, '').trim();
+      return sentence
+        .slice(0, match.index)
+        .replace(/^[\s,;:]+/, '')
+        .trim();
     }
   }
   return sentence.slice(0, 120).trim();
@@ -167,7 +188,10 @@ export function extractObject(sentence: string, mode: DeonticMode): string {
     if (m !== mode) continue;
     const match = re.exec(sentence);
     if (match) {
-      return sentence.slice(match.index + match[0].length).replace(/^[\s,;:]+/, '').trim();
+      return sentence
+        .slice(match.index + match[0].length)
+        .replace(/^[\s,;:]+/, '')
+        .trim();
     }
   }
   return '';

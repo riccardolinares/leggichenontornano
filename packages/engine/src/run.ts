@@ -11,7 +11,12 @@
  */
 import { getPrisma } from '@antinomia/corpus';
 import { CorpusView, type ActView, type ProvisionView } from './corpus-view.js';
-import { applyGate, evaluateGate, type GateDecision, type ReviewTally } from './publication-gate.js';
+import {
+  applyGate,
+  evaluateGate,
+  type GateDecision,
+  type ReviewTally,
+} from './publication-gate.js';
 import {
   ATTUAZIONE_MANCANTE,
   CHECK_DEFINITIONS,
@@ -145,9 +150,7 @@ export async function buildViewFromDatabase(withProvisions = false): Promise<Cor
       inForceFrom: v.inForceFrom,
       inForceTo: v.inForceTo,
     })),
-    consolidatedActs: [
-      ...new Set(versionRows.filter((v) => v.consolidated).map((v) => v.actUrn)),
-    ],
+    consolidatedActs: [...new Set(versionRows.filter((v) => v.consolidated).map((v) => v.actUrn))],
     articles: articleRows.map((a) => ({
       versionId: a.versionId,
       actUrn: actUrnByVersion.get(a.versionId) ?? '',

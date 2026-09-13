@@ -47,10 +47,13 @@ export class SnapshotReader {
     this.actByUrn = new Map(data.acts.map((a) => [a.urn, a]));
     this.versionsByAct = groupBy(data.versions, (v) => v.actUrn);
     for (const list of this.versionsByAct.values()) {
-      list.sort((a, b) => (a.inForceFrom < b.inForceFrom ? -1 : a.inForceFrom > b.inForceFrom ? 1 : 0));
+      list.sort((a, b) =>
+        a.inForceFrom < b.inForceFrom ? -1 : a.inForceFrom > b.inForceFrom ? 1 : 0,
+      );
     }
     this.articlesByVersion = groupBy(data.articles, (a) => a.versionId);
-    for (const list of this.articlesByVersion.values()) list.sort((a, b) => a.position - b.position);
+    for (const list of this.articlesByVersion.values())
+      list.sort((a, b) => a.position - b.position);
     this.anomalyById = new Map(data.anomalies.map((a) => [a.id, a]));
     this.anomaliesByUrn = new Map();
     for (const anomaly of data.anomalies) {
@@ -128,8 +131,12 @@ export class SnapshotReader {
     articleNumber: string,
   ): Array<{ from: string; to: string | null; text: string | null; heading: string | null }> {
     const wanted = articleNumber.toLowerCase();
-    const out: Array<{ from: string; to: string | null; text: string | null; heading: string | null }> =
-      [];
+    const out: Array<{
+      from: string;
+      to: string | null;
+      text: string | null;
+      heading: string | null;
+    }> = [];
     for (const version of this.versions(urn)) {
       const candidates = this.articles(version.id).filter((a) => a.number === wanted);
       const article = candidates.find((a) => a.principal) ?? candidates[0] ?? null;
@@ -194,7 +201,9 @@ export class SnapshotReader {
    * e datata, e un flag «questo atto ha preso una pronuncia» perderebbe quale
    * articolo, da quando, e con quali parole.
    */
-  pronunceSuAtto(urn: string): Array<{ pronuncia: SnapshotPronuncia; relazioni: SnapshotRelation[] }> {
+  pronunceSuAtto(
+    urn: string,
+  ): Array<{ pronuncia: SnapshotPronuncia; relazioni: SnapshotRelation[] }> {
     const archi = this.data.relations.filter(
       (r) => r.type === 'DICHIARA_ILLEGITTIMO' && r.targetUrn === urn,
     );

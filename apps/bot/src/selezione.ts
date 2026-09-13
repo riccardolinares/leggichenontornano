@@ -42,7 +42,8 @@ export function selezionaDelGiorno(
   const candidate = reader.publishedAnomalies().filter((a) => !giaPubblicate.has(a.id));
   if (candidate.length === 0) return null;
 
-  const peso = (a: SnapshotAnomaly): number => (a.severity === 'alta' ? 0 : a.severity === 'media' ? 1 : 2);
+  const peso = (a: SnapshotAnomaly): number =>
+    a.severity === 'alta' ? 0 : a.severity === 'media' ? 1 : 2;
 
   const ordinate = [...candidate].sort((a, b) => {
     const p = peso(a) - peso(b);

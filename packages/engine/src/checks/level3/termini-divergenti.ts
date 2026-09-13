@@ -107,7 +107,13 @@ export const TERMINI_DIVERGENTI: Check<TerminiInput> = {
           const nameB = actLabel(actB, baseUrn(b.urn));
 
           findings.push({
-            id: findingId('termini-divergenti', a.urn, b.urn, String(a.deadlineDays), String(b.deadlineDays)),
+            id: findingId(
+              'termini-divergenti',
+              a.urn,
+              b.urn,
+              String(a.deadlineDays),
+              String(b.deadlineDays),
+            ),
             checkId: 'termini-divergenti',
             level: 3 as const,
             title: `Per lo stesso adempimento, ${nameA} dà ${a.deadlineDays} giorni e ${nameB} ne dà ${b.deadlineDays}`,
@@ -122,14 +128,24 @@ export const TERMINI_DIVERGENTI: Check<TerminiInput> = {
             windowTo: window.to,
             rule: TERMINI_DIVERGENTI.definition.rule,
             evidence: [
-              textEvidence(a.urn, `${nameA} — estratto: termine ${a.deadlineDays} giorni`, a.quote, {
-                from: a.inForceFrom,
-                to: a.inForceTo,
-              }),
-              textEvidence(b.urn, `${nameB} — estratto: termine ${b.deadlineDays} giorni`, b.quote, {
-                from: b.inForceFrom,
-                to: b.inForceTo,
-              }),
+              textEvidence(
+                a.urn,
+                `${nameA} — estratto: termine ${a.deadlineDays} giorni`,
+                a.quote,
+                {
+                  from: a.inForceFrom,
+                  to: a.inForceTo,
+                },
+              ),
+              textEvidence(
+                b.urn,
+                `${nameB} — estratto: termine ${b.deadlineDays} giorni`,
+                b.quote,
+                {
+                  from: b.inForceFrom,
+                  to: b.inForceTo,
+                },
+              ),
             ],
             resolutions: [
               ...resolutionsFor(actA, actB),

@@ -83,7 +83,7 @@ const EXTRACTION_TOOL = {
             termine_giorni: {
               type: ['integer', 'null'],
               description:
-                'Il termine espresso in giorni, se il comma ne pone uno. Null se non c\'è.',
+                "Il termine espresso in giorni, se il comma ne pone uno. Null se non c'è.",
             },
             termine_testo: {
               type: ['string', 'null'],

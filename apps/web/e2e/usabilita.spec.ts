@@ -1,5 +1,11 @@
 import { expect, test } from '@playwright/test';
-import { normaConPiuVersioni, normaConPronuncia, percorsiDaVerificare, primaAnomalia, primaNorma } from './percorsi';
+import {
+  normaConPiuVersioni,
+  normaConPronuncia,
+  percorsiDaVerificare,
+  primaAnomalia,
+  primaNorma,
+} from './percorsi';
 
 /**
  * Verifiche di usabilità e di contenuto.
@@ -64,7 +70,9 @@ test.describe('vincoli non negoziabili', () => {
     expect(testo).toMatch(/elenco degli atti/i);
   });
 
-  test('la pagina Dati dice che la revisione esterna non è ancora stata fatta', async ({ page }) => {
+  test('la pagina Dati dice che la revisione esterna non è ancora stata fatta', async ({
+    page,
+  }) => {
     // docs/gold-standard.md promette che questo sia detto «qui e nella pagina
     // Dati del sito». Una promessa di trasparenza che vale solo dentro il
     // repository non è trasparenza.
@@ -292,7 +300,9 @@ test.describe('pronunce della Corte costituzionale', () => {
 
   test.skip(!colpita, 'nessuna norma colpita da una pronuncia nel dataset');
 
-  test('la pagina distingue la declaratoria di illegittimità dall’abrogazione', async ({ page }) => {
+  test('la pagina distingue la declaratoria di illegittimità dall’abrogazione', async ({
+    page,
+  }) => {
     await page.goto(`/norma/${encodeURIComponent(colpita!)}`);
     const sezione = page.getByRole('region', {
       name: /dichiarazioni di illegittimità costituzionale/i,

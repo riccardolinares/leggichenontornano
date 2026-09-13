@@ -170,8 +170,7 @@ const ESPANSIONE_VIETATA: Record<string, string> = {
   ABROGA:
     'come MODIFICA: l’abrogazione è già registrata nella vigenza della radice, e l’atto abrogante appartiene alla propria materia',
   SOSTITUISCE: 'come MODIFICA: la sostituzione è già dentro il testo multivigente della radice',
-  CONVERTE:
-    'la legge di conversione segue il decreto convertito, non la materia del decreto',
+  CONVERTE: 'la legge di conversione segue il decreto convertito, non la materia del decreto',
 };
 
 /** Una sigla: tutte maiuscole, almeno due lettere, niente minuscole in mezzo. */
@@ -206,7 +205,8 @@ export function validaVocabolario(vocabulary: Vocabulary): ProblemaVocabolario[]
       problemi.push({
         concetto: '(corpus)',
         forma: radice,
-        motivo: 'radice che non è un URN NIR: il confine del verticale si dichiara per atti, non per titoli',
+        motivo:
+          'radice che non è un URN NIR: il confine del verticale si dichiara per atti, non per titoli',
       });
     }
   }

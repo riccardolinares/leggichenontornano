@@ -104,7 +104,10 @@ describe('applyGate', () => {
   it('separa senza scartare: la coda interna serve a far salire la precisione', () => {
     const decisions = new Map([
       ['a', evaluateGate({ ...DETERMINISTICO, id: 'a' }, undefined)],
-      ['b', evaluateGate({ ...CON_ESTRAZIONE, id: 'b' }, { checkId: 'b', reviewed: 2, confirmed: 2 })],
+      [
+        'b',
+        evaluateGate({ ...CON_ESTRAZIONE, id: 'b' }, { checkId: 'b', reviewed: 2, confirmed: 2 }),
+      ],
     ]);
     const { published, queued } = applyGate(
       [finding('a', '1'), finding('b', '2'), finding('b', '3')],

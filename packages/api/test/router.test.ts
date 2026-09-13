@@ -36,17 +36,90 @@ const DATA: SnapshotData = {
     },
   ],
   versions: [
-    { id: 'v1', actUrn: URN, ordinal: 0, inForceFrom: '1990-09-02', inForceTo: '2005-03-07', consolidated: false, dateConflict: null },
-    { id: 'v2', actUrn: URN, ordinal: 1, inForceFrom: '2005-03-08', inForceTo: null, consolidated: true, dateConflict: null },
-    { id: 'v3', actUrn: ALTRO, ordinal: 0, inForceFrom: '2016-01-25', inForceTo: null, consolidated: false, dateConflict: null },
+    {
+      id: 'v1',
+      actUrn: URN,
+      ordinal: 0,
+      inForceFrom: '1990-09-02',
+      inForceTo: '2005-03-07',
+      consolidated: false,
+      dateConflict: null,
+    },
+    {
+      id: 'v2',
+      actUrn: URN,
+      ordinal: 1,
+      inForceFrom: '2005-03-08',
+      inForceTo: null,
+      consolidated: true,
+      dateConflict: null,
+    },
+    {
+      id: 'v3',
+      actUrn: ALTRO,
+      ordinal: 0,
+      inForceFrom: '2016-01-25',
+      inForceTo: null,
+      consolidated: false,
+      dateConflict: null,
+    },
   ],
   articles: [
-    { id: 'a1', versionId: 'v1', actUrn: URN, eId: 'art_3', number: '3', num: 'Art. 3.', heading: 'Motivazione', container: null, principal: true, text: 'Testo del 1990 sulla motivazione del provvedimento.', position: 0 },
-    { id: 'a2', versionId: 'v2', actUrn: URN, eId: 'art_3', number: '3', num: 'Art. 3.', heading: 'Motivazione', container: null, principal: true, text: 'Testo del 2005 sulla motivazione del provvedimento amministrativo.', position: 0 },
-    { id: 'a3', versionId: 'v3', actUrn: ALTRO, eId: 'art_1', number: '1', num: 'Art. 1.', heading: null, container: null, principal: true, text: 'Testo della legge successiva.', position: 0 },
+    {
+      id: 'a1',
+      versionId: 'v1',
+      actUrn: URN,
+      eId: 'art_3',
+      number: '3',
+      num: 'Art. 3.',
+      heading: 'Motivazione',
+      container: null,
+      principal: true,
+      text: 'Testo del 1990 sulla motivazione del provvedimento.',
+      position: 0,
+    },
+    {
+      id: 'a2',
+      versionId: 'v2',
+      actUrn: URN,
+      eId: 'art_3',
+      number: '3',
+      num: 'Art. 3.',
+      heading: 'Motivazione',
+      container: null,
+      principal: true,
+      text: 'Testo del 2005 sulla motivazione del provvedimento amministrativo.',
+      position: 0,
+    },
+    {
+      id: 'a3',
+      versionId: 'v3',
+      actUrn: ALTRO,
+      eId: 'art_1',
+      number: '1',
+      num: 'Art. 1.',
+      heading: null,
+      container: null,
+      principal: true,
+      text: 'Testo della legge successiva.',
+      position: 0,
+    },
   ],
   relations: [
-    { id: 'r1', type: 'MODIFICA', sourceUrn: ALTRO, sourceArticle: '1', targetUrn: URN, targetArticle: '3', targetParagraphs: [], wholeAct: false, effectiveFrom: '2016-01-25', evidence: 'prova', confidence: 'alta', origin: 'activeModifications' },
+    {
+      id: 'r1',
+      type: 'MODIFICA',
+      sourceUrn: ALTRO,
+      sourceArticle: '1',
+      targetUrn: URN,
+      targetArticle: '3',
+      targetParagraphs: [],
+      wholeAct: false,
+      effectiveFrom: '2016-01-25',
+      evidence: 'prova',
+      confidence: 'alta',
+      origin: 'activeModifications',
+    },
   ],
   anomalies: [
     {
@@ -99,7 +172,14 @@ const DATA: SnapshotData = {
     formatVersion: 1,
     generatedAt: '2026-09-12T00:00:00.000Z',
     knownAt: '2026-09-12T00:00:00.000Z',
-    counts: { acts: 2, versions: 3, articles: 3, relations: 1, anomalies: 2, publishedAnomalies: 1 },
+    counts: {
+      acts: 2,
+      versions: 3,
+      articles: 3,
+      relations: 1,
+      anomalies: 2,
+      publishedAnomalies: 1,
+    },
     sources: [{ name: 'Normattiva open data', licence: 'CC BY 4.0' }],
     publicationThreshold: { minPrecision: 0.85, minSample: 30 },
     disclaimer: 'disclaimer',
@@ -123,9 +203,7 @@ describe('intestazioni e contratto generale', () => {
   });
 
   it('l’API è di sola lettura', async () => {
-    const res = await handle(
-      new Request('https://esempio.it/v1/anomalie', { method: 'POST' }),
-    );
+    const res = await handle(new Request('https://esempio.it/v1/anomalie', { method: 'POST' }));
     expect(res.status).toBe(405);
   });
 
@@ -161,7 +239,9 @@ describe('/v1/anomalie', () => {
   });
 
   it('filtra per livello e per tipo', async () => {
-    expect(((await json('/v1/anomalie?livello=3')) as unknown as { totale: number }).totale).toBe(0);
+    expect(((await json('/v1/anomalie?livello=3')) as unknown as { totale: number }).totale).toBe(
+      0,
+    );
     expect(
       ((await json('/v1/anomalie?tipo=modifica-ad-atto-abrogato')) as unknown as { totale: number })
         .totale,
@@ -223,9 +303,9 @@ describe('/v1/norme', () => {
   });
 
   it('allega all’articolo le anomalie che lo riguardano', async () => {
-    const body = (await json(
-      `/v1/norme/${encodeURIComponent(URN)}/articoli/3`,
-    )) as unknown as { anomalie: Array<{ id: string }> };
+    const body = (await json(`/v1/norme/${encodeURIComponent(URN)}/articoli/3`)) as unknown as {
+      anomalie: Array<{ id: string }>;
+    };
     expect(body.anomalie.map((a) => a.id)).toContain('test.1');
   });
 

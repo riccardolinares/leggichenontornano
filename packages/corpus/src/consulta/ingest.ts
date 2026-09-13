@@ -45,9 +45,7 @@ export async function ingestConsulta(opts: OpzioniConsulta = {}): Promise<Rappor
     onProgress: log,
   });
 
-  const archivi = ARCHIVI_PRONUNCE.filter(
-    (a) => !opts.periodi || opts.periodi.includes(a.periodo),
-  );
+  const archivi = ARCHIVI_PRONUNCE.filter((a) => !opts.periodi || opts.periodi.includes(a.periodo));
   const pronunce: Pronuncia[] = [];
   for (const archivio of archivi) {
     const bytes = await client.archivio(archivio.path);
@@ -67,7 +65,9 @@ export async function ingestConsulta(opts: OpzioniConsulta = {}): Promise<Rappor
   }
 
   const prisma = getPrisma();
-  const attiNoti = new Set((await prisma.act.findMany({ select: { urn: true } })).map((a) => a.urn));
+  const attiNoti = new Set(
+    (await prisma.act.findMany({ select: { urn: true } })).map((a) => a.urn),
+  );
   const { relazioni, scartate } = relazioniDaPronunce(pronunce, dichiarazioni, attiNoti);
   log(`${relazioni.length} archi DICHIARA_ILLEGITTIMO verso atti del corpus`);
 

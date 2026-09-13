@@ -168,8 +168,8 @@ export default function Dati() {
             <p>
               Le dichiarazioni di illegittimità costituzionale le leggiamo dai dispositivi
               pubblicati dalla Corte. <strong>Normattiva annota gli stessi eventi</strong> in coda
-              all’articolo colpito, e nessuna delle due fonti deriva dall’altra: confrontarle
-              misura quanto leggiamo bene, senza chiedere il parere di nessuno.
+              all’articolo colpito, e nessuna delle due fonti deriva dall’altra: confrontarle misura
+              quanto leggiamo bene, senza chiedere il parere di nessuno.
             </p>
             <Tabella didascalia="Accordo fra le declaratorie lette dai dispositivi della Corte costituzionale e le note di aggiornamento scritte da Normattiva negli atti colpiti.">
               <thead>
@@ -183,7 +183,9 @@ export default function Dati() {
               <tbody>
                 {concordanza.map((c) => (
                   <tr key={c.confidence}>
-                    <th scope="row" style={{ fontWeight: 400 }}>{c.confidence}</th>
+                    <th scope="row" style={{ fontWeight: 400 }}>
+                      {c.confidence}
+                    </th>
                     <td>{numero(c.archi)}</td>
                     <td>{numero(c.confermate)}</td>
                     <td>{percentuale(c.accordo)}</td>
@@ -193,8 +195,8 @@ export default function Dati() {
             </Tabella>
             <p style={{ fontSize: '0.9rem', color: 'var(--inchiostro-tenue)' }}>
               Un disaccordo non prova che la lettura sia sbagliata: la nota può stare su un altro
-              articolo dello stesso atto, o mancare dalla versione che abbiamo ingerito. Il numero
-              è una conferma, non una condanna — ed è per questo che gli archi a bassa confidenza
+              articolo dello stesso atto, o mancare dalla versione che abbiamo ingerito. Il numero è
+              una conferma, non una condanna — ed è per questo che gli archi a bassa confidenza
               restano a bassa confidenza.
             </p>
           </>
@@ -216,10 +218,10 @@ export default function Dati() {
                 qui sopra valgono quanto quel campione.{' '}
               </>
             )}
-            Il primo lotto di segnalazioni <strong>non è ancora stato demolito da giuristi
-            esterni</strong>: è il passo previsto prima del lancio pubblico, e l’incarico è «trova
-            tutto quello che non regge», non «controlla se vanno bene». Finché non sarà fatto,
-            questa riga resta qui.
+            Il primo lotto di segnalazioni{' '}
+            <strong>non è ancora stato demolito da giuristi esterni</strong>: è il passo previsto
+            prima del lancio pubblico, e l’incarico è «trova tutto quello che non regge», non
+            «controlla se vanno bene». Finché non sarà fatto, questa riga resta qui.
           </p>
         </div>
       </section>
@@ -231,10 +233,10 @@ export default function Dati() {
           </h2>
           <p>
             I controlli di livello 3 confrontano il contenuto delle norme, e non possono farlo su
-            tutto: nell’italiano giuridico «concessione» sta nel codice dei contratti pubblici e
-            nel codice della navigazione, «collaudo» negli appalti e nel collaudo dei veicoli.
-            Ogni dominio dichiara quindi <strong>l’elenco degli atti</strong> su cui il confronto
-            lavora. Qui sotto c’è quell’elenco, per intero.
+            tutto: nell’italiano giuridico «concessione» sta nel codice dei contratti pubblici e nel
+            codice della navigazione, «collaudo» negli appalti e nel collaudo dei veicoli. Ogni
+            dominio dichiara quindi <strong>l’elenco degli atti</strong> su cui il confronto lavora.
+            Qui sotto c’è quell’elenco, per intero.
           </p>
           {verticali.map((v) => (
             <div key={v.vertical} style={{ marginBottom: '2rem' }}>
@@ -245,7 +247,9 @@ export default function Dati() {
                 {numero(v.propositionsWithConcept)} ricondotte a un concetto: sono le uniche che
                 entrano in un confronto.
               </p>
-              <Tabella didascalia={`Gli atti su cui il confronto semantico del dominio «${v.label}» ha effettivamente lavorato.`}>
+              <Tabella
+                didascalia={`Gli atti su cui il confronto semantico del dominio «${v.label}» ha effettivamente lavorato.`}
+              >
                 <thead>
                   <tr>
                     <th scope="col">Atto</th>

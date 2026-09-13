@@ -271,8 +271,8 @@ export default async function LettoreNorma({ params, searchParams }: Props) {
             {pronunce.map(({ pronuncia, relazioni }) => (
               <div key={pronuncia.ecli} style={{ marginBottom: '1.5rem' }}>
                 <dt style={{ fontWeight: 600 }}>
-                  {pronuncia.tipologia === 'O' ? 'Ordinanza' : 'Sentenza'} n.{' '}
-                  {pronuncia.numero}/{pronuncia.anno}
+                  {pronuncia.tipologia === 'O' ? 'Ordinanza' : 'Sentenza'} n. {pronuncia.numero}/
+                  {pronuncia.anno}
                   {pronuncia.dataDeposito ? `, depositata il ${data(pronuncia.dataDeposito)}` : ''}
                 </dt>
                 <dd style={{ margin: '0.3rem 0 0' }}>
@@ -308,9 +308,10 @@ export default async function LettoreNorma({ params, searchParams }: Props) {
             ))}
           </dl>
           <p style={{ fontSize: '0.9rem', color: 'var(--inchiostro-tenue)' }}>
-            Fonte: Corte costituzionale, <a href="https://dati.cortecostituzionale.it">dati.cortecostituzionale.it</a>,
-            licenza CC BY-SA 3.0. Gli estremi sono letti automaticamente dal dispositivo: prima di
-            trarne conclusioni, apri il testo integrale.
+            Fonte: Corte costituzionale,{' '}
+            <a href="https://dati.cortecostituzionale.it">dati.cortecostituzionale.it</a>, licenza
+            CC BY-SA 3.0. Gli estremi sono letti automaticamente dal dispositivo: prima di trarne
+            conclusioni, apri il testo integrale.
           </p>
         </section>
       ) : null}
