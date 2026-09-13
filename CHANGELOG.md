@@ -66,6 +66,21 @@ in [docs/qualita-fonti.md](docs/qualita-fonti.md).
 - Zero è la risposta onesta con l'estrattore a regole su cinque atti. Resta
   comunque nella coda interna, perché la precisione non è misurata.
 
+### Corretto
+
+- **L'integrazione continua non era mai partita.** `pnpm` era dichiarato due
+  volte — nel workflow e in `packageManager` — e l'azione si rifiutava di
+  scegliere. Il badge era rosso dal primo commit e nessuno dei passi
+  dichiarati veniva eseguito.
+- **La verifica costruiva un sito vuoto.** `ANTINOMIA_SNAPSHOT` era un percorso
+  relativo che da `apps/web` non puntava a nulla: trentotto test si saltavano
+  da soli e il riepilogo sembrava quasi verde. Ora il percorso è assoluto, e
+  un test che non si salta mai fallisce se il dataset è vuoto.
+- **Un pezzo del dataset non usciva dall'esportazione.** `verticali.json` lo
+  scriveva il comando di estrazione, quindi `esporta --dest altrove` produceva
+  un dataset incompleto e la pipeline quotidiana non lo aggiornava mai. Ora il
+  verticale sta nel database come ogni altra tabella.
+
 ### Non ancora fatto
 
 - Revisione esterna del primo lotto da parte di giuristi. Dichiarata sul sito,

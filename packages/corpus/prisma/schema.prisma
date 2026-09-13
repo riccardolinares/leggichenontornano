@@ -168,6 +168,35 @@ model Pronuncia {
   @@index([anno])
 }
 
+/// Un verticale del layer semantico, con il confine per atti che si è dato.
+///
+/// Sta nel database e non solo in un file perché il dataset derivato deve
+/// uscire **tutto** dalla stessa esportazione: finché `verticali.json` veniva
+/// scritto da un comando diverso, `esporta --dest altrove` produceva un dataset
+/// senza, e il dataset completo pubblicato era incompleto senza dirlo.
+///
+/// Vedi ADR 0009: il verticale è un elenco di atti, e quell'elenco è un limite
+/// dichiarato del prodotto, non un dettaglio di esecuzione.
+model Verticale {
+  /// Identificatore del dominio, es. `appalti`.
+  vertical                String   @id
+  label                   String
+  /// URN degli atti fondativi, dichiarati a mano nel vocabolario.
+  roots                   String[] @default([])
+  /// Radici dichiarate che il corpus ingerito non contiene.
+  missingRoots            String[] @default([])
+  /// Tutti gli atti su cui il livello 3 ha effettivamente lavorato.
+  acts                    String[] @default([])
+  /// Tipi di relazione che allargano il corpus di un passo.
+  expansion               String[] @default([])
+  concepts                Int
+  propositions            Int
+  propositionsWithConcept Int
+  extractor               String
+  computedAt              String
+  knownFrom               DateTime @default(now())
+}
+
 /// Un arco del grafo. `sourceUrn` dispone, `targetUrn` subisce.
 model Relation {
   id               String       @id

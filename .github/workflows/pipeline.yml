@@ -86,8 +86,24 @@ jobs:
       - name: Ingerisci le pronunce della Corte costituzionale
         run: node packages/corpus/dist/cli.js consulta || true
 
+      # Senza questo passo il livello 3 non si aggiorna mai: le proposizioni
+      # restano quelle dell'ultima estrazione fatta a mano, e `verticali.json`
+      # continua a dichiarare una data che non corrisponde più al corpus.
+      #
+      # Tollerante per costruzione: se le radici dichiarate non sono fra gli
+      # atti scaricati, l'estrazione si ferma con un messaggio e il resto della
+      # pipeline prosegue. Un verticale che non si può calcolare è un verticale
+      # in meno, non una pipeline rotta.
+      - name: Estrai le proposizioni dei verticali
+        run: |
+          for vocabolario in data/vocabolari/*.json; do
+            echo "::group::$vocabolario"
+            node packages/engine/dist/cli.js estrai --vocabolario "$vocabolario" || true
+            echo "::endgroup::"
+          done
+
       - name: Esegui i controlli
-        run: node packages/engine/dist/cli.js run
+        run: node packages/engine/dist/cli.js run --verticale appalti
 
       - name: Rigenera il dataset versionato
         run: |

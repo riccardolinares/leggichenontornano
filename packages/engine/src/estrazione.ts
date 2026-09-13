@@ -178,6 +178,30 @@ export async function estraiVerticale(opts: OpzioniEstrazione): Promise<ReportEs
     log(`${tutte.length} proposizioni scritte`);
   }
 
+  // Il verticale va nel database insieme alle proposizioni, non in un file
+  // scritto a parte: il dataset derivato deve uscire tutto dalla stessa
+  // esportazione, altrimenti `esporta --dest altrove` ne produce uno a cui
+  // manca un pezzo, e manca in silenzio.
+  if (opts.persist !== false) {
+    const dati = {
+      label: vocabulary.label,
+      roots: [...vocabulary.corpus.radici],
+      missingRoots: corpus.radiciAssenti,
+      acts: [...corpus.atti].sort(),
+      expansion: [...vocabulary.corpus.espansione],
+      concepts: vocabulary.concepts.length,
+      propositions: tutte.length,
+      propositionsWithConcept: conConcetto,
+      extractor: extractor.name,
+      computedAt: new Date().toISOString().slice(0, 10),
+    };
+    await prisma.verticale.upsert({
+      where: { vertical: vocabulary.vertical },
+      create: { vertical: vocabulary.vertical, ...dati },
+      update: dati,
+    });
+  }
+
   return {
     verticale: vocabulary.vertical,
     estrattore: extractor.name,

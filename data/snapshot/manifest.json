@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
-  "generatedAt": "2026-09-13T01:38:56.549Z",
-  "knownAt": "2026-09-13T01:38:56.549Z",
+  "generatedAt": "2026-09-13T06:45:05.621Z",
+  "knownAt": "2026-09-13T06:45:05.621Z",
   "counts": {
     "acts": 161,
     "versions": 704,
@@ -15,12 +15,12 @@
     {
       "name": "Normattiva open data",
       "licence": "CC BY 4.0",
-      "retrievedAt": "2026-09-13T01:38:56.549Z"
+      "retrievedAt": "2026-09-13T06:45:05.621Z"
     },
     {
       "name": "Corte costituzionale open data",
       "licence": "CC BY-SA 3.0",
-      "retrievedAt": "2026-09-13T01:38:56.549Z"
+      "retrievedAt": "2026-09-13T06:45:05.621Z"
     }
   ],
   "concordanzaPronunce": [

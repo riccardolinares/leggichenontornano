@@ -237,13 +237,15 @@ risposta dell'API. Non è nel footer in grigio chiaro.
 
 Gli open data di Normattiva hanno irregolarità che, prese per buone, producono
 segnalazioni che **sembrano errori del legislatore e sono errori di marcatura**.
-Ne abbiamo trovate sette. Altre cinque erano nostre, e sono le più istruttive:
+Ne abbiamo trovate sette. Altre sei erano nostre, e sono le più istruttive:
 il confronto semantico delimitato dalle parole invece che dagli atti, un «stesso
 soggetto» che confrontava concetti trovati in qualunque punto della frase, una
 citazione letta dentro il titolo di un altro atto che dichiarava caduta una
 legge costituzionale vigente, una data scritta «1° ottobre» che spariva, e un
 confine di parola sbagliato che trasformava le declaratorie parziali della Corte
-costituzionale in declaratorie totali. Tutte e dodici sono venute fuori
+costituzionale in declaratorie totali, e un pezzo del dataset scritto da un
+comando diverso da tutti gli altri, che spariva quando lo si esportava altrove.
+Tutte e tredici sono venute fuori
 eseguendo il motore sul corpus vero e leggendo l'output una riga per volta. Sono
 documentate in
 [docs/qualita-fonti.md](docs/qualita-fonti.md), con cosa producevano e cosa
