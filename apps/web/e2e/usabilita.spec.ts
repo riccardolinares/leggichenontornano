@@ -85,6 +85,20 @@ test.describe('vincoli non negoziabili', () => {
     expect(testo).toMatch(/una conferma, non una condanna/i);
   });
 
+  test('il contatore nazionale dice quello che misura, non quello che farebbe più effetto', async ({
+    page,
+  }) => {
+    await page.goto('/dati');
+    const testo = (await page.locator('main').textContent()) ?? '';
+    if (!/giorni trascorsi dalla scadenza/i.test(testo)) test.skip();
+    // Misuriamo che un termine di legge è passato. Che il provvedimento non sia
+    // mai arrivato non lo sappiamo, e non dobbiamo scriverlo: una sola
+    // affermazione falsa su una legge distrugge più di quanto dieci corrette
+    // costruiscano.
+    expect(testo).not.toMatch(/provvedimenti attuativi[^.]{0,80}non ancora adottati/i);
+    expect(testo).toMatch(/termini scaduti(,| e) non attuazioni mancate/i);
+  });
+
   test('la home dice che assenza di segnale non significa norma coerente', async ({ page }) => {
     await page.goto('/');
     const testo = (await page.locator('main').textContent()) ?? '';

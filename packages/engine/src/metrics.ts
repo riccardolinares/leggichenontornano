@@ -75,12 +75,21 @@ export async function computeMetrics(): Promise<CheckMetric[]> {
  * Il contatore nazionale.
  *
  * Deve essere **deterministico e crescente**, e deve avere un referente
- * concreto: «giorni di ritardo accumulati dai provvedimenti attuativi previsti e
- * mai adottati» è una frase che si può verificare, «indice di disfunzione
- * normativa» non lo è.
+ * concreto: «giorni trascorsi dalla scadenza dei termini fissati per i
+ * provvedimenti attuativi previsti» è una frase che si può verificare riga per
+ * riga, «indice di disfunzione normativa» non lo è.
  *
- * Il numero è una **sottostima dichiarata**: conta solo i mandati estratti dagli
- * atti che abbiamo ingerito. Sottostimare è l'errore innocuo; il contrario no.
+ * Il numero **sottostima** da un lato: conta solo i mandati estratti dagli atti
+ * che abbiamo ingerito. Sottostimare è l'errore innocuo.
+ *
+ * Dall'altro lato misura una cosa più stretta di quella che verrebbe voglia di
+ * annunciare. Sappiamo che un termine di legge è passato; non sappiamo ancora
+ * se il provvedimento sia arrivato dopo la scadenza, perché la verifica in
+ * Gazzetta Ufficiale non c'è. «Provvedimenti mai adottati» sarebbe un titolo
+ * migliore e un'affermazione che non possiamo sostenere. Il controllo che
+ * quell'affermazione la farebbe — `attuazione-mancante` — si rifiuta infatti di
+ * produrre segnalazioni finché la copertura in Gazzetta non esiste, e oggi
+ * produce zero.
  */
 export interface NationalCounter {
   label: string;
@@ -113,13 +122,20 @@ export function buildNationalCounter(
     acts.add(m.actUrn);
   }
   return {
-    label: 'Giorni di ritardo accumulati dai provvedimenti attuativi previsti e non ancora adottati',
+    // L'etichetta dice **quello che abbiamo misurato**, non quello che sarebbe
+    // più efficace dire. Misuriamo che un termine di legge è scaduto; non
+    // verifichiamo, oggi, se il provvedimento sia poi stato adottato. Chiamare
+    // questi «provvedimenti mai adottati» sarebbe un titolo migliore e
+    // un'affermazione che non possiamo sostenere — e una sola affermazione
+    // falsa su una legge distrugge più di quanto dieci corrette costruiscano.
+    label:
+      'Giorni trascorsi dalla scadenza dei termini fissati per i provvedimenti attuativi previsti',
     totalDaysLate,
     mandates: count,
     acts: acts.size,
     verified: [...acts].filter((a) => verifiedActs.has(a)).length,
     computedAt: today,
     caveat:
-      'Il conteggio riguarda i soli atti presenti nel corpus ingerito e i soli mandati con un termine espresso nel testo. È quindi una sottostima. L’assenza del provvedimento è verificata in Gazzetta Ufficiale solo per la quota indicata come verificata.',
+      'Il conteggio riguarda i soli atti presenti nel corpus ingerito e i soli mandati con un termine espresso nel testo: da questo lato è una sottostima. Dall’altro lato misura termini scaduti, non attuazioni mancate — che il provvedimento sia stato adottato dopo la scadenza non lo verifichiamo ancora in Gazzetta Ufficiale, se non per la quota indicata come verificata.',
   };
 }

@@ -111,6 +111,12 @@ describe('messaggio', () => {
     );
     expect(testo).toContain('sottostima');
     expect(testo).toContain('12.345');
+    // Il bot pubblica su piattaforme dove una frase circola senza il suo
+    // contesto. Deve dire quello che il contatore misura — termini scaduti —
+    // e non quello che farebbe più effetto: che i provvedimenti non siano mai
+    // arrivati non lo sappiamo, finché la verifica in Gazzetta non c'è.
+    expect(testo).not.toMatch(/non ancora adottati/i);
+    expect(testo).toMatch(/termini scaduti e non attuazioni mancate/i);
   });
 });
 

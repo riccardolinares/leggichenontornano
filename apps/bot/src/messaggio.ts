@@ -72,10 +72,11 @@ export function componiContatore(
   siteUrl: string,
 ): string {
   return [
-    `${new Intl.NumberFormat('it-IT').format(contatore.totalDaysLate)} giorni di ritardo accumulati`,
-    `dai ${contatore.mandates} provvedimenti attuativi previsti da ${contatore.acts} atti e non ancora adottati.`,
+    `${new Intl.NumberFormat('it-IT').format(contatore.totalDaysLate)} giorni trascorsi dalla scadenza`,
+    `dei termini fissati per ${contatore.mandates} provvedimenti attuativi previsti da ${contatore.acts} atti.`,
     '',
-    'È una sottostima: contiamo solo gli atti che abbiamo ingerito e i soli mandati con un termine scritto nel testo.',
+    'Contiamo solo gli atti che abbiamo ingerito e i soli mandati con un termine scritto nel testo: da questo lato è una sottostima.',
+    'Dall’altro, misura termini scaduti e non attuazioni mancate: che il provvedimento sia arrivato dopo non lo verifichiamo ancora.',
     '',
     `${siteUrl.replace(/\/+$/, '')}/dati`,
   ].join(' ');
