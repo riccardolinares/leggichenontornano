@@ -138,6 +138,16 @@ node packages/corpus/dist/cli.js consulta verifica # accordo con le note di Norm
 node packages/engine/dist/cli.js gold valuta       # quanto il motore intercetta
 ```
 
+Il dataset completo, in JSONL e Parquet:
+
+```bash
+node packages/engine/dist/cli.js esporta --dest dataset-completo --parquet
+```
+
+Nel repository sta la versione **ridotta** — serve a far girare sito e test da
+un clone appena fatto. Quella completa è pubblicata come artefatto dalla
+pipeline quotidiana.
+
 L'API pubblica si alza con o senza database:
 
 ```bash

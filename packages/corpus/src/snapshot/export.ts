@@ -9,9 +9,11 @@
  *    essere generato da un `git clone` senza scaricare 70 MB di XML, e perché un
  *    dataset di esempio che sta nel repository è un dataset che qualcuno guarda.
  */
+import { join } from 'node:path';
 import { getPrisma } from '../store/client.js';
 import { verificaDichiarazioni } from '../consulta/verifica.js';
 import { snapshotPath, writeJson, writeJsonl } from './io.js';
+import { scriviParquet } from './parquet.js';
 import {
   ATTRIBUTION,
   DISCLAIMER,
@@ -47,6 +49,14 @@ export interface ExportOptions {
   sources?: SnapshotManifest['sources'];
   /** Tetto al numero di articoli esportati, per tenere piccolo il dataset di esempio. */
   maxArticles?: number;
+  /**
+   * Se `true`, scrive anche le tabelle in Parquet sotto `parquet/`.
+   *
+   * Non è il formato primario: il JSONL si legge con `grep` e senza installare
+   * niente, e per un dataset civico quella proprietà vale più della
+   * compressione. Il Parquet serve a chi gli strumenti li ha già.
+   */
+  parquet?: boolean;
 }
 
 export async function exportSnapshot(opts: ExportOptions): Promise<SnapshotManifest> {
@@ -277,6 +287,19 @@ export async function exportSnapshot(opts: ExportOptions): Promise<SnapshotManif
   writeJsonl(snapshotPath(opts.dir, 'relations'), relations);
   writeJsonl(snapshotPath(opts.dir, 'anomalies'), anomalies);
   writeJsonl(snapshotPath(opts.dir, 'pronunce'), pronunce);
+
+  // Parquet accanto al JSONL, dalla stessa esportazione: le due forme non
+  // possono divergere perché sono la stessa cosa scritta due volte.
+  if (opts.parquet) {
+    scriviParquet(join(opts.dir, 'parquet'), {
+      acts,
+      versions,
+      articles,
+      relations,
+      anomalies,
+      pronunce,
+    });
+  }
   writeJson(snapshotPath(opts.dir, 'metrics'), opts.metrics ?? []);
   writeJson(snapshotPath(opts.dir, 'manifest'), manifest);
 

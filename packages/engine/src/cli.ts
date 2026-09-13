@@ -49,6 +49,7 @@ Opzioni di esporta:
   --solo-anomalie         solo gli atti toccati da un'anomalia
   --campione <n>          atti aggiuntivi oltre a quelli delle anomalie
   --max-articoli <n>      tetto agli articoli esportati
+  --parquet               scrive anche le tabelle in Parquet sotto parquet/
 
 Esiti ammessi per «revisiona»:
   CONFERMATA  NON_E_UN_CONFLITTO  ESTRAZIONE_ERRATA  DA_APPROFONDIRE
@@ -200,6 +201,7 @@ async function main(): Promise<number> {
         metrics,
         ...(flags.has('campione') ? { sampleActs: Number(flags.get('campione')) } : {}),
         ...(flags.has('max-articoli') ? { maxArticles: Number(flags.get('max-articoli')) } : {}),
+        parquet: flags.has('parquet'),
       });
       process.stdout.write(`${JSON.stringify(manifest.counts, null, 2)}\n`);
       return 0;

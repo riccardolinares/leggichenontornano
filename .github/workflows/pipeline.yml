@@ -93,6 +93,21 @@ jobs:
             --dest data/snapshot --solo-anomalie --campione 20 --max-articoli 2500
           node packages/engine/dist/cli.js contatore > data/snapshot/contatore.json
 
+      # Il dataset completo, JSONL e Parquet, come artefatto: nel repository
+      # sta solo la versione ridotta, che serve a far girare sito e test da un
+      # clone. Chi vuole i numeri interi scarica questo.
+      - name: Esporta il dataset completo
+        run: |
+          node packages/engine/dist/cli.js esporta --dest dataset-completo --parquet
+          du -sh dataset-completo dataset-completo/parquet
+
+      - name: Pubblica il dataset completo come artefatto
+        uses: actions/upload-artifact@v4
+        with:
+          name: dataset-antinomia
+          path: dataset-completo/
+          retention-days: 30
+
       - name: Riassumi il cambiamento
         id: diff
         run: |

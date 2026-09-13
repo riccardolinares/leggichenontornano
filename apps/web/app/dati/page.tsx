@@ -330,9 +330,19 @@ export default function Dati() {
             <code>verticali.json</code> — i domini del confronto semantico e i loro confini
           </li>
           <li>
+            <code>pronunce.jsonl</code> — le pronunce della Corte costituzionale che hanno colpito
+            una norma del corpus
+          </li>
+          <li>
             <code>metrics.json</code> e <code>manifest.json</code> — precisione e provenienza
           </li>
         </ul>
+        <p>
+          Le stesse tabelle sono pubblicate anche in <strong>Parquet</strong>, per chi lavora con
+          pandas, DuckDB o Polars. Il JSONL resta la forma primaria, e non per abitudine: si legge
+          con <code>grep</code> e non richiede di installare niente. Un dataset civico che si possa
+          controllare solo con gli strumenti giusti è un dataset che non si controlla.
+        </p>
         <p className="azioni">
           <a className="bottone bottone--primario" href={`${REPO_URL}/releases`}>
             Release e dataset
