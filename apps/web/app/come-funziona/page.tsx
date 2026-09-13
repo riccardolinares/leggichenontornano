@@ -29,7 +29,8 @@ export default function ComeFunziona() {
           <li>
             <strong>Ogni segnalazione è un punto di partenza documentato</strong>, con i testi e le
             date davanti: quello che serve a un professionista per farsi la propria opinione in
-            fretta. Il parere lo dà chi ha titolo per darlo, e con questi elementi lo dà meglio.
+            fretta. Il sito non fornisce consulenza legale — il parere lo dà chi ha titolo per
+            darlo, e con questi elementi lo dà meglio.
           </li>
           <li>
             <strong>Quando la Corte costituzionale si è già pronunciata, lo trovate scritto</strong>{' '}

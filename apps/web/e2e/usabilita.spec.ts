@@ -70,10 +70,11 @@ test.describe('vincoli non negoziabili', () => {
       await expect(avvertenza, percorso.url).toBeVisible();
       await expect(avvertenza).toContainText(/Normattiva/);
       await expect(avvertenza).toContainText(/Gazzetta Ufficiale/);
-      // La riga sul parere legale ha una funzione vera e deve esserci su ogni
-      // pagina. È scritta in positivo — «il parere lo dà chi ha titolo» — e
-      // copre lo stesso perimetro del vecchio «non fornisce consulenza legale».
-      await expect(avvertenza).toContainText(/parere legale lo dà chi ha titolo/i);
+      // «Non fornisce consulenza legale» è una formula con un significato
+      // consolidato, e il test la richiede **alla lettera**: chi deve valutarla
+      // cerca quelle parole. Una parafrasi più bella la indebolirebbe, e questo
+      // è l'unico punto del sito in cui la certezza vale più della chiarezza.
+      await expect(avvertenza).toContainText(/non fornisce consulenza legale/i);
       // Sta nel piede: è il posto dove si cercano le fonti, non un cartello
       // piazzato davanti al contenuto. Ma «nel piede» non vuol dire nascosta —
       // stesso corpo del testo attorno, e contrasto che regge (lo verifica

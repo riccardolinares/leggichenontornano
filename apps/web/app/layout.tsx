@@ -211,17 +211,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 cosa e la dice a chi non sa cosa voglia dire «carattere di
                 ufficialità».
 
-                L'ultima frase è il vecchio «questo sito non fornisce consulenza
-                legale»: ha una funzione legale vera e non si toglie, ma dice
-                anche a cosa il sito serve invece di limitarsi a dire a cosa non
-                serve. */}
+                L'ultima frase invece è alla lettera «questo sito non fornisce
+                consulenza legale», e alla lettera deve restare. È una formula
+                con un significato consolidato: chi deve valutarla — un ordine
+                professionale, un ufficio legale, un giudice — cerca quelle
+                parole, non una parafrasi. Riscriverla meglio la indebolisce, e
+                qui la chiarezza vale meno della certezza. */}
             <div className="attribuzione">
               <p className="avvertenza">
                 I testi vengono da <strong>Normattiva</strong> e sono citati alla lettera, così ogni
                 affermazione di questo sito si può risalire fino alla fonte. Il testo che fa fede
                 resta quello pubblicato sulla <em>Gazzetta Ufficiale</em>, e prevale in caso di
-                discordanza. Quello che trovate qui serve a farsi un’opinione documentata in fretta;
-                il parere legale lo dà chi ha titolo per darlo.
+                discordanza. Quello che trovate qui serve a farsi un’opinione documentata in fretta:{' '}
+                <strong>questo sito non fornisce consulenza legale</strong>.
               </p>
               <p className="attribuzione__fonti">
                 <strong>Fonti:</strong> Normattiva — Banca dati delle norme vigenti,{' '}

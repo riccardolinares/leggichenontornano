@@ -31,7 +31,7 @@ Prima di tutto il resto, perché è la parte che qualifica tutto il resto.
 - **Sappiamo sempre dire fin dove siamo arrivati**, e l'interfaccia lo dice a
   chiare lettere: quali controlli girano, su quanti atti, con quale precisione.
 
-Il parere legale lo dà chi ha titolo per darlo.
+Questo sito non fornisce consulenza legale.
 
 ## 2. L'unità di valore è la singola anomalia
 

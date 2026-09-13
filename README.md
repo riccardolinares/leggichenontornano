@@ -68,8 +68,8 @@ Prima di tutto il resto, perché è la parte che qualifica tutto il resto.
   quali controlli girano, su quanti atti e con quale precisione; il dataset
   porta con sé gli elenchi, e si possono contare.
 
-Il parere legale lo dà chi ha titolo per darlo: quello che trovate qui serve a
-farselo in fretta e con i testi davanti.
+Quello che trovate qui serve a farsi un'opinione documentata in fretta e con i
+testi davanti: questo sito non fornisce consulenza legale.
 
 ## La soglia di pubblicazione
 
