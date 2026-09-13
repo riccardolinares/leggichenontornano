@@ -94,8 +94,14 @@ export async function POST(request: Request): Promise<NextResponse> {
     request.headers.get('x-real-ip') ??
     'ignoto';
   if (troppeDa(ip)) {
+    /* Chi supera il limite non va lasciato davanti a un muro: la strada su
+       GitHub resta aperta, e non passa da qui. Il codice dell'errore è lo
+       stesso del caso «token non configurato» perché per chi segnala è la
+       stessa situazione — l'apertura automatica non è disponibile, e la
+       segnalazione non si perde lo stesso. Era un vicolo cieco: il modulo
+       mostrava «riprovate fra poco» e nient'altro. */
     return NextResponse.json(
-      { errore: 'Hai già mandato qualche segnalazione: riprova fra poco.' },
+      { errore: 'apertura-automatica-non-disponibile', motivo: 'troppe-richieste' },
       { status: 429 },
     );
   }

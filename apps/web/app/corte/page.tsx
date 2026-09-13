@@ -68,7 +68,7 @@ export default function Corte() {
             return (
               <tr key={p.ecli}>
                 <th scope="row">
-                  <Link href={percorsoPronuncia(p.ecli)}>{titoloPronuncia(p)}</Link>
+                  <Link href={percorsoPronuncia(p, pronunce)}>{titoloPronuncia(p)}</Link>
                 </th>
                 <td>{p.dataDeposito ? data(p.dataDeposito) : '—'}</td>
                 <td>{numero(colpite.length)}</td>

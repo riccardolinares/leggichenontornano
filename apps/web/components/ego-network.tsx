@@ -1,6 +1,14 @@
 import Link from 'next/link';
 import type { SnapshotAct, SnapshotRelation } from '@leggichenontornano/corpus';
-import { data, nomeNorma, percorsoNorma } from '@/lib/testo';
+import {
+  data,
+  nomeNorma,
+  percorsoNorma,
+  percorsoPronuncia,
+  pronunciaDaEcli,
+  titoloPronuncia,
+} from '@/lib/testo';
+import type { SnapshotPronuncia } from '@leggichenontornano/corpus';
 import { Tabella } from '@/components/tabella';
 
 /**
@@ -39,10 +47,13 @@ export function EgoNetwork({
   centro,
   nodi,
   archi,
+  pronunce,
 }: {
   centro: string;
   nodi: SnapshotAct[];
   archi: SnapshotRelation[];
+  /** Serve a mandare un arco di illegittimità alla pagina della decisione. */
+  pronunce: readonly SnapshotPronuncia[];
 }) {
   const visibili = archi.filter((a) => a.confidence === 'alta').slice(0, 40);
   if (visibili.length === 0) return null;
@@ -170,11 +181,11 @@ export function EgoNetwork({
           {visibili.map((arco) => (
             <tr key={`riga-${arco.id}`}>
               <td>
-                <Link href={percorsoNorma(arco.sourceUrn)}>{nomeNorma(arco.sourceUrn)}</Link>
+                <Estremo urn={arco.sourceUrn} pronunce={pronunce} />
               </td>
               <td>{TIPI[arco.type]?.verbo ?? arco.type}</td>
               <td>
-                <Link href={percorsoNorma(arco.targetUrn)}>{nomeNorma(arco.targetUrn)}</Link>
+                <Estremo urn={arco.targetUrn} pronunce={pronunce} />
                 {arco.targetArticle ? `, art. ${arco.targetArticle}` : ''}
               </td>
               <td>{arco.effectiveFrom ? data(arco.effectiveFrom) : '—'}</td>
@@ -184,4 +195,26 @@ export function EgoNetwork({
       </Tabella>
     </>
   );
+}
+
+/**
+ * Un estremo di un arco, e la pagina giusta a cui mandarlo.
+ *
+ * Non tutti gli estremi sono norme. Un arco `DICHIARA_ILLEGITTIMO` parte da una
+ * **decisione della Corte**, e il suo identificatore è un ECLI: mandarlo a
+ * `/norma/<ecli>` produceva una pagina che non esiste. Erano otto collegamenti
+ * rotti sul sito pubblicato, uno per ogni norma toccata da una pronuncia, e non
+ * se ne era accorto nessuno perché il link c'era e sembrava giusto.
+ *
+ * Se la pronuncia non è nel dataset si scrive il suo nome senza collegamento:
+ * un titolo che non porta da nessuna parte è meno peggio di un titolo che porta
+ * a un errore.
+ */
+function Estremo({ urn, pronunce }: { urn: string; pronunce: readonly SnapshotPronuncia[] }) {
+  if (urn.startsWith('ECLI:')) {
+    const pronuncia = pronunciaDaEcli(urn, pronunce);
+    if (!pronuncia) return <>{urn}</>;
+    return <Link href={percorsoPronuncia(pronuncia, pronunce)}>{titoloPronuncia(pronuncia)}</Link>;
+  }
+  return <Link href={percorsoNorma(urn)}>{nomeNorma(urn)}</Link>;
 }

@@ -99,7 +99,7 @@ export default function Dicono() {
           <a className="bottone" href={`${REPO_URL}/issues/new`}>
             Segnala un errore
           </a>
-          <Link className="bottone" href="/assistente">
+          <Link className="bottone" href="/mcp">
             Usalo nel tuo assistente
           </Link>
         </p>

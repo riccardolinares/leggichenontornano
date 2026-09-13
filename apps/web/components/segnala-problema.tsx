@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useState } from 'react';
 
 /**
@@ -78,7 +79,10 @@ export function SegnalaProblema({
         setContatto('');
         return;
       }
-      if (dati.errore === 'apertura-automatica-non-configurata') {
+      if (
+        dati.errore === 'apertura-automatica-non-configurata' ||
+        dati.errore === 'apertura-automatica-non-disponibile'
+      ) {
         setStato({ tipo: 'ripiego', url: urlDiRipiego() });
         return;
       }
@@ -175,7 +179,8 @@ export function SegnalaProblema({
 
       <p className="segnala__nota">
         La segnalazione diventa una <strong>issue pubblica</strong> su GitHub, con quello che hai
-        scritto. Non metterci dati personali che non vuoi pubblici.
+        scritto. Non metterci dati personali che non vuoi pubblici.{' '}
+        <Link href="/legal/privacy">Che fine fa quello che scrivi</Link>.
       </p>
 
       <div className="azioni">

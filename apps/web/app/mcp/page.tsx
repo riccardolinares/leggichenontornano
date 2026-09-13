@@ -14,15 +14,22 @@ import { numero } from '@/lib/testo';
  * Per questo comincia da cosa ci si fa, non da cos'è. «Puoi chiedere al tuo
  * assistente cosa dice una legge, e risponde leggendola davvero» è una frase
  * che si capisce; «server MCP su trasporto stdio» non lo è.
+ *
+ * L'indirizzo però è `/mcp`, e non più `/assistente`: la sigla era un termine
+ * da iniziati quando la pagina è nata, oggi è la parola con cui la si cerca, e
+ * un indirizzo che nessuno digita non serve a niente. Il vecchio indirizzo
+ * resta vivo con un reindirizzamento permanente (ADR 0008: un URL pubblicato
+ * non si rompe). Che la sigla sia diffusa non vuol dire che sia nota: la prima
+ * volta che compare nel testo, qui sotto, va sciolta.
  */
 
 export const dynamic = 'force-static';
 
 export const metadata = metadatiPagina({
-  titolo: 'Dentro il tuo assistente',
+  titolo: 'MCP: il progetto dentro il tuo assistente',
   descrizione:
-    'Collega Claude, Codex o un altro assistente al corpus normativo e alle segnalazioni: risponde leggendo i testi, non a memoria. Tre righe di configurazione, nessun account.',
-  percorso: '/assistente',
+    'Il server MCP del progetto collega Claude, Codex o un altro assistente al corpus normativo e alle segnalazioni: risponde leggendo i testi, non a memoria. Tre righe di configurazione, nessun account.',
+  percorso: '/mcp',
 });
 
 const CONFIG_JSON = `{
@@ -46,17 +53,19 @@ const DOMANDE = [
   'Quali pronunce della Corte costituzionale hanno colpito questo decreto?',
 ];
 
-export default function Assistente() {
+export default function PaginaMcp() {
   const reader = dataset();
   const manifest = reader.data.manifest;
 
   return (
     <div className="contenitore stretto">
-      <h1>Dentro il tuo assistente</h1>
+      <h1>MCP: il progetto dentro il tuo assistente</h1>
       <p className="apertura">
-        Puoi collegare Claude, Codex o un altro assistente a questo progetto. Da quel momento,
-        quando gli chiedi cosa dice una legge, la legge davvero: il testo vigente a una data, come è
-        cambiato nel tempo, e le segnalazioni che lo riguardano. Non risponde a memoria.
+        Puoi collegare Claude, Codex o un altro assistente a questo progetto, con un server{' '}
+        <strong>MCP</strong> — <em>Model Context Protocol</em>, la convenzione con cui un assistente
+        si collega a una fonte di dati e la interroga mentre risponde, invece di andare a memoria.
+        Da quel momento, quando gli chiedi cosa dice una legge, la legge davvero: il testo vigente a
+        una data, come è cambiato nel tempo, e le segnalazioni che lo riguardano.
       </p>
 
       <p className="riga-corpus">

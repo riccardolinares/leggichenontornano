@@ -7,8 +7,8 @@
  * terracotta ormai onnipresente.
  *
  * Il testo di legge si legge come un documento (serif), l'interfaccia come
- * segnaletica (grottesco). Nessun cruscotto: la home apre con una frase che dice
- * cosa contiene il sito.
+ * segnaletica (grottesco). Le cifre dell'apertura sono grandi, ma nessuna sta
+ * da sola: sotto ognuna c'è la riga che dice cosa misura.
  *
  * Ogni colore usato per il testo raggiunge almeno 4,5:1 sul proprio fondo, e
  * ogni colore usato per un elemento non testuale almeno 3:1 (WCAG 2.1 AA).
@@ -57,8 +57,18 @@
   --gutter: clamp(1rem, 4vw, 2.5rem);
 }
 
+/* La tavolozza scura vale in due casi, e i due blocchi qui sotto devono
+   restare identici: lo verifica `test/tema.test.ts`, perché due tavolozze che
+   divergono di un colore producono un tema scuro sbagliato solo per metà degli
+   utenti, ed è il tipo di guasto che non si vede finché qualcuno non apre una
+   segnalazione.
+
+   Primo caso: il sistema è scuro e nessuno ha scelto. Vale anche senza
+   JavaScript, ed è il motivo per cui questa media query resta. Il
+   `:not([data-theme='light'])` serve perché una scelta esplicita «chiaro»
+   deve vincere sul sistema. */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme='light']) {
     color-scheme: dark;
     /* Il prototipo non aveva un tema scuro. Questo lo deriva mantenendo i
        rapporti del chiaro: la carta diventa quasi nera, il bianco delle
@@ -81,6 +91,32 @@
     --bordo: #2b332f;
     --bordo-forte: #5c6862;
   }
+}
+
+/* Secondo caso: la scelta esplicita, che vince sempre. L'attributo lo scrive
+   `next-themes` prima della prima pittura, così non c'è il lampo bianco. */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  /* Il prototipo non aveva un tema scuro. Questo lo deriva mantenendo i
+       rapporti del chiaro: la carta diventa quasi nera, il bianco delle
+       superfici diventa il grigio appena più chiaro del fondo, e gli accenti
+       si schiariscono quanto basta per restare sopra 4,5:1. */
+  --carta: #111614;
+  --carta-alta: #191f1c;
+  --carta-incisa: #222925;
+  --inchiostro: #e7ebe7;
+  --inchiostro-tenue: #b7c1bb;
+  --inchiostro-debole: #97a29c;
+  --verderame: #6fd3bf;
+  --verderame-scuro: #9ae5d4;
+  --verderame-velo: #16312c;
+  --ocra: #e0b463;
+  --ocra-velo: #322810;
+  --ossido: #f0917f;
+  --ossido-velo: #391d17;
+  --ossido-linea: #5a2c24;
+  --bordo: #2b332f;
+  --bordo-forte: #5c6862;
 }
 
 *,
@@ -401,9 +437,13 @@ main {
 }
 
 @media (prefers-color-scheme: dark) {
-  .filtro[aria-current='true'] {
+  :root:not([data-theme='light']) .filtro[aria-current='true'] {
     color: #0b1512;
   }
+}
+
+:root[data-theme='dark'] .filtro[aria-current='true'] {
+  color: #0b1512;
 }
 
 /* ---------- Scheda anomalia ---------- */
@@ -762,12 +802,15 @@ tbody th {
 }
 
 @media (prefers-color-scheme: dark) {
-  .bottone--primario {
+  :root:not([data-theme='light']) .bottone--primario,
+  :root:not([data-theme='light']) .bottone--primario:hover {
     color: #0b1512;
   }
-  .bottone--primario:hover {
-    color: #0b1512;
-  }
+}
+
+:root[data-theme='dark'] .bottone--primario,
+:root[data-theme='dark'] .bottone--primario:hover {
+  color: #0b1512;
 }
 
 /* ---------- Niente segnale ---------- */
@@ -1847,4 +1890,258 @@ a.griglia-cifre__voce:focus-visible .griglia-cifre__etichetta {
   font-family: var(--grottesco);
   font-size: 12px;
   opacity: 0.55;
+}
+
+/* ---------- Tema e strumenti della testata ---------- */
+
+/* Il selettore del tema e il collegamento al codice stanno in coda alla riga
+   della testata, staccati dalla navigazione: non sono pagine del sito, sono
+   due strumenti. Su un telefono la navigazione va a capo e questi restano
+   dove sono. */
+/* Su un telefono marchio e strumenti condividono la riga; da 52rem in su il
+   contenitore sparisce e i tre blocchi tornano in fila come prima. */
+.testata__marchio {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+}
+
+@media (min-width: 52rem) {
+  .testata__marchio {
+    display: contents;
+  }
+
+  /* Con `display: contents` i figli entrano nella riga della testata in
+     ordine di markup, e gli strumenti finirebbero fra il marchio e il menù.
+     L'ordine qui li rimette in fondo, dove stanno. */
+  .testata__marchio > .marchio {
+    order: 1;
+  }
+
+  .testata__riga > .navigazione {
+    order: 2;
+  }
+
+  .testata__marchio > .testata__strumenti {
+    order: 3;
+  }
+}
+
+.testata__strumenti {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}
+
+.tema__bottone,
+.testata__codice {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  /* 2,5rem è il lato minimo perché un bersaglio tattile resti comodo: sotto
+     i 40 px si sbaglia, e si sbaglia soprattutto su un telefono. */
+  min-width: 2.5rem;
+  height: 2.5rem;
+  padding-inline: 0.55rem;
+  border: 1px solid var(--bordo);
+  border-radius: 3px;
+  background: var(--carta-alta);
+  color: var(--inchiostro-tenue);
+  font: inherit;
+  font-size: 0.85rem;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.tema__bottone:hover,
+.testata__codice:hover {
+  border-color: var(--verderame);
+  color: var(--verderame-scuro);
+}
+
+.tema__menu {
+  min-width: 12rem;
+  padding: 0.3rem;
+  background: var(--carta-alta);
+  border: 1px solid var(--bordo-forte);
+  border-radius: 4px;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 12%);
+  z-index: 60;
+}
+
+.tema__voce {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0.6rem;
+  border-radius: 3px;
+  font-size: 0.9rem;
+  color: var(--inchiostro);
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Radix segna la voce sotto il puntatore **e** quella raggiunta con le
+   frecce con lo stesso attributo: evidenziarle insieme è l'unico modo perché
+   tastiera e mouse si comportino uguale. */
+.tema__voce[data-highlighted] {
+  background: var(--verderame-velo);
+  color: var(--inchiostro);
+  outline: none;
+}
+
+.tema__spunta {
+  display: inline-flex;
+  width: 0.9rem;
+  color: var(--verderame);
+}
+
+/* ---------- Apertura della home ---------- */
+
+/* Quello che sta sopra la piega deve entrarci: titolo, una riga, quattro
+   cifre. Il margine sotto è quello di una sezione, non di un paragrafo,
+   perché fra l'apertura e l'elenco ci deve essere uno stacco netto. */
+.apertura-forte {
+  padding-bottom: 2.2rem;
+}
+
+.apertura-forte + .sezione {
+  margin-top: 1rem;
+}
+
+.apertura-forte__riga {
+  font-family: var(--serif);
+  font-size: clamp(1.1rem, 1rem + 0.6vw, 1.35rem);
+  line-height: 1.45;
+  color: var(--inchiostro-tenue);
+  max-width: 40rem;
+  margin: 0 0 2rem;
+}
+
+/* Quattro colonne quando ci stanno, due su un tablet, una su un telefono.
+   `auto-fit` con un minimo di 13rem le fa scendere da sole: sotto quella
+   soglia la cifra andrebbe a capo, e una cifra spezzata su due righe non si
+   legge come una cifra. */
+.cifre-forti {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: 0;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-width: none;
+  border-top: 1px solid var(--bordo);
+}
+
+.cifre-forti__voce {
+  border-bottom: 1px solid var(--bordo);
+}
+
+/* Il bordo verticale separa le colonne senza disegnare una griglia intera:
+   su una riga sola si vede, quando le voci vanno a capo sparisce da sé
+   perché è il primo elemento di ogni riga a non averlo. */
+@media (min-width: 52rem) {
+  .cifre-forti__voce + .cifre-forti__voce {
+    border-left: 1px solid var(--bordo);
+  }
+
+  .cifre-forti__collegamento {
+    padding-inline: 1.2rem;
+  }
+
+  .cifre-forti__voce:first-child .cifre-forti__collegamento {
+    padding-left: 0;
+  }
+}
+
+.cifre-forti__collegamento {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-block: 1.4rem;
+  text-decoration: none;
+  color: inherit;
+  height: 100%;
+}
+
+.cifre-forti__collegamento:hover .cifre-forti__frase,
+.cifre-forti__collegamento:focus-visible .cifre-forti__frase {
+  color: var(--inchiostro);
+  text-decoration: underline;
+}
+
+.cifre-forti__valore {
+  font-family: var(--serif);
+  font-size: clamp(2.6rem, 1.6rem + 4vw, 4.2rem);
+  font-weight: 600;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  color: var(--ossido);
+  font-feature-settings: 'tnum';
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.cifre-forti__unita {
+  margin-left: 0.18em;
+  font-family: var(--grottesco);
+  font-size: clamp(0.95rem, 0.8rem + 0.6vw, 1.25rem);
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--inchiostro);
+}
+
+.cifre-forti__frase {
+  font-size: 0.92rem;
+  line-height: 1.45;
+  color: var(--inchiostro-tenue);
+  max-width: 22rem;
+}
+
+/* ---------- Pagine legali ---------- */
+
+/*
+ * La data di revisione sta sotto il titolo, nel corpo del testo e non in
+ * grigio chiaro: un'informativa vale a una data, e chi legge deve trovarla
+ * prima di decidere se fidarsi, non in fondo dopo aver già deciso.
+ */
+.legale-data {
+  margin-top: -0.4rem;
+  padding-bottom: 1.2rem;
+  border-bottom: 1px solid var(--bordo);
+  max-width: 46rem;
+}
+
+.legale-indice {
+  list-style: none;
+  margin: 2rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 1.4rem;
+  max-width: 46rem;
+}
+
+.legale-indice li {
+  padding-left: 1rem;
+  border-left: 3px solid var(--verderame-velo);
+}
+
+.legale-indice a {
+  font-weight: 600;
+}
+
+.legale-indice p {
+  margin: 0.3rem 0 0;
+  color: var(--inchiostro-tenue);
+}
+
+.legale-indice small {
+  display: block;
+  margin-top: 0.3rem;
+  color: var(--inchiostro-debole);
 }
