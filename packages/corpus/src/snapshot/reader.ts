@@ -234,15 +234,14 @@ export class SnapshotReader {
    * e lo dichiara invece di fingersi qualcosa che non è.
    */
   search(query: string, limit = 20): Array<{ act: SnapshotAct; article: SnapshotArticle }> {
-    const terms = query
-      .toLowerCase()
+    const terms = normalizzaRicerca(query)
       .split(/\s+/)
       .map((t) => t.trim())
       .filter((t) => t.length > 2);
     if (terms.length === 0) return [];
     const out: Array<{ act: SnapshotAct; article: SnapshotArticle; score: number }> = [];
     for (const article of this.data.articles) {
-      const haystack = `${article.heading ?? ''} ${article.text}`.toLowerCase();
+      const haystack = normalizzaRicerca(`${article.heading ?? ''} ${article.text}`);
       let score = 0;
       for (const term of terms) if (haystack.includes(term)) score++;
       if (score === terms.length) {
@@ -252,6 +251,20 @@ export class SnapshotReader {
     }
     return out.slice(0, limit).map(({ act, article }) => ({ act, article }));
   }
+}
+
+/**
+ * Minuscole **e senza accenti**, su entrambi i lati del confronto.
+ *
+ * Chi cerca scrive «tracciabilita», il testo di legge dice «tracciabilità», e
+ * senza questa normalizzazione la ricerca non trova niente — restituendo un
+ * «nessun risultato» che somiglia a un fatto sulla legge e non lo è.
+ */
+function normalizzaRicerca(value: string): string {
+  return value
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
 }
 
 function groupBy<T, K>(items: readonly T[], key: (item: T) => K): Map<K, T[]> {
