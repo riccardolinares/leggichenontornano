@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { THRESHOLD } from '@leggichenontornano/engine';
 import { REPO_URL, dataset } from '@/lib/dataset';
 import { metadatiPagina } from '@/lib/seo';
-import { data, numero, percentuale } from '@/lib/testo';
+import { data, nomeNorma, numero, percentuale } from '@/lib/testo';
 import { Tabella } from '@/components/tabella';
 import { ContatoreNazionale } from '@/components/contatore';
 import { GraficoBarre } from '@/components/grafico-barre';
@@ -286,22 +286,43 @@ export default function Dati() {
                   </tr>
                 </thead>
                 <tbody>
-                  {v.acts.map((urn) => (
-                    <tr key={urn}>
-                      <th scope="row" style={{ fontWeight: 400 }}>
-                        <Link href={`/norma/${encodeURIComponent(urn)}`}>
-                          {dataset().act(urn)?.title.slice(0, 90) ?? urn}
-                        </Link>
-                        <br />
-                        <code>{urn}</code>
-                      </th>
-                      <td>
-                        {v.roots.includes(urn)
-                          ? 'dichiarato a mano come atto fondativo del dominio'
-                          : `aggiunto dal grafo: ${v.expansion.join(' o ').toLowerCase()} un atto fondativo`}
-                      </td>
-                    </tr>
-                  ))}
+                  {v.acts.map((urn) => {
+                    /* Un verticale **dichiara** gli atti del suo dominio, e il
+                       corpus può non averli ancora ingeriti tutti. Finché
+                       l'atto non c'è, il suo nome non è un collegamento: ne
+                       bastava uno — il codice dei contratti pubblici del 2023 —
+                       per lasciare un 404 sul sito pubblicato.
+
+                       Dirlo è meglio che nasconderlo: che il dominio arrivi più
+                       in là di dove il corpus è arrivato è un'informazione, non
+                       un imbarazzo. */
+                    const atto = dataset().act(urn);
+                    return (
+                      <tr key={urn}>
+                        <th scope="row" style={{ fontWeight: 400 }}>
+                          {atto ? (
+                            <Link href={`/norma/${encodeURIComponent(urn)}`}>
+                              {atto.title.slice(0, 90)}
+                            </Link>
+                          ) : (
+                            <>
+                              {nomeNorma(urn)}{' '}
+                              <span style={{ color: 'var(--inchiostro-debole)' }}>
+                                — dichiarato nel dominio, non ancora ingerito
+                              </span>
+                            </>
+                          )}
+                          <br />
+                          <code>{urn}</code>
+                        </th>
+                        <td>
+                          {v.roots.includes(urn)
+                            ? 'dichiarato a mano come atto fondativo del dominio'
+                            : `aggiunto dal grafo: ${v.expansion.join(' o ').toLowerCase()} un atto fondativo`}
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </Tabella>
               {v.missingRoots.length > 0 ? (

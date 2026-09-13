@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { ETICHETTA_FAMIGLIA, type Famiglia, type Grafo, type NodoGrafo } from '@/lib/grafo-tipi';
 
 /**
@@ -73,7 +73,6 @@ function raggio(nodo: NodoGrafo): number {
 
 export function GrafoForze({ grafo, base }: { grafo: Grafo; base: string }) {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const svgRef = useRef<SVGSVGElement>(null);
   const telaRef = useRef<HTMLDivElement>(null);
 
@@ -87,23 +86,32 @@ export function GrafoForze({ grafo, base }: { grafo: Grafo; base: string }) {
    * più elegante e su questa pagina non funziona: è generata staticamente, e un
    * `router.replace` fa un giro dal server che non riporta indietro i parametri
    * aggiornati. Il risultato è una casella che si clicca e non cambia stato.
+   *
+   * **Lo stato iniziale non guarda l'URL, e non è una svista.** La pagina è
+   * generata una volta sola, senza parametri: il server disegna il grafo
+   * intero. Se qui leggessimo i filtri, il browser partirebbe da uno stato
+   * diverso da quello che il server ha appena scritto nell'HTML, e React
+   * butterebbe via l'idratazione con l'errore 418 — visibile aprendo
+   * `/grafo?rotti=1` con la console aperta.
+   *
+   * I filtri dell'indirizzo si applicano quindi subito **dopo** il montaggio,
+   * qui sotto. Il prezzo è che per un istante si vede il grafo intero prima di
+   * quello filtrato; l'alternativa era una pagina che si ricostruisce da capo
+   * nel browser, su duecento nodi e millecinquecento archi.
    */
-  const [filtri, setFiltri] = useState<Filtri>(() => ({
-    famiglia: (searchParams.get('legame') as Famiglia | null) ?? null,
-    soloRotti: searchParams.get('rotti') === '1',
-    minGrado: Number(searchParams.get('grado') ?? '0') || 0,
-  }));
+  const [filtri, setFiltri] = useState<Filtri>({
+    famiglia: null,
+    soloRotti: false,
+    minGrado: 0,
+  });
 
-  // Alla prima resa in statico i parametri possono non esserci ancora: si
-  // rileggono dall'indirizzo vero appena il componente è montato, altrimenti un
-  // link con i filtri si aprirebbe senza filtri.
   useEffect(() => {
     const p = new URLSearchParams(window.location.search);
-    setFiltri({
-      famiglia: (p.get('legame') as Famiglia | null) ?? null,
-      soloRotti: p.get('rotti') === '1',
-      minGrado: Number(p.get('grado') ?? '0') || 0,
-    });
+    const famiglia = (p.get('legame') as Famiglia | null) ?? null;
+    const soloRotti = p.get('rotti') === '1';
+    const minGrado = Number(p.get('grado') ?? '0') || 0;
+    if (!famiglia && !soloRotti && !minGrado) return;
+    setFiltri({ famiglia, soloRotti, minGrado });
   }, []);
 
   const aggiorna = useCallback(
