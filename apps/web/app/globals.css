@@ -1538,20 +1538,152 @@ a.griglia-cifre__voce:focus-visible .griglia-cifre__etichetta {
   margin: 2rem 0;
 }
 
+/* Il contenitore riceve i gesti, l'SVG disegna e basta. Separarli serve
+   perché la rotella e il trascinamento vogliono le coordinate del riquadro, e
+   perché il fuoco da tastiera deve stare su un elemento solo. */
+/*
+ * La tavolozza del grafo non cambia con il tema, e deve essere così.
+ *
+ * Il fondo del disegno è scuro sempre, in tutti e due i temi: è l'unica
+ * superficie del sito che non si ribalta, perché duecento fili chiari su fondo
+ * chiaro non si vedono. Usare i token del sito dentro quel riquadro sembrava
+ * coerente ed era un guasto: `--carta` nel tema scuro è quasi nera, quindi le
+ * etichette del disegno sparivano, e `--verderame` nel tema chiaro è verde
+ * scuro, cioè invisibile sul nero.
+ *
+ * Questi colori sono scelti una volta contro quel fondo, e valgono uguali per
+ * chiunque — anche dentro il PNG condiviso, che non ha nessun tema.
+ */
+:root {
+  --grafo-fondo: #101715;
+  --grafo-carta: #eef2f0;
+  --grafo-rinvio: #7f8d86;
+  --grafo-modifica: #5fcdae;
+  --grafo-abrogazione: #e3b869;
+  --grafo-attuazione: #7fc4ef;
+  --grafo-illegittimita: #c79ad8;
+  --grafo-rotto: #ef8b77;
+  --grafo-vivo: #4f9d88;
+}
+
+.grafo__tela-contenitore {
+  position: relative;
+  overflow: hidden;
+  border-radius: 4px;
+  background: var(--grafo-fondo);
+  cursor: grab;
+  /* Senza questo il trascinamento su un telefono scorre la pagina invece di
+     spostare il disegno, e il grafo diventa inutilizzabile proprio dove la
+     rotella non c'è. */
+  touch-action: none;
+}
+
+.grafo__tela-contenitore--trascina {
+  cursor: grabbing;
+}
+
 .grafo__tela {
   width: 100%;
   height: auto;
   display: block;
-  background: var(--inchiostro);
-  border-radius: 4px;
-  /* Le posizioni sono calcolate su una tela 1000×700: l'aspetto non cambia mai,
-     e su un telefono il disegno si rimpicciolisce invece di riorganizzarsi. */
-  aspect-ratio: 1000 / 700;
+  /* Le posizioni sono calcolate su una tela 1600×1100: l'aspetto non cambia
+     mai, e su un telefono il disegno si rimpicciolisce invece di
+     riorganizzarsi. */
+  aspect-ratio: 1600 / 1100;
 }
 
 .grafo__tela circle {
-  cursor: pointer;
   transition: opacity 0.12s ease;
+}
+
+/*
+ * L'ingresso del disegno.
+ *
+ * Non è decorazione: duecento nodi che compaiono tutti insieme sono una
+ * macchia, e per un istante non si capisce se sia un'immagine o un errore.
+ * Facendoli salire dopo i fili, l'occhio vede prima la trama e poi i punti —
+ * che è l'ordine in cui il disegno va letto.
+ *
+ * Anima la **comparsa**, non le posizioni: quelle arrivano calcolate dal
+ * server e non si spostano di un pixel (ADR 0012).
+ */
+@keyframes grafo-entrata {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes grafo-entrata-nodi {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.grafo__archi {
+  animation: grafo-entrata 900ms ease-out both;
+}
+
+.grafo__nodi {
+  transform-origin: center;
+  animation: grafo-entrata-nodi 700ms 350ms ease-out both;
+}
+
+.grafo__scritte {
+  animation: grafo-entrata 600ms 900ms ease-out both;
+}
+
+/* I buchi respirano. È l'unico movimento che continua dopo l'ingresso, e
+   continua perché segna l'unica cosa che questa pagina deve far vedere senza
+   parole: le norme che non ci sono più e che tutti continuano a citare. */
+@keyframes grafo-respiro {
+  0%,
+  100% {
+    stroke-opacity: 0.9;
+    stroke-width: 7;
+  }
+  50% {
+    stroke-opacity: 0.4;
+    stroke-width: 14;
+  }
+}
+
+.grafo__buco {
+  animation: grafo-respiro 2.8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grafo__archi,
+  .grafo__nodi,
+  .grafo__scritte,
+  .grafo__buco {
+    animation: none;
+  }
+}
+
+.grafo__zoom {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.grafo__zoom .bottone {
+  padding-inline: 0.8rem;
+}
+
+.grafo__zoom-valore {
+  min-width: 2.6rem;
+  text-align: center;
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--inchiostro-tenue);
 }
 
 .grafo__comandi {
@@ -1631,34 +1763,34 @@ a.griglia-cifre__voce:focus-visible .griglia-cifre__etichetta {
 
 /* Le scritte dentro la tela: vivono nell'immagine esportata, non nella pagina. */
 .grafo__titolo-tela {
-  fill: var(--carta);
+  fill: var(--grafo-carta);
   font-family: var(--grottesco);
   font-size: 19px;
   font-weight: 700;
 }
 
 .grafo__sottotitolo-tela {
-  fill: var(--ossido);
+  fill: var(--grafo-rotto);
   font-family: var(--grottesco);
   font-size: 13px;
   font-weight: 600;
 }
 
 .grafo__etichetta-tela {
-  fill: var(--carta);
+  fill: var(--grafo-carta);
   font-family: var(--grottesco);
   font-size: 12px;
   font-weight: 600;
 }
 
 .grafo__etichetta-tela--debole {
-  fill: var(--ossido);
+  fill: var(--grafo-rotto);
   font-weight: 500;
   font-size: 11px;
 }
 
 .grafo__firma-tela {
-  fill: var(--carta);
+  fill: var(--grafo-carta);
   font-family: var(--grottesco);
   font-size: 12px;
   opacity: 0.55;
