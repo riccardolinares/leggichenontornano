@@ -114,6 +114,23 @@ export function primoApprofondimento(): string | null {
 }
 
 /**
+ * Il registro dei consumi ha già qualche riga?
+ *
+ * La pagina dei costi ha due facce — quella con i numeri e quella che dice di
+ * non averli ancora — e su un clone appena fatto è la seconda. I test devono
+ * verificare quella che la build ha davvero prodotto: chiedere alla pagina
+ * quale sia significherebbe farsi dire dall'imputato com'è andata.
+ */
+export function registroConsumiVuoto(): boolean {
+  const cartella =
+    process.env['LCNT_CONSUMI'] ?? join(process.cwd(), '..', '..', 'data', 'consumi');
+  if (!existsSync(cartella)) return true;
+  return readdirSync(cartella)
+    .filter((f) => f.endsWith('.jsonl'))
+    .every((f) => readFileSync(join(cartella, f), 'utf8').trim().length === 0);
+}
+
+/**
  * I percorsi delle pagine legali, indice compreso.
  *
  * Scritti qui e non importati da `lib/legale.ts` di proposito: un test che
@@ -141,6 +158,7 @@ export function percorsiDaVerificare(): Percorso[] {
     { nome: 'mcp', url: '/mcp' },
     { nome: 'come funziona', url: '/come-funziona' },
     { nome: 'dati', url: '/dati' },
+    { nome: 'costi e contributori', url: '/costi' },
     { nome: 'stampa', url: '/stampa' },
     { nome: 'dicono di noi', url: '/dicono' },
     { nome: 'segnala un problema', url: '/segnala' },

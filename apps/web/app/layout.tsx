@@ -159,6 +159,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                       <Link href="/dati">Dati e precisione</Link>
                     </li>
                     <li>
+                      <Link href="/costi">Costi e contributori</Link>
+                    </li>
+                    <li>
                       <Link href="/stampa">Per la stampa</Link>
                     </li>
                     <li>
