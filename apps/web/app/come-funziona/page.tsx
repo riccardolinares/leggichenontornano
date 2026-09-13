@@ -108,7 +108,9 @@ export default function ComeFunziona() {
           <tbody>
             {CHECK_DEFINITIONS.map((c) => (
               <tr key={c.id}>
-                <th scope="row">{c.label}</th>
+                <th scope="row">
+                  <Link href={`/controllo/${c.id}`}>{c.label}</Link>
+                </th>
                 <td>{c.level}</td>
                 <td>{c.description}</td>
                 <td>{c.expectedPrecision}</td>

@@ -115,7 +115,7 @@ export default function Dati() {
             {metriche.map((m) => (
               <tr key={m.checkId}>
                 <th scope="row">
-                  {m.label}
+                  <Link href={`/controllo/${m.checkId}`}>{m.label}</Link>
                   <br />
                   <small className="mono" style={{ color: 'var(--inchiostro-debole)' }}>
                     {m.checkId}
