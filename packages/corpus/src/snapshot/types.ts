@@ -43,6 +43,7 @@ export interface SnapshotArticle {
   num: string | null;
   heading: string | null;
   container: string | null;
+  principal: boolean;
   text: string;
   position: number;
 }

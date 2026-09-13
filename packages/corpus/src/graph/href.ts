@@ -101,9 +101,22 @@ export function fromAknPath(path: string): AknPathResult | null {
   if (authority === 'eu') {
     return { kind: 'eu', euId: `eu:${type}:${date};${number}` };
   }
-  // Nei path AKN il tipo usa l'underscore dove l'URN:NIR usa il punto.
-  const measureType = type.replace(/_/g, '.').toLowerCase();
-  return { kind: 'nir', urn: `urn:nir:${authority}:${measureType}:${date};${number}` };
+  return { kind: 'nir', urn: `urn:nir:${authority}:${normalizeActType(type)}:${date};${number}` };
+}
+
+/**
+ * Il tipo di atto nei path AKN arriva in due grafie, a volte nello stesso file:
+ * `decreto_legislativo` con gli underscore e `decretoLegislativo` in camelCase.
+ * L'URN:NIR ne vuole una sola, con i punti. Trattarne una e ignorare l'altra
+ * significa perdere in silenzio tutti gli archi scritti nella grafia ignorata —
+ * ed è successo: i riferimenti del preambolo, che usano il camelCase, non
+ * trovavano mai l'atto citato.
+ */
+export function normalizeActType(type: string): string {
+  return type
+    .replace(/_/g, '.')
+    .replace(/([a-z0-9])([A-Z])/g, '$1.$2')
+    .toLowerCase();
 }
 
 interface FragmentInfo {

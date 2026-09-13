@@ -35,6 +35,7 @@ export interface ArticleText {
   num: string | null;
   heading: string | null;
   container: string | null;
+  principal: boolean;
   text: string;
   position: number;
 }
@@ -131,8 +132,12 @@ export async function articleAt(
   const prisma = getPrisma();
   const [act, version] = await Promise.all([getAct(urn), versionAt(urn, date)]);
   if (!act || !version) return null;
+  // `principal: 'desc'` mette per primo l'articolo del corpo principale: in un
+  // atto con due numerazioni (il codice civile e il regio decreto che lo approva)
+  // chi chiede l'art. 1 vuole quello del codice.
   const article = await prisma.article.findFirst({
     where: { versionId: version.id, number: articleNumber.toLowerCase() },
+    orderBy: [{ principal: 'desc' }, { position: 'asc' }],
     include: { provisions: { orderBy: { position: 'asc' } } },
   });
   if (!article) return null;
@@ -294,6 +299,7 @@ function toArticleText(row: {
   num: string | null;
   heading: string | null;
   container: string | null;
+  principal: boolean;
   text: string;
   position: number;
 }): ArticleText {
@@ -304,6 +310,7 @@ function toArticleText(row: {
     num: row.num,
     heading: row.heading,
     container: row.container,
+    principal: row.principal,
     text: row.text,
     position: row.position,
   };

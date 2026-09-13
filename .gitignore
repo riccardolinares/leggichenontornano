@@ -13,8 +13,9 @@ coverage/
 /tmp/
 playwright-report/
 test-results/
-/data/corpus/**/*.xml
-/data/corpus/**/*.zip
-/data/snapshot/*.jsonl
-!/data/snapshot/.gitkeep
 /data/corpus/
+# Il corpus grezzo (centinaia di MB di XML) si riscarica con `pnpm fetch`.
+/data/corpus/
+
+# Il dataset derivato, invece, sta nel repository: serve a far girare il sito e
+# i test da un clone appena fatto, ed e' il dataset che chiunque puo' verificare.

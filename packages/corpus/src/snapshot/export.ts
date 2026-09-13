@@ -26,8 +26,17 @@ import {
 export interface ExportOptions {
   /** Cartella di destinazione. */
   dir: string;
-  /** Se `true`, esporta solo gli atti coinvolti in un'anomalia pubblicata. */
+  /**
+   * Se `true`, esporta solo gli atti coinvolti in un'anomalia — pubblicata o in
+   * coda — più il campione indicato da `sampleActs`.
+   */
   onlyAnomalyActs?: boolean;
+  /**
+   * Quanti atti aggiungere oltre a quelli delle anomalie. Serve perché il
+   * dataset di esempio nel repository non sia vuoto quando nessun controllo
+   * pubblica: il lettore norma deve avere qualcosa da leggere.
+   */
+  sampleActs?: number;
   /** Metriche per controllo, calcolate dal motore. */
   metrics?: SnapshotCheckMetric[];
   /** Soglia di pubblicazione vigente, ripetuta nel manifesto. */
@@ -59,14 +68,33 @@ export async function exportSnapshot(opts: ExportOptions): Promise<SnapshotManif
     computedAt: a.computedAt.toISOString(),
   }));
 
-  const anomalyUrns = new Set(anomalies.filter((a) => a.published).flatMap((a) => a.urns));
+  // Gli atti citati da qualunque anomalia, anche da quelle in coda: la pagina
+  // «Dati» conta le segnalazioni non pubblicate, e per contarle onestamente
+  // servono nel dataset.
+  const anomalyUrns = new Set(
+    anomalies.flatMap((a) => a.urns).map((u) => u.split('~')[0]!),
+  );
 
-  const actWhere = opts.onlyAnomalyActs ? { urn: { in: [...anomalyUrns] } } : {};
-  const actRows = await prisma.act.findMany({
-    where: actWhere,
-    include: { _count: { select: { versions: true } } },
-    orderBy: { urn: 'asc' },
-  });
+  const actRows = opts.onlyAnomalyActs
+    ? [
+        ...(await prisma.act.findMany({
+          where: { urn: { in: [...anomalyUrns] } },
+          include: { _count: { select: { versions: true } } },
+          orderBy: { urn: 'asc' },
+        })),
+        ...(opts.sampleActs
+          ? await prisma.act.findMany({
+              where: { urn: { notIn: [...anomalyUrns] } },
+              include: { _count: { select: { versions: true } } },
+              orderBy: [{ publicationDate: 'desc' }, { urn: 'asc' }],
+              take: opts.sampleActs,
+            })
+          : []),
+      ]
+    : await prisma.act.findMany({
+        include: { _count: { select: { versions: true } } },
+        orderBy: { urn: 'asc' },
+      });
   const acts: SnapshotAct[] = actRows.map((a) => ({
     urn: a.urn,
     title: a.title,
@@ -96,12 +124,41 @@ export async function exportSnapshot(opts: ExportOptions): Promise<SnapshotManif
     dateConflict: v.dateConflict,
   }));
 
-  const versionIds = versions.map((v) => v.id);
   const actUrnByVersion = new Map(versions.map((v) => [v.id, v.actUrn]));
+
+  // Il tetto agli articoli si applica **per atto intero**, non troncando a metà.
+  // Un atto esportato per tre quarti è peggio di un atto assente: il lettore
+  // norma mostrerebbe un testo incompleto senza dirlo, e la modalità confronto
+  // segnalerebbe come «cambiato» un articolo che semplicemente non è stato
+  // esportato. Si includono atti finché c'è budget, e di ciascuno tutto.
+  const versionIdsByAct = new Map<string, string[]>();
+  for (const v of versions) {
+    const list = versionIdsByAct.get(v.actUrn);
+    if (list) list.push(v.id);
+    else versionIdsByAct.set(v.actUrn, [v.id]);
+  }
+
+  const conteggi = await prisma.article.groupBy({
+    by: ['versionId'],
+    where: { versionId: { in: versions.map((v) => v.id) } },
+    _count: { _all: true },
+  });
+  const articoliPerVersione = new Map(conteggi.map((c) => [c.versionId, c._count._all]));
+
+  const versionIds: string[] = [];
+  let budget = opts.maxArticles ?? Number.POSITIVE_INFINITY;
+  for (const urn of actUrns) {
+    const ids = versionIdsByAct.get(urn) ?? [];
+    const costo = ids.reduce((sum, id) => sum + (articoliPerVersione.get(id) ?? 0), 0);
+    if (costo === 0) continue;
+    if (costo > budget) continue;
+    versionIds.push(...ids);
+    budget -= costo;
+  }
+
   const articleRows = await prisma.article.findMany({
     where: { versionId: { in: versionIds } },
     orderBy: [{ versionId: 'asc' }, { position: 'asc' }],
-    ...(opts.maxArticles ? { take: opts.maxArticles } : {}),
   });
   const articles: SnapshotArticle[] = articleRows.map((a) => ({
     id: a.id,
@@ -112,6 +169,7 @@ export async function exportSnapshot(opts: ExportOptions): Promise<SnapshotManif
     num: a.num,
     heading: a.heading,
     container: a.container,
+    principal: a.principal,
     text: a.text,
     position: a.position,
   }));
@@ -119,8 +177,11 @@ export async function exportSnapshot(opts: ExportOptions): Promise<SnapshotManif
   const relationRows = await prisma.relation.findMany({
     where: {
       knownTo: null,
+      // In modalità ridotta si tengono solo gli archi i cui **due** estremi sono
+      // nel dataset: un arco che punta fuori non è navigabile e gonfierebbe il
+      // file senza aggiungere nulla di verificabile.
       ...(opts.onlyAnomalyActs
-        ? { OR: [{ sourceUrn: { in: actUrns } }, { targetUrn: { in: actUrns } }] }
+        ? { AND: [{ sourceUrn: { in: actUrns } }, { targetUrn: { in: actUrns } }] }
         : {}),
     },
     orderBy: { id: 'asc' },

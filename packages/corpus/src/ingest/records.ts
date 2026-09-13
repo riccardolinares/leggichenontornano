@@ -48,6 +48,7 @@ export interface ArticleRecord {
   heading: string | null;
   partition: string | null;
   container: string | null;
+  principal: boolean;
   text: string;
   position: number;
 }
@@ -128,6 +129,7 @@ export function buildRecords(timeline: Timeline, opts: BuildRecordsOptions = {})
         heading: article.heading,
         partition: article.partition,
         container: article.container,
+        principal: article.principal,
         text: article.text,
         position,
       });

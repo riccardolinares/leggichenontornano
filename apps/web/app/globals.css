@@ -1,0 +1,835 @@
+/*
+ * Direzione visiva.
+ *
+ * Carta grigio-fredda, inchiostro verdastro quasi nero, verderame come unico
+ * colore interattivo, ocra per le aree grigie, rosso ossido spento per le
+ * antinomie. Il riferimento sono gli archivi e il bronzo, non la palette
+ * terracotta ormai onnipresente.
+ *
+ * Il testo di legge si legge come un documento (serif), l'interfaccia come
+ * segnaletica (grottesco). Nessun cruscotto: la home apre con una frase che dice
+ * cosa contiene il sito.
+ *
+ * Ogni colore usato per il testo raggiunge almeno 4,5:1 sul proprio fondo, e
+ * ogni colore usato per un elemento non testuale almeno 3:1 (WCAG 2.1 AA).
+ */
+
+:root {
+  color-scheme: light;
+
+  /* Carta */
+  --carta: #eaece9;
+  --carta-alta: #f4f5f2;
+  --carta-incisa: #dfe2dd;
+
+  /* Inchiostro */
+  --inchiostro: #131d19;
+  --inchiostro-tenue: #3f4b46;
+  --inchiostro-debole: #5c6763;
+
+  /* Verderame: l'unico colore interattivo */
+  --verderame: #0f5c50;
+  --verderame-scuro: #0a413a;
+  --verderame-velo: #d7e5e1;
+
+  /* Ocra: aree grigie */
+  --ocra: #7a5206;
+  --ocra-velo: #f0e6d2;
+
+  /* Rosso ossido spento: antinomie */
+  --ossido: #8c2f21;
+  --ossido-velo: #f2ddd9;
+
+  --bordo: #c3c9c3;
+  --bordo-forte: #97a09a;
+
+  --serif: 'Newsreader', 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
+  --grottesco: 'Archivo', 'Helvetica Neue', Inter, system-ui, -apple-system, sans-serif;
+
+  --misura: 34rem;
+  --gutter: clamp(1rem, 4vw, 2.5rem);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --carta: #121614;
+    --carta-alta: #1a201d;
+    --carta-incisa: #232a27;
+    --inchiostro: #e6eae6;
+    --inchiostro-tenue: #b6c0ba;
+    --inchiostro-debole: #97a29c;
+    --verderame: #6fd3bf;
+    --verderame-scuro: #9ae5d4;
+    --verderame-velo: #17332e;
+    --ocra: #e0b463;
+    --ocra-velo: #33280f;
+    --ossido: #f0917f;
+    --ossido-velo: #3a1d17;
+    --bordo: #333c38;
+    --bordo-forte: #4e5a54;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--carta);
+  color: var(--inchiostro);
+  font-family: var(--grottesco);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  font-synthesis-weight: none;
+}
+
+/* Il focus deve essere sempre visibile e non deve mai essere solo un colore. */
+:focus-visible {
+  outline: 3px solid var(--verderame);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+a {
+  color: var(--verderame);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+
+a:hover {
+  color: var(--verderame-scuro);
+  text-decoration-thickness: 2px;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--grottesco);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.012em;
+  margin: 0 0 0.5em;
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: clamp(1.75rem, 1.2rem + 2.2vw, 2.75rem);
+}
+h2 {
+  font-size: clamp(1.3rem, 1.1rem + 0.9vw, 1.7rem);
+}
+h3 {
+  font-size: 1.15rem;
+}
+
+p {
+  margin: 0 0 1em;
+  max-width: var(--misura);
+}
+
+ul,
+ol {
+  max-width: var(--misura);
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid var(--bordo);
+  margin: 2.5rem 0;
+}
+
+code,
+pre,
+.mono {
+  font-family: 'Roboto Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.9em;
+  /* Gli URN e gli URL sono lunghi e senza spazi. Su un telefono, se non si
+     possono spezzare, spingono la pagina fuori dallo schermo — e questo sito
+     mostra URN ovunque, per scelta. */
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* ---------- Struttura ---------- */
+
+.salta {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  background: var(--verderame);
+  color: var(--carta-alta);
+  padding: 0.7rem 1.1rem;
+  z-index: 100;
+  font-weight: 600;
+}
+
+.salta:focus {
+  left: 0.5rem;
+  top: 0.5rem;
+}
+
+.contenitore {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding-inline: var(--gutter);
+}
+
+.stretto {
+  max-width: 46rem;
+}
+
+/* ---------- Intestazione ---------- */
+
+.testata {
+  border-bottom: 1px solid var(--bordo);
+  background: var(--carta-alta);
+}
+
+.testata__riga {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 2rem;
+  align-items: baseline;
+  justify-content: space-between;
+  padding-block: 1.1rem;
+}
+
+.marchio {
+  font-family: var(--serif);
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--inchiostro);
+  text-decoration: none;
+}
+
+.marchio:hover {
+  color: var(--inchiostro);
+  text-decoration: underline;
+  text-decoration-color: var(--verderame);
+}
+
+.marchio__tecnico {
+  display: block;
+  font-family: var(--grottesco);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--inchiostro-debole);
+}
+
+.navigazione ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.4rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 0.95rem;
+}
+
+.navigazione a[aria-current='page'] {
+  color: var(--inchiostro);
+  text-decoration-color: var(--verderame);
+  text-decoration-thickness: 2px;
+  font-weight: 600;
+}
+
+/* ---------- Avvertenza permanente ---------- */
+
+.avvertenza {
+  background: var(--carta-incisa);
+  border-bottom: 1px solid var(--bordo);
+  font-size: 0.875rem;
+  color: var(--inchiostro-tenue);
+}
+
+.avvertenza p {
+  margin: 0;
+  padding-block: 0.6rem;
+  max-width: 68rem;
+}
+
+/* ---------- Principale ---------- */
+
+main {
+  padding-block: clamp(2rem, 5vw, 3.5rem) 4rem;
+}
+
+.apertura {
+  font-family: var(--serif);
+  font-size: clamp(1.15rem, 1rem + 0.7vw, 1.45rem);
+  line-height: 1.5;
+  max-width: 40rem;
+  color: var(--inchiostro-tenue);
+}
+
+/* ---------- Elenco delle anomalie ---------- */
+
+.elenco {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-width: none;
+}
+
+.scheda {
+  border-top: 1px solid var(--bordo);
+  padding-block: 1.6rem;
+}
+
+.scheda__titolo {
+  font-family: var(--serif);
+  font-size: clamp(1.2rem, 1.05rem + 0.7vw, 1.55rem);
+  font-weight: 500;
+  line-height: 1.28;
+  margin: 0 0 0.5rem;
+  max-width: 46rem;
+}
+
+.scheda__titolo a {
+  color: var(--inchiostro);
+  text-decoration-color: var(--bordo-forte);
+}
+
+.scheda__titolo a:hover,
+.scheda__titolo a:focus-visible {
+  color: var(--verderame-scuro);
+  text-decoration-color: var(--verderame);
+}
+
+.scheda__pratica {
+  max-width: 44rem;
+  color: var(--inchiostro-tenue);
+  margin-bottom: 0.6rem;
+}
+
+.scheda__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  align-items: center;
+  font-size: 0.82rem;
+  color: var(--inchiostro-debole);
+}
+
+/* ---------- Etichette ---------- */
+
+.etichetta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.55rem;
+  border-radius: 2px;
+  border: 1px solid currentColor;
+}
+
+.etichetta--antinomia {
+  color: var(--ossido);
+  background: var(--ossido-velo);
+}
+
+.etichetta--area-grigia {
+  color: var(--ocra);
+  background: var(--ocra-velo);
+}
+
+.etichetta--neutra {
+  color: var(--inchiostro-tenue);
+  background: var(--carta-incisa);
+}
+
+.etichetta--verificato {
+  color: var(--verderame);
+  background: var(--verderame-velo);
+}
+
+/* ---------- Filtri ---------- */
+
+.filtri {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0;
+  margin: 0 0 1.5rem;
+  list-style: none;
+  max-width: none;
+}
+
+.filtro {
+  display: inline-block;
+  padding: 0.35rem 0.8rem;
+  border: 1px solid var(--bordo-forte);
+  border-radius: 2px;
+  font-size: 0.85rem;
+  text-decoration: none;
+  color: var(--inchiostro-tenue);
+  background: var(--carta-alta);
+}
+
+.filtro:hover {
+  border-color: var(--verderame);
+  color: var(--verderame-scuro);
+}
+
+.filtro[aria-current='true'] {
+  background: var(--verderame);
+  border-color: var(--verderame);
+  color: var(--carta-alta);
+  font-weight: 600;
+}
+
+@media (prefers-color-scheme: dark) {
+  .filtro[aria-current='true'] {
+    color: #0b1512;
+  }
+}
+
+/* ---------- Scheda anomalia ---------- */
+
+.anomalia__intestazione {
+  border-bottom: 2px solid var(--inchiostro);
+  padding-bottom: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.anomalia__titolo {
+  font-family: var(--serif);
+  font-weight: 500;
+  max-width: 30ch;
+  max-width: 46rem;
+}
+
+.pratica {
+  font-family: var(--serif);
+  font-size: 1.15rem;
+  line-height: 1.55;
+  max-width: 40rem;
+}
+
+.sezione {
+  margin-block: 3rem;
+}
+
+.sezione__titolo {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--inchiostro-debole);
+  border-bottom: 1px solid var(--bordo);
+  padding-bottom: 0.4rem;
+  margin-bottom: 1.2rem;
+}
+
+/* Testi affiancati: il testo originale sta sempre sopra i campi estratti. */
+.affiancati {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 56rem) {
+  .affiancati {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.prova {
+  border: 1px solid var(--bordo);
+  background: var(--carta-alta);
+  padding: 1.1rem 1.2rem;
+}
+
+.prova__etichetta {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--inchiostro-debole);
+  margin: 0 0 0.6rem;
+  max-width: none;
+}
+
+.prova__testo {
+  font-family: var(--serif);
+  font-size: 1rem;
+  line-height: 1.55;
+  margin: 0;
+  max-width: none;
+}
+
+.prova__urn {
+  display: block;
+  margin-top: 0.8rem;
+  font-size: 0.75rem;
+  color: var(--inchiostro-debole);
+  word-break: break-all;
+}
+
+/* ---------- Barra delle vigenze ---------- */
+
+.vigenze {
+  border: 1px solid var(--bordo);
+  background: var(--carta-alta);
+  padding: 1rem 1.2rem 1.2rem;
+}
+
+.vigenze__riga {
+  display: grid;
+  grid-template-columns: minmax(7rem, 12rem) 1fr;
+  gap: 0.75rem;
+  align-items: center;
+  margin-bottom: 0.6rem;
+  font-size: 0.85rem;
+}
+
+.vigenze__traccia {
+  position: relative;
+  height: 1.1rem;
+  background: var(--carta-incisa);
+  border: 1px solid var(--bordo);
+}
+
+.vigenze__barra {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: var(--verderame-velo);
+  border-inline: 2px solid var(--verderame);
+}
+
+.vigenze__intersezione {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    45deg,
+    var(--ossido-velo),
+    var(--ossido-velo) 4px,
+    transparent 4px,
+    transparent 8px
+  );
+  border-inline: 2px solid var(--ossido);
+}
+
+/* ---------- Dettaglio tecnico ---------- */
+
+details {
+  border: 1px solid var(--bordo);
+  background: var(--carta-alta);
+  padding: 0 1.1rem;
+  margin-bottom: 1rem;
+}
+
+summary {
+  cursor: pointer;
+  padding: 0.85rem 0;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+summary::marker {
+  color: var(--verderame);
+}
+
+details[open] summary {
+  border-bottom: 1px solid var(--bordo);
+  margin-bottom: 0.9rem;
+}
+
+details > *:last-child {
+  margin-bottom: 1rem;
+}
+
+.regola {
+  display: block;
+  overflow-x: auto;
+  background: var(--carta-incisa);
+  border: 1px solid var(--bordo);
+  padding: 0.9rem 1rem;
+  font-size: 0.8rem;
+  line-height: 1.55;
+  white-space: pre;
+  margin: 0 0 1rem;
+  max-width: none;
+}
+
+/* ---------- Risoluzioni ---------- */
+
+.risoluzioni {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-width: 46rem;
+}
+
+.risoluzione {
+  display: grid;
+  grid-template-columns: minmax(6rem, 9rem) 1fr;
+  gap: 0.4rem 1rem;
+  padding-block: 0.8rem;
+  border-top: 1px solid var(--bordo);
+  font-size: 0.95rem;
+}
+
+.risoluzione__criterio {
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.risoluzione__stato {
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--inchiostro-debole);
+}
+
+@media (max-width: 32rem) {
+  .risoluzione {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- Testo normativo ---------- */
+
+.norma {
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  line-height: 1.62;
+}
+
+.norma p {
+  max-width: 36rem;
+}
+
+.articolo {
+  padding-block: 1.4rem;
+  border-top: 1px solid var(--bordo);
+  scroll-margin-top: 2rem;
+}
+
+.articolo__num {
+  font-family: var(--grottesco);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--inchiostro-debole);
+  margin: 0 0 0.3rem;
+}
+
+.articolo__rubrica {
+  font-family: var(--serif);
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0 0 0.6rem;
+}
+
+/* Annotazione a margine: le anomalie sul lettore norma */
+.margine {
+  border-left: 3px solid var(--ossido);
+  background: var(--ossido-velo);
+  padding: 0.7rem 0.9rem;
+  margin: 0.9rem 0;
+  font-family: var(--grottesco);
+  font-size: 0.9rem;
+  max-width: 36rem;
+}
+
+/* ---------- Tabelle ---------- */
+
+.tabella-contenitore {
+  overflow-x: auto;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.92rem;
+}
+
+caption {
+  text-align: left;
+  font-size: 0.85rem;
+  color: var(--inchiostro-tenue);
+  padding-bottom: 0.6rem;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 0.6rem 0.8rem;
+  border-bottom: 1px solid var(--bordo);
+  vertical-align: top;
+}
+
+th {
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--inchiostro-debole);
+  border-bottom: 2px solid var(--bordo-forte);
+}
+
+/* ---------- Bottoni e azioni ---------- */
+
+.azioni {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.bottone {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1rem;
+  border: 1px solid var(--verderame);
+  border-radius: 2px;
+  background: var(--carta-alta);
+  color: var(--verderame);
+  font-family: inherit;
+  font-size: 0.92rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.bottone:hover {
+  background: var(--verderame-velo);
+  color: var(--verderame-scuro);
+}
+
+.bottone--primario {
+  background: var(--verderame);
+  color: var(--carta-alta);
+}
+
+.bottone--primario:hover {
+  background: var(--verderame-scuro);
+  color: var(--carta-alta);
+}
+
+@media (prefers-color-scheme: dark) {
+  .bottone--primario {
+    color: #0b1512;
+  }
+  .bottone--primario:hover {
+    color: #0b1512;
+  }
+}
+
+/* ---------- Niente segnale ---------- */
+
+.niente-segnale {
+  border: 1px solid var(--bordo-forte);
+  border-left: 4px solid var(--ocra);
+  background: var(--carta-alta);
+  padding: 1.3rem 1.5rem;
+  max-width: 46rem;
+}
+
+.niente-segnale h2 {
+  margin-top: 0;
+}
+
+/* ---------- Grafo a strati ---------- */
+
+.grafo {
+  border: 1px solid var(--bordo);
+  background: var(--carta-alta);
+  padding: 1rem;
+  overflow-x: auto;
+}
+
+.grafo svg {
+  display: block;
+  min-width: 30rem;
+}
+
+/* ---------- Piè di pagina ---------- */
+
+.piede {
+  border-top: 1px solid var(--bordo);
+  background: var(--carta-alta);
+  padding-block: 2.5rem 3rem;
+  font-size: 0.9rem;
+  color: var(--inchiostro-tenue);
+}
+
+.piede h2 {
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--inchiostro-debole);
+}
+
+.piede__griglia {
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+}
+
+.piede ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.piede li {
+  margin-bottom: 0.4rem;
+}
+
+/* L'attribuzione a Normattiva non sta in grigio chiaro nel footer. */
+.attribuzione {
+  border: 1px solid var(--bordo-forte);
+  background: var(--carta-incisa);
+  padding: 1rem 1.2rem;
+  color: var(--inchiostro);
+  font-size: 0.92rem;
+  max-width: 46rem;
+}
+
+.attribuzione strong {
+  font-weight: 700;
+}
+
+/* ---------- Utilità ---------- */
+
+.solo-lettori-schermo {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

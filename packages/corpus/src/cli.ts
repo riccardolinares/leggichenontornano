@@ -41,7 +41,8 @@ Opzioni di ingest:
 
 Opzioni di export:
   --dest <cartella>                cartella di destinazione (default data/snapshot)
-  --solo-anomalie                  solo gli atti toccati da un'anomalia pubblicata
+  --solo-anomalie                  solo gli atti toccati da un'anomalia
+  --campione <n>                   atti aggiuntivi da includere nel campione
   --max-articoli <n>               tetto agli articoli esportati
 
 I dati provengono da Normattiva (dati.normattiva.it), licenza CC BY 4.0.
@@ -157,6 +158,7 @@ async function main(): Promise<number> {
       const manifest = await exportSnapshot({
         dir: dest,
         onlyAnomalyActs: flags.has('solo-anomalie'),
+        ...(flags.has('campione') ? { sampleActs: Number(flags.get('campione')) } : {}),
         ...(flags.has('max-articoli') ? { maxArticles: Number(flags.get('max-articoli')) } : {}),
       });
       process.stdout.write(

@@ -105,7 +105,8 @@ export class SnapshotReader {
     const version = this.versionAt(urn, date);
     if (!version) return null;
     const wanted = articleNumber.toLowerCase();
-    const article = this.articles(version.id).find((a) => a.number === wanted);
+    const candidates = this.articles(version.id).filter((a) => a.number === wanted);
+    const article = candidates.find((a) => a.principal) ?? candidates[0];
     return article ? { version, article } : null;
   }
 
@@ -121,7 +122,8 @@ export class SnapshotReader {
     const out: Array<{ from: string; to: string | null; text: string | null; heading: string | null }> =
       [];
     for (const version of this.versions(urn)) {
-      const article = this.articles(version.id).find((a) => a.number === wanted) ?? null;
+      const candidates = this.articles(version.id).filter((a) => a.number === wanted);
+      const article = candidates.find((a) => a.principal) ?? candidates[0] ?? null;
       const previous = out[out.length - 1];
       if (previous && previous.text === (article?.text ?? null)) {
         previous.to = version.inForceTo;

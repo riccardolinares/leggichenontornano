@@ -13,6 +13,7 @@ export * from './urn.js';
 export * from './eli.js';
 export * from './akn.js';
 export * from './modifications.js';
+export * from './citations.js';
 export * from './multivigenza.js';
 export { parseXml, textContent, normalizeSpace } from './xml.js';
 export type { XmlElement, XmlNode, XmlText } from './xml.js';

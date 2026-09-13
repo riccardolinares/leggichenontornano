@@ -18,6 +18,7 @@ export * from './ingest/read-collection.js';
 export * from './ingest/records.js';
 export * from './graph/href.js';
 export * from './graph/build-relations.js';
+export * from './graph/preambolo.js';
 export * from './source-rank.js';
 export * from './store/client.js';
 export * from './store/read.js';

@@ -1,0 +1,25 @@
+{
+  "formatVersion": 1,
+  "generatedAt": "2026-09-13T00:16:43.545Z",
+  "knownAt": "2026-09-13T00:16:43.545Z",
+  "counts": {
+    "acts": 140,
+    "versions": 482,
+    "articles": 2500,
+    "relations": 3256,
+    "anomalies": 128,
+    "publishedAnomalies": 103
+  },
+  "sources": [
+    {
+      "name": "Normattiva open data",
+      "licence": "CC BY 4.0",
+      "retrievedAt": "2026-09-13T00:16:43.545Z"
+    }
+  ],
+  "publicationThreshold": {
+    "minPrecision": 0.85,
+    "minSample": 30
+  },
+  "disclaimer": "La banca dati Normattiva non ha carattere di ufficialità. L'unico testo ufficiale è quello pubblicato sulla Gazzetta Ufficiale della Repubblica Italiana, che prevale in caso di discordanza. Questo dataset è un'elaborazione automatica e non costituisce consulenza legale. Elaborazione su dati Normattiva (dati.normattiva.it), licenza CC BY 4.0."
+}

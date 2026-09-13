@@ -90,6 +90,11 @@ model Article {
   partition String?
   /// Allegato che contiene l'articolo, quando applicabile.
   container String?
+  /// `true` per gli articoli del corpo principale dell'atto. Un atto puo' avere
+  /// due numerazioni: il codice civile e' un regio decreto di tre articoli a cui
+  /// e' annesso il codice vero, di 2969. Chi chiede l'art. 1 del codice civile
+  /// vuole il secondo.
+  principal Boolean @default(true)
   text      String
   /// Posizione nell'atto, per l'ordinamento di lettura.
   position  Int
