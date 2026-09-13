@@ -5,9 +5,11 @@ import { usePathname } from 'next/navigation';
 
 const VOCI = [
   { href: '/', label: 'Segnalazioni' },
+  { href: '/numeri', label: 'I numeri' },
+  { href: '/norme', label: 'Norme' },
+  { href: '/corte', label: 'Consulta' },
   { href: '/come-funziona', label: 'Come funziona' },
   { href: '/dati', label: 'Dati' },
-  { href: '/stampa', label: 'Stampa' },
 ] as const;
 
 /**

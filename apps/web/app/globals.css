@@ -581,6 +581,14 @@ details > *:last-child {
   margin-bottom: 1rem;
 }
 
+/* Il blocco scorre in orizzontale, quindi riceve il fuoco: e se riceve il
+   fuoco deve mostrarlo, altrimenti chi naviga da tastiera lo attraversa senza
+   sapere dov'è. */
+.regola:focus-visible {
+  outline: 3px solid var(--verderame);
+  outline-offset: 2px;
+}
+
 .regola {
   display: block;
   overflow-x: auto;
@@ -703,12 +711,20 @@ td {
   vertical-align: top;
 }
 
-th {
+/* Le maiuscolette sono **etichette di colonna**, non contenuto.
+   Applicate a ogni `th` finivano anche sulle intestazioni di riga, che sono
+   testo vero: un elenco di atti diventava «DECRETO LEGISLATIVO 12 APRILE 2006,
+   N. 163» per centosessantun righe, cioè illeggibile. */
+thead th {
   font-size: 0.78rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--inchiostro-debole);
   border-bottom: 2px solid var(--bordo-forte);
+}
+
+tbody th {
+  font-weight: 600;
 }
 
 /* ---------- Bottoni e azioni ---------- */
@@ -968,4 +984,81 @@ th {
   font-size: 0.86rem;
   color: var(--inchiostro-debole);
   max-width: 56ch;
+}
+
+/* ---------- La pagina dei numeri ---------- */
+
+/*
+ * Ogni voce è pensata per essere guardata da sola: la cifra grande, la frase
+ * che dice di cosa è, e il limite subito sotto — nello stesso blocco, nello
+ * stesso corpo, senza asterischi.
+ *
+ * Il limite non è in grigio chiaro e non è più piccolo della frase per una
+ * ragione precisa: rimpicciolire la riserva è il modo tipografico di dire che
+ * conta meno, e qui conta quanto il numero.
+ */
+.numeri {
+  list-style: none;
+  margin: 2.4rem 0 0;
+  padding: 0;
+}
+
+.numero {
+  padding: 1.8rem 0;
+  border-top: 1px solid var(--bordo);
+  max-width: 58ch;
+}
+
+.numero:last-child {
+  border-bottom: 1px solid var(--bordo);
+}
+
+.numero__cifra {
+  font-family: var(--serif);
+  font-size: clamp(3rem, 11vw, 5.2rem);
+  line-height: 1;
+  font-weight: 600;
+  color: var(--ossido);
+  margin: 0 0 0.6rem;
+  font-variant-numeric: tabular-nums;
+  /* Una cifra lunga su uno schermo stretto deve poter andare a capo invece di
+     spingere la pagina a destra. */
+  overflow-wrap: anywhere;
+}
+
+.numero__unita {
+  font-family: var(--grottesco);
+  font-size: clamp(1rem, 3.4vw, 1.5rem);
+  font-weight: 500;
+  color: var(--inchiostro);
+  letter-spacing: 0.01em;
+}
+
+.numero__frase {
+  margin: 0 0 0.9rem;
+  font-size: 1.02rem;
+  line-height: 1.55;
+}
+
+.numero__limite {
+  margin: 0 0 0.9rem;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--inchiostro-tenue);
+  border-left: 3px solid var(--ocra);
+  padding-left: 0.9rem;
+}
+
+.numero__permalink {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--inchiostro-debole);
+  font-family: var(--grottesco);
+  overflow-wrap: anywhere;
+}
+
+/* Chi arriva da un link con l'ancora deve vedere subito quale voce è. */
+.numero:target {
+  background: var(--carta-incisa);
+  box-shadow: 0 0 0 1rem var(--carta-incisa);
 }

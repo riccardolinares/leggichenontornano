@@ -145,6 +145,21 @@ export default async function Home({ searchParams }: Props) {
         ))}
       </ul>
 
+      {/* Il filtro mostra un sottoinsieme dell'indice; la pagina del controllo
+          dice anche **cosa cerca quella regola e quanto è precisa**, ed è quella
+          che ha senso citare o trovare da un motore di ricerca. */}
+      <ul className="filtri" aria-label="Approfondisci un controllo">
+        {CHECK_DEFINITIONS.filter(
+          (c) => (perTipo.get(c.id) ?? 0) > 0 || (reader.metric(c.id)?.found ?? 0) > 0,
+        ).map((c) => (
+          <li key={c.id}>
+            <Link className="filtro" href={`/controllo/${c.id}`}>
+              Com’è fatto il controllo «{c.label}»
+            </Link>
+          </li>
+        ))}
+      </ul>
+
       {anomalie.length === 0 ? (
         <div className="niente-segnale">
           <h2>Nessuna segnalazione pubblicata{tipo ? ' per questo filtro' : ''}</h2>

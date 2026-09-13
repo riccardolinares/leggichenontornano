@@ -110,3 +110,19 @@ export function numeroDecimale(value: number, decimali = 1): string {
     maximumFractionDigits: decimali,
   }).format(value);
 }
+
+/** Percorso della pagina di una pronuncia, indirizzata dal suo ECLI. */
+export function percorsoPronuncia(ecli: string): string {
+  return `/corte/${encodeURIComponent(ecli)}`;
+}
+
+/**
+ * Come si cita una decisione della Corte: «Sentenza n. 251/2001».
+ *
+ * È la forma con cui la si cerca e con cui la citano gli atti, e non coincide
+ * con l'ECLI — che è l'identificatore giusto per una macchina e illeggibile
+ * per chiunque altro.
+ */
+export function titoloPronuncia(p: { tipologia: string; numero: string; anno: string }): string {
+  return `${p.tipologia === 'O' ? 'Ordinanza' : 'Sentenza'} n. ${p.numero}/${p.anno}`;
+}

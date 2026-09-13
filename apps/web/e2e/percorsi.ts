@@ -79,14 +79,44 @@ export function normaConPronuncia(): string | null {
   return colpita?.targetUrn ?? null;
 }
 
+/** Un controllo che ha davvero prodotto qualcosa: la sua pagina non è vuota. */
+export function primoControlloConEsito(): string | null {
+  const anomalie = jsonl<{ checkId: string; published: boolean }>('anomalies.jsonl');
+  return anomalie.find((a) => a.published)?.checkId ?? anomalie[0]?.checkId ?? null;
+}
+
+/** Una pronuncia presente nel dataset, per la pagina della singola decisione. */
+export function primaPronuncia(): string | null {
+  return jsonl<{ ecli: string }>('pronunce.jsonl')[0]?.ecli ?? null;
+}
+
 export function percorsiDaVerificare(): Percorso[] {
   const percorsi: Percorso[] = [
     { nome: 'home', url: '/' },
+    { nome: 'numeri', url: '/numeri' },
+    { nome: 'elenco delle norme', url: '/norme' },
+    { nome: 'elenco delle pronunce', url: '/corte' },
     { nome: 'come funziona', url: '/come-funziona' },
     { nome: 'dati', url: '/dati' },
     { nome: 'stampa', url: '/stampa' },
     { nome: 'pagina non trovata', url: '/percorso-che-non-esiste' },
   ];
+
+  /* Le pagine generate una per controllo e una per pronuncia hanno una forma
+     loro — tabelle, citazioni lunghe, elenchi annidati — e senza un percorso
+     dedicato l'audit non le guarderebbe mai. */
+  const controllo = primoControlloConEsito();
+  if (controllo) {
+    percorsi.push({ nome: 'pagina di un controllo', url: `/controllo/${controllo}` });
+  }
+
+  const pronuncia = primaPronuncia();
+  if (pronuncia) {
+    percorsi.push({
+      nome: 'pagina di una pronuncia',
+      url: `/corte/${encodeURIComponent(pronuncia)}`,
+    });
+  }
 
   const anomalia = primaAnomalia();
   if (anomalia) {

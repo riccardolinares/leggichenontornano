@@ -221,7 +221,9 @@ export default async function SchedaAnomalia({ params }: Props) {
             deciso che queste due norme sono in conflitto; il conflitto è il risultato di questa
             interrogazione.
           </p>
-          <code className="regola">{anomalia.rule}</code>
+          <pre className="regola" tabIndex={0} role="region" aria-label="La regola, come query">
+            <code>{anomalia.rule}</code>
+          </pre>
           {controllo ? (
             <p style={{ fontSize: '0.9rem' }}>
               Precisione attesa per questo tipo di controllo: {controllo.expectedPrecision}.{' '}
