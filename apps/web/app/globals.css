@@ -1185,3 +1185,34 @@ a.griglia-cifre__voce:focus-visible .griglia-cifre__etichetta {
   margin-bottom: 0.7rem;
   line-height: 1.55;
 }
+
+/* ---------- Il muro delle testimonianze ---------- */
+
+.muro {
+  list-style: none;
+  margin: 2rem 0;
+  padding: 0;
+  display: grid;
+  gap: 1.6rem;
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+}
+
+.muro__voce {
+  padding: 1.2rem 1.3rem;
+  background: var(--carta-alta);
+  border: 1px solid var(--bordo);
+  border-radius: 3px;
+}
+
+.muro__testo {
+  margin: 0 0 0.9rem;
+  font-family: var(--serif);
+  font-size: 1.02rem;
+  line-height: 1.55;
+}
+
+.muro__firma {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--inchiostro-tenue);
+}

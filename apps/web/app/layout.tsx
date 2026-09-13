@@ -157,6 +157,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   <li>
                     <a href={SOSTIENI_URL}>Offri un caffè al progetto</a>
                   </li>
+                  <li>
+                    <Link href="/dicono">Dicono di noi</Link>
+                  </li>
                 </ul>
               </div>
             </div>
