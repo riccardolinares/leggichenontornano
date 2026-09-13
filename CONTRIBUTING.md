@@ -147,6 +147,31 @@ non vederla piuttosto che pubblicarla insieme a duecento coppie inventate.
 
 ---
 
+## Aprire un lavoro per qualcun altro
+
+C'è un modulo apposta: [«Un lavoro da fare»](.github/ISSUE_TEMPLATE/lavoro.yml).
+È lungo di proposito.
+
+Un lavoro descritto male costa più tempo di quanto ne faccia risparmiare la
+fretta di aprirlo: chi lo prende in mano si ferma alla prima ambiguità, e a quel
+punto servono due persone invece di una. Le quattro sezioni obbligatorie sono
+quelle senza cui **non si può cominciare**:
+
+1. **il problema, non la soluzione** — se scrivi già la soluzione, chi legge non
+   può proporne una migliore, e spesso ce n'è una migliore;
+2. **come si vede che è fatto** — un risultato osservabile, non un'attività:
+   «aggiungere un campo» è un'attività, «aprendo quella pagina si legge la data
+   sopra il testo» o c'è o non c'è;
+3. **dove mettere le mani** — non deve essere esatto, serve a far partire chi
+   legge dal punto giusto invece che dalla ricerca a tappeto;
+4. **come si verifica** — i comandi esatti e cosa devono dire. Un lavoro senza
+   un modo di verificarlo non è finito, è solo scritto.
+
+Se non sai rispondere a una di esse, è il segnale che il lavoro va discusso
+prima in una issue normale.
+
+---
+
 ## Le etichette
 
 Stanno in [`.github/labels.yml`](.github/labels.yml), con il comando per

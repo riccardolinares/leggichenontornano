@@ -48,6 +48,10 @@ labels:
     color: '5a4a7d'
     description: Propone o supera una decisione architetturale.
 
+  - name: lavoro
+    color: '2f5d7d'
+    description: Una modifica al codice, descritta abbastanza bene da poterla cominciare subito.
+
   - name: aiuto-cercasi
     color: '2f6f4f'
     description: Non serve saper programmare. Serve conoscere la materia.
