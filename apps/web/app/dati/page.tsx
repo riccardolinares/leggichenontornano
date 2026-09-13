@@ -5,6 +5,7 @@ import { metadatiPagina } from '@/lib/seo';
 import { data, numero, percentuale } from '@/lib/testo';
 import { Tabella } from '@/components/tabella';
 import { ContatoreNazionale } from '@/components/contatore';
+import { GraficoBarre } from '@/components/grafico-barre';
 
 export const dynamic = 'force-static';
 
@@ -173,28 +174,52 @@ export default function Dati() {
               all’articolo colpito, e nessuna delle due fonti deriva dall’altra: confrontarle misura
               quanto leggiamo bene, senza chiedere il parere di nessuno.
             </p>
-            <Tabella didascalia="Accordo fra le declaratorie lette dai dispositivi della Corte costituzionale e le note di aggiornamento scritte da Normattiva negli atti colpiti.">
-              <thead>
-                <tr>
-                  <th scope="col">Confidenza dell’arco</th>
-                  <th scope="col">Archi</th>
-                  <th scope="col">Confermati da Normattiva</th>
-                  <th scope="col">Accordo</th>
-                </tr>
-              </thead>
-              <tbody>
-                {concordanza.map((c) => (
-                  <tr key={c.confidence}>
-                    <th scope="row" style={{ fontWeight: 400 }}>
-                      {c.confidence}
-                    </th>
-                    <td>{numero(c.archi)}</td>
-                    <td>{numero(c.confermate)}</td>
-                    <td>{percentuale(c.accordo)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </Tabella>
+            {/* Qui il grafico guadagna il suo posto perché la tabella, da sola,
+                chiede di confrontare due percentuali con una terza scritta in
+                un altro paragrafo. Con la soglia disegnata dentro le barre il
+                confronto non si fa più: si vede. È anche l'unica precisione
+                che questo sito può misurare senza revisione umana — quella per
+                controllo è ancora «non misurata», e finché lo è non c'è niente
+                da disegnare. */}
+            <GraficoBarre
+              barre={concordanza.map((c) => ({
+                etichetta: `Confidenza ${c.confidence}`,
+                etichettaLunga: `archi a confidenza ${c.confidence}, ${numero(c.archi)} in tutto`,
+                valore: (c.accordo ?? 0) * 100,
+                valoreTesto: percentuale(c.accordo),
+                tono: (c.accordo ?? 0) >= THRESHOLD.minPrecision ? 'neutro' : 'ossido',
+              }))}
+              massimo={100}
+              soglia={{
+                valore: THRESHOLD.minPrecision * 100,
+                spiegazione: `La riga tratteggiata è la soglia di pubblicazione, ${percentuale(THRESHOLD.minPrecision)}. Gli archi che la superano finiscono nel sito; quelli che restano sotto no, ed è tutto quello che la soglia decide.`,
+              }}
+              descrizione={`Accordo fra le declaratorie lette dai dispositivi della Corte e le note di Normattiva, a confronto con la soglia di pubblicazione fissata a ${percentuale(THRESHOLD.minPrecision)}`}
+              alternativa={
+                <Tabella didascalia="Accordo fra le declaratorie lette dai dispositivi della Corte costituzionale e le note di aggiornamento scritte da Normattiva negli atti colpiti.">
+                  <thead>
+                    <tr>
+                      <th scope="col">Confidenza dell’arco</th>
+                      <th scope="col">Archi</th>
+                      <th scope="col">Confermati da Normattiva</th>
+                      <th scope="col">Accordo</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {concordanza.map((c) => (
+                      <tr key={c.confidence}>
+                        <th scope="row" style={{ fontWeight: 400 }}>
+                          {c.confidence}
+                        </th>
+                        <td>{numero(c.archi)}</td>
+                        <td>{numero(c.confermate)}</td>
+                        <td>{percentuale(c.accordo)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Tabella>
+              }
+            />
             <p style={{ fontSize: '0.9rem', color: 'var(--inchiostro-tenue)' }}>
               Un disaccordo non prova che la lettura sia sbagliata: la nota può stare su un altro
               articolo dello stesso atto, o mancare dalla versione che abbiamo ingerito. Il numero è

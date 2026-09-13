@@ -95,10 +95,17 @@ export function classeGravita(severity: string): string {
   return 'etichetta etichetta--area-grigia';
 }
 
-/** Percentuale con una cifra, o un trattino esplicito quando non è misurata. */
+/**
+ * Percentuale con una cifra, o un trattino esplicito quando non è misurata.
+ *
+ * Passa da `Intl` e non da `toFixed` per lo stesso motivo di `numeroDecimale`:
+ * `toFixed` scrive «16.8%», che in una pagina italiana non si legge come un
+ * decimale ma come un refuso — e un refuso su una cifra fa dubitare della
+ * cifra.
+ */
 export function percentuale(value: number | null): string {
   if (value === null) return 'non misurata';
-  return `${(value * 100).toFixed(1).replace(/\.0$/, '')}%`;
+  return `${new Intl.NumberFormat('it-IT', { maximumFractionDigits: 1 }).format(value * 100)}%`;
 }
 
 /** Numero con separatore delle migliaia all'italiana. */
