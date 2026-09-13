@@ -18,7 +18,13 @@ concurrency:
 env:
   # Il dataset versionato basta per costruire il sito e girare i test: nessun
   # passo di questa verifica scarica il corpus da Normattiva.
-  ANTINOMIA_SNAPSHOT: data/snapshot
+  #
+  # **Assoluto, non relativo.** Il sito e Playwright girano con la cartella di
+  # lavoro in `apps/web`, dove `data/snapshot` non esiste: con un percorso
+  # relativo la CI costruiva un sito con il dataset vuoto, e i test che
+  # dipendono dai dati si saltavano da soli invece di fallire. Trentotto test
+  # saltati e nessuno che se ne accorgesse.
+  ANTINOMIA_SNAPSHOT: ${{ github.workspace }}/data/snapshot
 
 jobs:
   pacchetti:
@@ -26,9 +32,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      # Nessun «version:» qui: la versione autorevole è `packageManager` in
+      # package.json, ed è più precisa (9.15.0, non 9). Dichiararla in due
+      # posti fa fallire l'azione — «Multiple versions of pnpm specified» — e
+      # tenerle allineate a mano è un lavoro che prima o poi qualcuno sbaglia.
       - uses: pnpm/action-setup@v4
-        with:
-          version: 9
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -54,9 +62,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      # Nessun «version:» qui: la versione autorevole è `packageManager` in
+      # package.json, ed è più precisa (9.15.0, non 9). Dichiararla in due
+      # posti fa fallire l'azione — «Multiple versions of pnpm specified» — e
+      # tenerle allineate a mano è un lavoro che prima o poi qualcuno sbaglia.
       - uses: pnpm/action-setup@v4
-        with:
-          version: 9
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -98,9 +108,11 @@ jobs:
       DATABASE_URL: postgresql://antinomia:antinomia@localhost:5432/antinomia
     steps:
       - uses: actions/checkout@v4
+      # Nessun «version:» qui: la versione autorevole è `packageManager` in
+      # package.json, ed è più precisa (9.15.0, non 9). Dichiararla in due
+      # posti fa fallire l'azione — «Multiple versions of pnpm specified» — e
+      # tenerle allineate a mano è un lavoro che prima o poi qualcuno sbaglia.
       - uses: pnpm/action-setup@v4
-        with:
-          version: 9
       - uses: actions/setup-node@v4
         with:
           node-version: 22
