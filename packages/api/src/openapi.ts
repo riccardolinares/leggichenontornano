@@ -5,13 +5,13 @@
  * generato automaticamente da tipi interni finirebbe per descrivere le nostre
  * strutture invece del nostro contratto.
  */
-import { ATTRIBUTION, DISCLAIMER } from '@antinomia/corpus';
+import { ATTRIBUTION, DISCLAIMER } from '@leggichenontornano/corpus';
 
 export function openApiDocument(basePath = '/v1'): Record<string, unknown> {
   return {
     openapi: '3.1.0',
     info: {
-      title: 'Antinomia — API pubblica',
+      title: 'LeggiCheNonTornano.it — API pubblica',
       version: '1.0.0',
       description: [
         'API di sola lettura sul corpus normativo statale e sulle anomalie rilevate.',

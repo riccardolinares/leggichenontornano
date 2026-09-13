@@ -339,7 +339,7 @@ grafo.
 
 E la scoperta ha prodotto qualcosa che vale più del controllo: **due fonti
 indipendenti** che dicono la stessa cosa. Il comando
-`antinomia-corpus consulta verifica` confronta ciò che abbiamo letto nei
+`lcnt-corpus consulta verifica` confronta ciò che abbiamo letto nei
 dispositivi della Corte con ciò che Normattiva annota negli atti colpiti.
 Sull'ingestione corrente l'accordo è **9 su 9 per gli archi ad alta
 confidenza**. Nessuna delle due fonti deriva dall'altra, quindi non è un

@@ -19,8 +19,8 @@
  * Non esiste uno strumento che chieda un giudizio, né che restituisca una
  * conclusione senza le prove per contestarla.
  */
-import type { SnapshotAnomaly, SnapshotReader } from '@antinomia/corpus';
-import { ATTRIBUTION, DISCLAIMER } from '@antinomia/corpus';
+import type { SnapshotAnomaly, SnapshotReader } from '@leggichenontornano/corpus';
+import { ATTRIBUTION, DISCLAIMER } from '@leggichenontornano/corpus';
 
 export const AVVERTENZA = `${DISCLAIMER} ${ATTRIBUTION}`;
 

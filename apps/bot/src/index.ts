@@ -1,5 +1,5 @@
 /**
- * `@antinomia/bot`
+ * `@leggichenontornano/bot`
  *
  * Una segnalazione al giorno, sempre la stessa forma, sempre con il link.
  * La costanza batte il picco: un account che pubblica una cosa verificabile

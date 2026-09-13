@@ -11,7 +11,7 @@
  * La terza non è normativa statale: è un rinvio sovranazionale e va tenuto
  * distinto, non forzato dentro un URN:NIR che non gli appartiene.
  */
-import { actUrn, tryParseUrn } from '@antinomia/akn-parser';
+import { actUrn, tryParseUrn } from '@leggichenontornano/akn-parser';
 
 export type NormalizedRefKind = 'nir' | 'eu' | 'sconosciuto';
 

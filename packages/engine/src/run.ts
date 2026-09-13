@@ -9,7 +9,7 @@
  * al momento del calcolo, perché una segnalazione pubblicata deve restare
  * riproducibile anche dopo un aggiornamento del corpus (ADR 0007).
  */
-import { getPrisma } from '@antinomia/corpus';
+import { getPrisma } from '@leggichenontornano/corpus';
 import { CorpusView, type ActView, type ProvisionView } from './corpus-view.js';
 import {
   applyGate,

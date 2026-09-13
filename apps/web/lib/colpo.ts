@@ -1,4 +1,4 @@
-import type { SnapshotAnomaly } from '@antinomia/corpus';
+import type { SnapshotAnomaly } from '@leggichenontornano/corpus';
 
 /**
  * Il numero che regge da solo, per una singola segnalazione.

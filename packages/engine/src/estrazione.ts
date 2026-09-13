@@ -9,7 +9,7 @@
  * Non vede mai due norme insieme e non gli viene mai chiesto un giudizio. La
  * contraddizione arriva dopo, come query su ciò che è stato estratto.
  */
-import { getPrisma, type SnapshotVertical } from '@antinomia/corpus';
+import { getPrisma, type SnapshotVertical } from '@leggichenontornano/corpus';
 import { RuleBasedExtractor } from './deontic/rule-based.js';
 import { LlmExtractor } from './deontic/llm.js';
 import type { DeonticExtractor, DeonticProposition, Vocabulary } from './deontic/types.js';

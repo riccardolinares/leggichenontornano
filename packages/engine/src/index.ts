@@ -1,5 +1,5 @@
 /**
- * `@antinomia/engine`
+ * `@leggichenontornano/engine`
  *
  * Il motore delle anomalie: tre livelli di controlli sopra il grafo del corpus,
  * il cancello di pubblicazione all'85% di precisione e la coda di revisione

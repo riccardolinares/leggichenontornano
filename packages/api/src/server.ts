@@ -2,8 +2,8 @@
 /**
  * Processo autonomo che espone l'API.
  *
- *   DATABASE_URL=... antinomia-api                 # legge da PostgreSQL
- *   ANTINOMIA_SNAPSHOT=data/snapshot antinomia-api # legge dal dataset JSONL
+ *   DATABASE_URL=... lcnt-api                 # legge da PostgreSQL
+ *   LCNT_SNAPSHOT=data/snapshot lcnt-api # legge dal dataset JSONL
  *
  * La seconda forma non richiede alcun database: chi scarica il dataset può
  * alzare la stessa API sul proprio portatile e verificare che risponda come la
@@ -14,7 +14,7 @@ import { DatabaseSource, SnapshotSource } from './source.js';
 import { createRouter } from './router.js';
 
 const port = Number(process.env['PORT'] ?? 4000);
-const snapshotDir = process.env['ANTINOMIA_SNAPSHOT'];
+const snapshotDir = process.env['LCNT_SNAPSHOT'];
 
 const source = snapshotDir ? SnapshotSource.fromDirectory(snapshotDir) : new DatabaseSource();
 

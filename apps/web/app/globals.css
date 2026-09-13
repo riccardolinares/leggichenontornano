@@ -354,6 +354,10 @@ main {
   border: 1px solid currentColor;
 }
 
+/* «antinomia» qui è il termine giuridico — un conflitto fra norme — non il
+   nome del progetto, che è LeggiCheNonTornano.it. È la parola con cui la
+   dottrina chiama esattamente questa cosa, e sostituirla con un sinonimo più
+   generico farebbe perdere precisione. */
 .etichetta--antinomia {
   color: var(--ossido);
   background: var(--ossido-velo);

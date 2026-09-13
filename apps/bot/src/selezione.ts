@@ -10,7 +10,7 @@
  * giorno scelgono la stessa segnalazione, e un'esecuzione fallita si può
  * ripetere senza pubblicare due volte cose diverse.
  */
-import type { SnapshotAnomaly, SnapshotReader } from '@antinomia/corpus';
+import type { SnapshotAnomaly, SnapshotReader } from '@leggichenontornano/corpus';
 
 export interface Selezione {
   anomalia: SnapshotAnomaly;

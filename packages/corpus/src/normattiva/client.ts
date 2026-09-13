@@ -52,7 +52,7 @@ export class NormattivaError extends Error {
 }
 
 const DEFAULT_UA =
-  'antinomia/0.1 (+https://github.com/riccardolinares/leggichenontornano) progetto civico open source';
+  'leggichenontornano/0.1 (+https://github.com/riccardolinares/leggichenontornano) progetto civico open source';
 
 export class NormattivaClient {
   private readonly baseUrl: string;

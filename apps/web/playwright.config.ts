@@ -42,7 +42,7 @@ export default defineConfig({
   timeout: 45_000,
   expect: { timeout: 10_000 },
   use: {
-    baseURL: process.env['ANTINOMIA_BASE_URL'] ?? 'http://127.0.0.1:3100',
+    baseURL: process.env['LCNT_BASE_URL'] ?? 'http://127.0.0.1:3100',
     trace: 'retain-on-failure',
     locale: 'it-IT',
     timezoneId: 'Europe/Rome',
@@ -74,7 +74,7 @@ export default defineConfig({
    * risultato sembrava plausibile: qualche test in meno, nessun errore. Meglio
    * un fallimento immediato «porta occupata» che un verde che non vale niente.
    */
-  webServer: process.env['ANTINOMIA_BASE_URL']
+  webServer: process.env['LCNT_BASE_URL']
     ? undefined
     : {
         command: 'pnpm exec next start -p 3100',

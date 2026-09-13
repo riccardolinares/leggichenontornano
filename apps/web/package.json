@@ -1,5 +1,5 @@
 {
-  "name": "@antinomia/web",
+  "name": "@leggichenontornano/web",
   "version": "0.1.0",
   "license": "EUPL-1.2",
   "private": true,
@@ -14,10 +14,10 @@
     "e2e:install": "playwright install --with-deps chromium"
   },
   "dependencies": {
-    "@antinomia/akn-parser": "workspace:*",
-    "@antinomia/api": "workspace:*",
-    "@antinomia/corpus": "workspace:*",
-    "@antinomia/engine": "workspace:*",
+    "@leggichenontornano/akn-parser": "workspace:*",
+    "@leggichenontornano/api": "workspace:*",
+    "@leggichenontornano/corpus": "workspace:*",
+    "@leggichenontornano/engine": "workspace:*",
     "next": "^15.5.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

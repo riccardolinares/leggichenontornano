@@ -1,4 +1,4 @@
-import { SnapshotReader, type SnapshotData } from '@antinomia/corpus';
+import { SnapshotReader, type SnapshotData } from '@leggichenontornano/corpus';
 import { describe, expect, it } from 'vitest';
 import {
   AVVERTENZA,

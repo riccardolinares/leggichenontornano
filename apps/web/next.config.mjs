@@ -4,10 +4,10 @@ const nextConfig = {
   // Il sito si genera dal dataset JSONL: i pacchetti del monorepo vengono
   // transpilati insieme all'app invece di essere pubblicati e reinstallati.
   transpilePackages: [
-    '@antinomia/corpus',
-    '@antinomia/engine',
-    '@antinomia/api',
-    '@antinomia/akn-parser',
+    '@leggichenontornano/corpus',
+    '@leggichenontornano/engine',
+    '@leggichenontornano/api',
+    '@leggichenontornano/akn-parser',
   ],
   poweredByHeader: false,
   eslint: { ignoreDuringBuilds: true },

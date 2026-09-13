@@ -2,7 +2,7 @@
 
 Non aprite una issue pubblica.
 
-Scrivete a **linares.riccardo@gmail.com** con «antinomia — sicurezza»
+Scrivete a **linares.riccardo@gmail.com** con «leggichenontornano — sicurezza»
 nell'oggetto. Rispondiamo entro cinque giorni lavorativi e vi teniamo aggiornati
 fino alla chiusura.
 

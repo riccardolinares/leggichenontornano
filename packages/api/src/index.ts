@@ -1,5 +1,5 @@
 /**
- * `@antinomia/api`
+ * `@leggichenontornano/api`
  *
  * L'API pubblica del progetto. È stata scritta **prima** del frontend, e il
  * frontend ne è il primo consumatore: se il sito avesse una via d'accesso

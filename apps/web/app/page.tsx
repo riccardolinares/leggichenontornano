@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { CHECK_DEFINITIONS } from '@antinomia/engine';
+import { CHECK_DEFINITIONS } from '@leggichenontornano/engine';
 import { Tabella } from '@/components/tabella';
 import { dataset } from '@/lib/dataset';
 import { metadatiPagina } from '@/lib/seo';

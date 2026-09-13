@@ -1,5 +1,5 @@
 /**
- * `@antinomia/mcp`
+ * `@leggichenontornano/mcp`
  *
  * Un server MCP che mette «Le leggi che non tornano» dentro un assistente.
  *

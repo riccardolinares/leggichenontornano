@@ -15,7 +15,7 @@ import {
   parseVersionFileName,
   type AknAct,
   type Timeline,
-} from '@antinomia/akn-parser';
+} from '@leggichenontornano/akn-parser';
 
 export interface CollectionFile {
   path: string;

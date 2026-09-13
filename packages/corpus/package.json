@@ -1,5 +1,5 @@
 {
-  "name": "@antinomia/corpus",
+  "name": "@leggichenontornano/corpus",
   "version": "0.1.0",
   "license": "EUPL-1.2",
   "type": "module",
@@ -16,7 +16,7 @@
     }
   },
   "bin": {
-    "antinomia-corpus": "./dist/cli.js"
+    "lcnt-corpus": "./dist/cli.js"
   },
   "files": [
     "dist",
@@ -33,7 +33,7 @@
     "pipeline": "node dist/cli.js pipeline"
   },
   "dependencies": {
-    "@antinomia/akn-parser": "workspace:*",
+    "@leggichenontornano/akn-parser": "workspace:*",
     "@prisma/client": "^6.19.3",
     "fflate": "^0.8.2",
     "hyparquet-writer": "^0.16.9"

@@ -15,7 +15,7 @@
  */
 import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
-import { getPrisma } from '@antinomia/corpus';
+import { getPrisma } from '@leggichenontornano/corpus';
 
 export type FonteGold =
   'consiglio-di-stato' | 'corte-costituzionale' | 'sezioni-unite' | 'circolare';

@@ -21,9 +21,9 @@ Una voce, tre righe, uguale ovunque.
 ```json
 {
   "mcpServers": {
-    "antinomia": {
+    "leggichenontornano": {
       "command": "npx",
-      "args": ["-y", "@antinomia/mcp"]
+      "args": ["-y", "@leggichenontornano/mcp"]
     }
   }
 }
@@ -34,7 +34,7 @@ Riavvia Claude Desktop. Gli strumenti compaiono nel menù degli allegati.
 ### Claude Code
 
 ```bash
-claude mcp add antinomia -- npx -y @antinomia/mcp
+claude mcp add leggichenontornano -- npx -y @leggichenontornano/mcp
 ```
 
 ### Codex
@@ -42,14 +42,14 @@ claude mcp add antinomia -- npx -y @antinomia/mcp
 In `~/.codex/config.toml`:
 
 ```toml
-[mcp_servers.antinomia]
+[mcp_servers.leggichenontornano]
 command = "npx"
-args = ["-y", "@antinomia/mcp"]
+args = ["-y", "@leggichenontornano/mcp"]
 ```
 
 ### Qualunque altro client
 
-Il trasporto è **stdio**, il comando è `npx -y @antinomia/mcp`. Non serve altro:
+Il trasporto è **stdio**, il comando è `npx -y @leggichenontornano/mcp`. Non serve altro:
 niente porte, niente processi da tenere vivi, niente autenticazione.
 
 ### Se hai clonato il repository
@@ -57,16 +57,16 @@ niente porte, niente processi da tenere vivi, niente autenticazione.
 ```json
 {
   "mcpServers": {
-    "antinomia": {
+    "leggichenontornano": {
       "command": "node",
       "args": ["/percorso/del/clone/packages/mcp/dist/server.js"],
-      "env": { "ANTINOMIA_SNAPSHOT": "/percorso/del/clone/data/snapshot" }
+      "env": { "LCNT_SNAPSHOT": "/percorso/del/clone/data/snapshot" }
     }
   }
 }
 ```
 
-Con `ANTINOMIA_SNAPSHOT` il server non tocca la rete e legge i dati del tuo
+Con `LCNT_SNAPSHOT` il server non tocca la rete e legge i dati del tuo
 clone, freschi quanto il tuo ultimo `git pull`.
 
 ---
@@ -153,11 +153,11 @@ legge, e non lo è.
 
 Tutte facoltative.
 
-| Variabile               | Effetto                                                             |
-| ----------------------- | ------------------------------------------------------------------- |
-| `ANTINOMIA_SNAPSHOT`    | Percorso di un dataset locale. Se c'è, la rete non viene toccata    |
-| `ANTINOMIA_CACHE`       | Dove tenere il dataset scaricato. Predefinito: `~/.cache/antinomia` |
-| `ANTINOMIA_DATASET_URL` | Da dove scaricarlo, per usare un mirror o una copia propria         |
+| Variabile          | Effetto                                                                      |
+| ------------------ | ---------------------------------------------------------------------------- |
+| `LCNT_SNAPSHOT`    | Percorso di un dataset locale. Se c'è, la rete non viene toccata             |
+| `LCNT_CACHE`       | Dove tenere il dataset scaricato. Predefinito: `~/.cache/leggichenontornano` |
+| `LCNT_DATASET_URL` | Da dove scaricarlo, per usare un mirror o una copia propria                  |
 
 ## Licenze
 

@@ -41,7 +41,7 @@ pnpm install
 pnpm run build
 pnpm run typecheck
 pnpm run test
-pnpm --filter @antinomia/web run build
+pnpm --filter @leggichenontornano/web run build
 pnpm run e2e
 ```
 
@@ -124,7 +124,7 @@ multivigente della radice. `MODIFICA`, `INTRODUCE`, `ABROGA`, `SOSTITUISCE` e
 Il **vocabolario controllato** serve poi a distinguere fattispecie _dentro_ un
 dominio già delimitato: poche centinaia di concetti, con i sinonimi che li
 denotano in quella materia. `validaVocabolario` rifiuta le forme troppo
-generiche e quelle condivise fra due concetti; `pnpm --filter @antinomia/engine
+generiche e quelle condivise fra due concetti; `pnpm --filter @leggichenontornano/engine
 test` lo verifica su ogni file in `data/vocabolari/`.
 
 Il vocabolario è un documento che si legge e si discute, non un artefatto

@@ -27,7 +27,7 @@
  *     inammissibilità o infondatezza non producono niente. Solo la formula
  *     «dichiara l'illegittimità costituzionale» produce una relazione.
  */
-import { parseActCitations, type ActCitation } from '@antinomia/akn-parser';
+import { parseActCitations, type ActCitation } from '@leggichenontornano/akn-parser';
 
 /** Una dichiarazione di illegittimità, come sta scritta nel dispositivo. */
 export interface DichiarazioneIllegittimita {

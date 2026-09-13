@@ -5,7 +5,12 @@
  * all'altra) e **datati** (da quando lo fa). Un arco senza tipo o senza data non
  * serve a niente al motore delle anomalie, e per questo non viene creato.
  */
-import { actUrn, citationAgreesWith, type AknAct, parseModifications } from '@antinomia/akn-parser';
+import {
+  actUrn,
+  citationAgreesWith,
+  type AknAct,
+  parseModifications,
+} from '@leggichenontornano/akn-parser';
 import { normalizeHref } from './href.js';
 import { relazioniDaPreambolo } from './preambolo.js';
 

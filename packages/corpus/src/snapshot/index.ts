@@ -1,5 +1,5 @@
 /**
- * `@antinomia/corpus/snapshot`
+ * `@leggichenontornano/corpus/snapshot`
  *
  * Il dataset derivato: come si scrive dal database e come si rilegge senza.
  * Il sito pubblico consuma **questo**, non il database: in questo modo la

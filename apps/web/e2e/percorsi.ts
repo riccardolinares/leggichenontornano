@@ -15,7 +15,7 @@ export interface Percorso {
 }
 
 const SNAPSHOT =
-  process.env['ANTINOMIA_SNAPSHOT'] ?? join(process.cwd(), '..', '..', 'data', 'snapshot');
+  process.env['LCNT_SNAPSHOT'] ?? join(process.cwd(), '..', '..', 'data', 'snapshot');
 
 function jsonl<T>(file: string): T[] {
   const path = join(SNAPSHOT, file);

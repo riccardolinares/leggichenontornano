@@ -9,7 +9,7 @@
  *
  * Quindi, in ordine:
  *
- *  1. `ANTINOMIA_SNAPSHOT` — un dataset già sul disco. È il caso di chi
+ *  1. `LCNT_SNAPSHOT` — un dataset già sul disco. È il caso di chi
  *     sviluppa: nessuna rete, dati freschi quanto il suo clone.
  *  2. Altrimenti si scarica il dataset pubblico e lo si tiene in cache. Zero
  *     configurazione, e i file sono gli stessi che il sito legge.
@@ -21,11 +21,11 @@
 import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { homedir, tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { SnapshotReader, SNAPSHOT_FILES } from '@antinomia/corpus';
+import { SnapshotReader, SNAPSHOT_FILES } from '@leggichenontornano/corpus';
 
 /** Dove stanno i file del dataset pubblico, quando non ce n'è uno locale. */
 const BASE_PUBBLICA =
-  process.env['ANTINOMIA_DATASET_URL'] ??
+  process.env['LCNT_DATASET_URL'] ??
   'https://raw.githubusercontent.com/riccardolinares/leggichenontornano/main/data/snapshot';
 
 /** Ore dopo le quali la cache si considera vecchia. Il dataset si rigenera una volta al giorno. */
@@ -40,10 +40,10 @@ export interface EsitoSorgente {
 
 function cartellaCache(): string {
   const base =
-    process.env['ANTINOMIA_CACHE'] ??
+    process.env['LCNT_CACHE'] ??
     (process.env['XDG_CACHE_HOME']
-      ? join(process.env['XDG_CACHE_HOME'], 'antinomia')
-      : join(homedir() || tmpdir(), '.cache', 'antinomia'));
+      ? join(process.env['XDG_CACHE_HOME'], 'leggichenontornano')
+      : join(homedir() || tmpdir(), '.cache', 'leggichenontornano'));
   mkdirSync(base, { recursive: true });
   return base;
 }
@@ -87,7 +87,7 @@ async function scaricaSeServe(dir: string): Promise<string[]> {
 }
 
 export async function apriSorgente(): Promise<EsitoSorgente> {
-  const locale = process.env['ANTINOMIA_SNAPSHOT'];
+  const locale = process.env['LCNT_SNAPSHOT'];
   if (locale && existsSync(join(locale, SNAPSHOT_FILES.acts))) {
     const reader = SnapshotReader.fromDirectory(locale);
     return {

@@ -1,5 +1,5 @@
 {
-  "name": "antinomia",
+  "name": "leggichenontornano",
   "version": "0.1.0",
   "private": true,
   "description": "Motore open source per rendere visibili le incongruenze della legislazione italiana. Sito pubblico: \"Le leggi che non tornano\".",
@@ -11,12 +11,12 @@
   "packageManager": "pnpm@9.15.0",
   "scripts": {
     "build": "pnpm -r --filter \"./packages/*\" run build",
-    "build:all": "pnpm run build && pnpm --filter @antinomia/web run build",
+    "build:all": "pnpm run build && pnpm --filter @leggichenontornano/web run build",
     "typecheck": "pnpm -r run typecheck",
     "test": "pnpm -r run test",
     "lint": "pnpm -r run lint",
-    "pipeline": "pnpm --filter @antinomia/corpus run pipeline",
-    "e2e": "pnpm --filter @antinomia/web run e2e",
+    "pipeline": "pnpm --filter @leggichenontornano/corpus run pipeline",
+    "e2e": "pnpm --filter @leggichenontornano/web run e2e",
     "format": "prettier --write ."
   },
   "devDependencies": {

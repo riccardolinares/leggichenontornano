@@ -6,7 +6,7 @@
 [![Dati: CC BY 4.0](https://img.shields.io/badge/dati-CC%20BY%204.0-lightgrey.svg)](https://dati.normattiva.it)
 
 Piattaforma open source che rende visibili incongruenze, contraddizioni e aree
-grigie della legislazione italiana. Nome tecnico del progetto: **antinomia**.
+grigie della legislazione italiana.
 
 Il sito sta su **[leggichenontornano.it](https://leggichenontornano.it)**. Da
 lì: [le segnalazioni](https://leggichenontornano.it),
@@ -113,12 +113,12 @@ pnpm install
 pnpm run build
 
 # Il sito, dal dataset già nel repository
-pnpm --filter @antinomia/web run build
-pnpm --filter @antinomia/web exec next start
+pnpm --filter @leggichenontornano/web run build
+pnpm --filter @leggichenontornano/web exec next start
 
 # I test: unitari, poi accessibilità e usabilità nel browser
 pnpm run test
-pnpm --filter @antinomia/web exec playwright install --with-deps chromium
+pnpm --filter @leggichenontornano/web exec playwright install --with-deps chromium
 pnpm run e2e
 ```
 
@@ -127,7 +127,7 @@ pnpm run e2e
 ```bash
 docker compose up -d                      # PostgreSQL 16
 cp .env.example .env                      # DATABASE_URL
-pnpm --filter @antinomia/corpus exec prisma db push
+pnpm --filter @leggichenontornano/corpus exec prisma db push
 
 # Le collezioni disponibili su dati.normattiva.it
 node packages/corpus/dist/cli.js collections
@@ -171,7 +171,7 @@ pipeline quotidiana.
 L'API pubblica si alza con o senza database:
 
 ```bash
-ANTINOMIA_SNAPSHOT=data/snapshot node packages/api/dist/server.js   # dal dataset
+LCNT_SNAPSHOT=data/snapshot node packages/api/dist/server.js   # dal dataset
 DATABASE_URL=... node packages/api/dist/server.js                   # dal database
 ```
 
@@ -205,7 +205,7 @@ Questa fonte dà anche **l'unica precisione che possiamo misurare senza
 revisione umana**: Normattiva annota le stesse declaratorie in coda all'articolo
 colpito, e le due fonti non derivano l'una dall'altra. Sull'ingestione corrente
 l'accordo è **9 su 9** per gli archi ad alta confidenza
-(`antinomia-corpus consulta verifica`, e il numero viaggia nel dataset).
+(`lcnt-corpus consulta verifica`, e il numero viaggia nel dataset).
 
 Leggiamo il **dispositivo**, cioè la parte in cui la Corte scrive cosa ha
 deciso, e ne copiamo gli estremi. Non interpretiamo, non riassumiamo, non
@@ -291,7 +291,7 @@ pubblico e lo tiene in cache.
 ```json
 {
   "mcpServers": {
-    "antinomia": { "command": "npx", "args": ["-y", "@antinomia/mcp"] }
+    "leggichenontornano": { "command": "npx", "args": ["-y", "@leggichenontornano/mcp"] }
   }
 }
 ```

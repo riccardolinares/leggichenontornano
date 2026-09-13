@@ -6,7 +6,7 @@
  * del dataset. Le funzioni di questo file sono la terza categoria, e sono poche
  * di proposito.
  */
-import { humanLabel, tryParseUrn } from '@antinomia/akn-parser';
+import { humanLabel, tryParseUrn } from '@leggichenontornano/akn-parser';
 
 const MESI = [
   'gennaio',

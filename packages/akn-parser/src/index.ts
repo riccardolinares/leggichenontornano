@@ -1,5 +1,5 @@
 /**
- * `@antinomia/akn-parser`
+ * `@leggichenontornano/akn-parser`
  *
  * Parser e normalizzatore Akoma Ntoso per gli open data di Normattiva, con
  * risoluzione di URN:NIR ed ELI e con la risoluzione della multivigenza: dato un

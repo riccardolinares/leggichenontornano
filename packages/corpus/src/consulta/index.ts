@@ -1,5 +1,5 @@
 /**
- * `@antinomia/corpus/consulta`
+ * `@leggichenontornano/corpus/consulta`
  *
  * Le pronunce della Corte costituzionale: archivio ufficiale, lettura del
  * dispositivo, archi `DICHIARA_ILLEGITTIMO` e voci per il gold standard.

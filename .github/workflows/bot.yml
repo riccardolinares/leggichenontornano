@@ -36,7 +36,7 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm --filter @antinomia/corpus exec prisma generate
+      - run: pnpm --filter @leggichenontornano/corpus exec prisma generate
       - run: pnpm run build
 
       - name: Pubblica la segnalazione del giorno
@@ -44,8 +44,8 @@ jobs:
           # Assoluto, come in verifica.yml: un percorso relativo regge finché
           # nessuno cambia la cartella di lavoro, e poi legge un dataset vuoto
           # senza dirlo.
-          ANTINOMIA_SNAPSHOT: ${{ github.workspace }}/data/snapshot
-          ANTINOMIA_SITE_URL: https://leggichenontornano.it
+          LCNT_SNAPSHOT: ${{ github.workspace }}/data/snapshot
+          LCNT_SITE_URL: https://leggichenontornano.it
           MASTODON_INSTANCE: ${{ secrets.MASTODON_INSTANCE }}
           MASTODON_TOKEN: ${{ secrets.MASTODON_TOKEN }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
@@ -61,7 +61,7 @@ jobs:
             echo "Niente da registrare."
             exit 0
           fi
-          git config user.name "bot antinomia"
+          git config user.name "bot leggichenontornano"
           git config user.email "bot@leggichenontornano.it"
           git add data/bot/pubblicate.json
           git commit -m "Registra la segnalazione pubblicata oggi"

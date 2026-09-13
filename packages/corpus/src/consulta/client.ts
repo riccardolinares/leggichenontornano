@@ -24,7 +24,7 @@ export const ARCHIVI_PRONUNCE = [
 export const CONSULTA_LICENCE = 'CC BY-SA 3.0 — Corte costituzionale, dati.cortecostituzionale.it';
 
 const DEFAULT_UA =
-  'antinomia/0.1 (+https://github.com/riccardolinares/leggichenontornano) progetto civico open source';
+  'leggichenontornano/0.1 (+https://github.com/riccardolinares/leggichenontornano) progetto civico open source';
 
 export interface ConsultaOptions {
   baseUrl?: string;

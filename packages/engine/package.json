@@ -1,5 +1,5 @@
 {
-  "name": "@antinomia/engine",
+  "name": "@leggichenontornano/engine",
   "version": "0.1.0",
   "license": "EUPL-1.2",
   "type": "module",
@@ -12,7 +12,7 @@
     }
   },
   "bin": {
-    "antinomia-engine": "./dist/cli.js"
+    "lcnt-engine": "./dist/cli.js"
   },
   "files": [
     "dist"
@@ -23,8 +23,8 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@antinomia/akn-parser": "workspace:*",
-    "@antinomia/corpus": "workspace:*",
+    "@leggichenontornano/akn-parser": "workspace:*",
+    "@leggichenontornano/corpus": "workspace:*",
     "@anthropic-ai/sdk": "^0.71.0"
   },
   "devDependencies": {

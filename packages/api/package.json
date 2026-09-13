@@ -1,5 +1,5 @@
 {
-  "name": "@antinomia/api",
+  "name": "@leggichenontornano/api",
   "version": "0.1.0",
   "license": "EUPL-1.2",
   "type": "module",
@@ -12,7 +12,7 @@
     }
   },
   "bin": {
-    "antinomia-api": "./dist/server.js"
+    "lcnt-api": "./dist/server.js"
   },
   "files": [
     "dist"
@@ -24,9 +24,9 @@
     "start": "node dist/server.js"
   },
   "dependencies": {
-    "@antinomia/akn-parser": "workspace:*",
-    "@antinomia/corpus": "workspace:*",
-    "@antinomia/engine": "workspace:*"
+    "@leggichenontornano/akn-parser": "workspace:*",
+    "@leggichenontornano/corpus": "workspace:*",
+    "@leggichenontornano/engine": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.7.2",
