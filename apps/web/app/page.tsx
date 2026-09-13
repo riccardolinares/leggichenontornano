@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { CHECK_DEFINITIONS } from '@antinomia/engine';
 import { Tabella } from '@/components/tabella';
 import { dataset } from '@/lib/dataset';
+import { metadatiPagina } from '@/lib/seo';
 import {
   classeGravita,
   data,
@@ -24,11 +25,16 @@ import {
  * La pagina resta economica: legge un file JSONL già in memoria.
  */
 
-export const metadata = {
-  title: 'Le leggi che non tornano',
-  description:
+/* Il canonical è `/` anche quando l'URL porta `?tipo=`: il filtro mostra un
+   sottoinsieme dello stesso indice, e senza canonical ogni filtro diventerebbe
+   una pagina concorrente della home. Il posto indicizzabile per un singolo
+   controllo è la sua pagina, `/controllo/<id>`, non un parametro. */
+export const metadata = metadatiPagina({
+  titolo: 'Le leggi che non tornano',
+  descrizione:
     'Indice delle incongruenze rilevate nella legislazione italiana, con le prove e la regola che le ha trovate.',
-};
+  percorso: '/',
+});
 
 interface Props {
   searchParams: Promise<{ tipo?: string }>;

@@ -1,22 +1,31 @@
 import { ImageResponse } from 'next/og';
+import { accentoGravita, cornice, DIMENSIONE, OG, TIPO_IMMAGINE } from '@/lib/og';
+import { colpoDiSegnalazione } from '@/lib/colpo';
 import { dataset } from '@/lib/dataset';
+import { nomeNorma, urnAtto } from '@/lib/testo';
 
 /*
- * L'anteprima Open Graph di ogni segnalazione.
+ * L'anteprima di una segnalazione.
  *
  * È la feature con il rapporto impatto/sforzo più alto del progetto: decide se
- * il contenuto circola su WhatsApp e su X, cioè se una segnalazione esce dal
- * sito o resta dentro. Costa cinquanta righe.
+ * una segnalazione esce dal sito o ci resta dentro.
  *
- * Contiene il titolo e il numero chiave, nient'altro: un'anteprima piena di
- * dettagli non si legge su un telefono, e il dettaglio sta nella pagina.
+ * Non mostra il titolo, che è lungo e pieno di riferimenti normativi: mostra
+ * **il numero di quella norma** — da quanti anni quel rinvio punta a un testo
+ * cancellato — e la frase che dice di cosa è il numero. Chi scorre una chat
+ * legge «10 anni» e capisce; il titolo lo leggerà dopo, nella pagina.
+ *
+ * Quando quel numero non esiste (segnalazione senza finestra temporale, o
+ * troppo recente perché il numero aggiunga qualcosa) si torna all'anteprima
+ * generica con il titolo. È la stessa cornice, senza cifra: un'immagine
+ * corretta in meno vale di una a effetto che dice una cosa non vera.
  */
 
 export const alt = 'Anteprima della segnalazione';
-export const size = { width: 1200, height: 630 };
-export const contentType = 'image/png';
+export const size = DIMENSIONE;
+export const contentType = TIPO_IMMAGINE;
 
-export async function generateStaticParams() {
+export function generateStaticParams() {
   return dataset()
     .publishedAnomalies()
     .map((a) => ({ id: a.id }));
@@ -24,69 +33,36 @@ export async function generateStaticParams() {
 
 export default async function Image({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const anomalia = dataset().anomaly(decodeURIComponent(id));
+  const reader = dataset();
+  const anomalia = reader.anomaly(decodeURIComponent(id));
 
-  const titolo = anomalia?.title ?? 'Le leggi che non tornano';
-  const chiave = anomalia?.urns[0]?.split(':').pop() ?? '';
-  const accento = anomalia?.severity === 'alta' ? '#8c2f21' : '#7a5206';
+  if (!anomalia) {
+    return new ImageResponse(
+      cornice({
+        occhiello: 'Le leggi che non tornano',
+        accento: OG.verderame,
+        titolo:
+          'Incongruenze, contraddizioni e aree grigie della legislazione italiana, con le prove e la regola che le ha trovate.',
+      }),
+      size,
+    );
+  }
+
+  const accento = accentoGravita(anomalia.severity);
+  const conosciutoAl = reader.data.manifest?.knownAt ?? anomalia.computedAt;
+  const colpo = colpoDiSegnalazione(anomalia, conosciutoAl);
+  const primoUrn = anomalia.urns[0];
+  const atto = primoUrn ? nomeNorma(urnAtto(primoUrn)) : undefined;
 
   return new ImageResponse(
-    <div
-      style={{
-        width: '100%',
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        background: '#eaece9',
-        color: '#131d19',
-        padding: '72px 80px',
-        fontFamily: 'sans-serif',
-      }}
-    >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
-        <div style={{ width: 14, height: 56, background: accento }} />
-        <div
-          style={{
-            display: 'flex',
-            fontSize: 26,
-            letterSpacing: 3,
-            textTransform: 'uppercase',
-            color: '#0f5c50',
-            fontWeight: 700,
-          }}
-        >
-          Le leggi che non tornano
-        </div>
-      </div>
-
-      <div
-        style={{
-          display: 'flex',
-          fontSize: titolo.length > 110 ? 48 : 60,
-          lineHeight: 1.16,
-          fontWeight: 600,
-          maxWidth: 1000,
-        }}
-      >
-        {titolo.length > 180 ? `${titolo.slice(0, 177)}…` : titolo}
-      </div>
-
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'flex-end',
-          fontSize: 24,
-          color: '#3f4b46',
-        }}
-      >
-        <div style={{ display: 'flex' }}>{chiave}</div>
-        <div style={{ display: 'flex', color: '#5c6763' }}>
-          elaborazione su dati Normattiva · CC BY 4.0
-        </div>
-      </div>
-    </div>,
+    cornice({
+      occhiello: 'Segnalazione',
+      accento,
+      ...(colpo
+        ? { cifra: colpo.cifra, unita: colpo.unita, titolo: colpo.frase }
+        : { titolo: anomalia.title }),
+      ...(atto ? { nota: atto } : {}),
+    }),
     size,
   );
 }

@@ -30,6 +30,21 @@ import {
  * lasciare che l'assenza di segnale somigli a un successo — che è esattamente
  * ciò che il progetto rimprovera a chi legge le sue segnalazioni.
  */
+/**
+ * Lo stesso indirizzo, ma sul sito che stiamo provando.
+ *
+ * `og:image` è assoluto per forza — un'anteprima relativa non la risolve
+ * nessun client — e punta al dominio di produzione. Scaricarlo così significa
+ * provare il sito pubblicato invece di quello appena costruito: il primo test
+ * scritto in questo modo passava leggendo un'immagine che stava online da
+ * giorni, mentre quella nella build era rotta.
+ */
+function localmente(indirizzo: string, pagina: string): string {
+  const voluto = new URL(indirizzo, pagina);
+  const qui = new URL(pagina);
+  return `${qui.origin}${voluto.pathname}${voluto.search}`;
+}
+
 test.describe('il dataset da cui il sito è costruito', () => {
   test('non è vuoto, e i test che dipendono dai dati stanno girando', () => {
     const norma = primaNorma();
@@ -200,6 +215,79 @@ test.describe('scheda anomalia', () => {
     await expect(og).toHaveCount(1);
     const contenuto = await og.getAttribute('content');
     expect(contenuto).toContain('opengraph-image');
+  });
+
+  /*
+   * Dichiarata non basta: deve esistere e deve essere un'immagine.
+   *
+   * Un'anteprima rotta non si vede mai guardando il sito — si vede quando
+   * qualcuno incolla il link in una chat e non compare niente, cioè fuori da
+   * qui e troppo tardi. Questo test scarica davvero i byte e controlla che
+   * siano un PNG delle dimensioni giuste.
+   */
+  test('l’anteprima Open Graph esiste davvero ed è un PNG 1200×630', async ({ page, request }) => {
+    await page.goto(`/anomalia/${encodeURIComponent(anomalia!.id)}`);
+    const indirizzo = await page.locator('meta[property="og:image"]').getAttribute('content');
+    expect(indirizzo).toBeTruthy();
+
+    const risposta = await request.get(localmente(indirizzo!, page.url()));
+    expect(risposta.status()).toBe(200);
+    expect(risposta.headers()['content-type']).toContain('image/png');
+
+    const byte = await risposta.body();
+    // Firma PNG, poi larghezza e altezza dall'intestazione IHDR.
+    expect([...byte.subarray(0, 4)]).toEqual([0x89, 0x50, 0x4e, 0x47]);
+    expect(byte.readUInt32BE(16)).toBe(1200);
+    expect(byte.readUInt32BE(20)).toBe(630);
+  });
+
+  test('anche le pagine fisse hanno la loro anteprima, non quella di un’altra', async ({
+    page,
+    request,
+  }) => {
+    const viste = new Set<string>();
+    for (const percorso of ['/', '/dati', '/come-funziona', '/stampa']) {
+      await page.goto(percorso);
+      const indirizzo = await page.locator('meta[property="og:image"]').getAttribute('content');
+      expect(indirizzo, `manca l’anteprima di ${percorso}`).toBeTruthy();
+
+      const risposta = await request.get(localmente(indirizzo!, page.url()));
+      expect(risposta.status(), `anteprima di ${percorso}`).toBe(200);
+      const byte = await risposta.body();
+      expect([...byte.subarray(0, 4)]).toEqual([0x89, 0x50, 0x4e, 0x47]);
+      viste.add(byte.length.toString());
+    }
+    // Quattro pagine, quattro immagini diverse: se una sola cornice finisse
+    // ovunque, il numero di byte coinciderebbe e questo test lo direbbe.
+    expect(viste.size).toBe(4);
+  });
+
+  test('la pagina dichiara un canonical assoluto, e i parametri non ne creano di nuovi', async ({
+    page,
+  }) => {
+    await page.goto('/');
+    const canonicalHome = await page.locator('link[rel="canonical"]').getAttribute('href');
+    expect(canonicalHome).toMatch(/^https?:\/\//);
+
+    // Il filtro è un parametro dello stesso indice, non una pagina concorrente.
+    await page.goto('/?tipo=rinvio-ad-atto-abrogato');
+    const canonicalFiltro = await page.locator('link[rel="canonical"]').getAttribute('href');
+    expect(canonicalFiltro).toBe(canonicalHome);
+  });
+
+  test('i dati strutturati dichiarano un dataset con licenza e fonte', async ({ page }) => {
+    await page.goto('/');
+    const blocchi = await page.locator('script[type="application/ld+json"]').allTextContents();
+    expect(blocchi.length).toBeGreaterThan(0);
+    const tutti = blocchi.flatMap((b) => {
+      const letto: unknown = JSON.parse(b);
+      return Array.isArray(letto) ? letto : [letto];
+    }) as Array<Record<string, unknown>>;
+
+    const dataset = tutti.find((v) => v['@type'] === 'Dataset');
+    expect(dataset, 'nessun blocco Dataset nei dati strutturati').toBeTruthy();
+    expect(String(dataset!['license'])).toContain('creativecommons.org');
+    expect(JSON.stringify(dataset!['isBasedOn'])).toContain('normattiva');
   });
 
   test('la scheda è autoconsistente: chi arriva da un link capisce senza altre pagine', async ({

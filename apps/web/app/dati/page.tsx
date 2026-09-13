@@ -1,17 +1,19 @@
 import Link from 'next/link';
 import { THRESHOLD } from '@antinomia/engine';
 import { REPO_URL, dataset } from '@/lib/dataset';
+import { metadatiPagina } from '@/lib/seo';
 import { data, numero, percentuale } from '@/lib/testo';
 import { Tabella } from '@/components/tabella';
 import { ContatoreNazionale } from '@/components/contatore';
 
 export const dynamic = 'force-static';
 
-export const metadata = {
-  title: 'Dati e precisione',
-  description:
+export const metadata = metadatiPagina({
+  titolo: 'Dati e precisione',
+  descrizione:
     'Il dataset scaricabile, le licenze e la precisione misurata di ogni controllo, compresi quelli che non pubblichiamo.',
-};
+  percorso: '/dati',
+});
 
 export default function Dati() {
   const reader = dataset();

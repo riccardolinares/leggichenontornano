@@ -3,7 +3,8 @@ import { Archivo, Newsreader } from 'next/font/google';
 import Link from 'next/link';
 import './globals.css';
 import { Navigazione } from '@/components/navigazione';
-import { REPO_URL, SITE_URL } from '@/lib/dataset';
+import { REPO_URL, SITE_URL, dataset } from '@/lib/dataset';
+import { NOME_SITO, datiStrutturatiSito } from '@/lib/seo';
 
 /*
  * Tipografia: un serif per il testo normativo, un grottesco per l'interfaccia.
@@ -24,26 +25,54 @@ const grottesco = Archivo({
   weight: ['400', '500', '600', '700'],
 });
 
+const DESCRIZIONE =
+  'Incongruenze, contraddizioni e aree grigie della legislazione italiana, con le prove e la regola che le ha trovate.';
+
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: 'Le leggi che non tornano',
-    template: '%s — Le leggi che non tornano',
+    default: NOME_SITO,
+    template: `%s — ${NOME_SITO}`,
   },
-  description:
-    'Incongruenze, contraddizioni e aree grigie della legislazione italiana, con le prove e la regola che le ha trovate.',
+  description: DESCRIZIONE,
+  applicationName: NOME_SITO,
+  alternates: { canonical: '/' },
   openGraph: {
     type: 'website',
     locale: 'it_IT',
-    siteName: 'Le leggi che non tornano',
+    siteName: NOME_SITO,
+    url: SITE_URL,
+    title: NOME_SITO,
+    description: DESCRIZIONE,
   },
-  robots: { index: true, follow: true },
+  twitter: { card: 'summary_large_image', title: NOME_SITO, description: DESCRIZIONE },
+  // `max-image-preview: large` è quello che permette all'anteprima di comparire
+  // a piena larghezza nei risultati di ricerca invece che come miniatura.
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1 },
+  },
+  // Un numero di legge in una pagina non è un numero di telefono: senza questo,
+  // iOS trasforma «n. 207» in un collegamento da chiamare.
+  formatDetection: { telephone: false, date: false, address: false },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const aggiornatoAl = dataset().data.manifest?.knownAt ?? null;
+
   return (
     <html lang="it" className={`${serif.variable} ${grottesco.variable}`}>
       <body>
+        {/* I dati strutturati dichiarano che qui c'è un dataset con una licenza
+            e una fonte, non un commento giuridico. È l'unico modo per dirlo a
+            un motore di ricerca in un vocabolario che capisce. */}
+        <script
+          type="application/ld+json"
+          // eslint-disable-next-line react/no-danger -- JSON serializzato da noi, non da input
+          dangerouslySetInnerHTML={{ __html: datiStrutturatiSito(REPO_URL, aggiornatoAl) }}
+        />
+
         {/* Primo elemento focalizzabile della pagina: chi naviga da tastiera
             non deve attraversare la navigazione a ogni cambio di pagina. */}
         <a className="salta" href="#contenuto">

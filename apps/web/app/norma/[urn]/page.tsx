@@ -13,6 +13,7 @@ import {
   percorsoNorma,
 } from '@/lib/testo';
 import { Tabella } from '@/components/tabella';
+import { metadatiPagina } from '@/lib/seo';
 
 /*
  * Anche qui niente `force-static`: `?v=` sceglie la data di vigenza e `?c=`
@@ -48,12 +49,34 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
   const { urn } = await params;
   const { v } = await searchParams;
   const decoded = decodeURIComponent(urn);
-  const act = dataset().act(decoded);
-  if (!act) return { title: 'Norma non presente nel corpus' };
-  return {
-    title: `${nomeNorma(decoded)}${v ? ` — testo vigente al ${data(v)}` : ''}`,
-    description: act.title,
-  };
+  const reader = dataset();
+  const act = reader.act(decoded);
+  if (!act)
+    return { title: 'Norma non presente nel corpus', robots: { index: false, follow: true } };
+
+  const segnalazioni = reader.anomaliesFor(decoded).filter((a) => a.published).length;
+  const descrizione = [
+    act.title,
+    act.abrogated
+      ? `Abrogato${act.abrogatedFrom ? ` dal ${data(act.abrogatedFrom)}` : ''}.`
+      : 'Testo vigente per versioni successive, con le date di ogni modifica.',
+    segnalazioni > 0
+      ? `${segnalazioni} segnalazion${segnalazioni === 1 ? 'e' : 'i'} di incongruenza su questo atto.`
+      : '',
+  ]
+    .filter((p) => p.length > 0)
+    .join(' ');
+
+  /* Il canonical punta sempre alla pagina senza parametri. `?v=` e `?c=` sono
+     lo stesso atto letto a una data diversa: sono la ragione per cui questo
+     lettore esiste, ma sono anche un modo di generare centinaia di URL con lo
+     stesso contenuto, e senza canonical un motore di ricerca li tratterebbe
+     come pagine distinte che si fanno concorrenza fra loro. */
+  return metadatiPagina({
+    titolo: `${nomeNorma(decoded)}${v ? ` — testo vigente al ${data(v)}` : ''}`,
+    descrizione,
+    percorso: `/norma/${encodeURIComponent(decoded)}`,
+  });
 }
 
 export default async function LettoreNorma({ params, searchParams }: Props) {

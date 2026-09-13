@@ -2,14 +2,16 @@ import Link from 'next/link';
 import { CHECK_DEFINITIONS, THRESHOLD } from '@antinomia/engine';
 import { REPO_URL } from '@/lib/dataset';
 import { Tabella } from '@/components/tabella';
+import { metadatiPagina } from '@/lib/seo';
 
 export const dynamic = 'force-static';
 
-export const metadata = {
-  title: 'Come funziona',
-  description:
+export const metadata = metadatiPagina({
+  titolo: 'Come funziona',
+  descrizione:
     'Cosa questo progetto non fa, come nasce una segnalazione, e a quali condizioni viene pubblicata.',
-};
+  percorso: '/come-funziona',
+});
 
 export default function ComeFunziona() {
   return (

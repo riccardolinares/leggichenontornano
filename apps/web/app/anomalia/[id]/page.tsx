@@ -15,6 +15,7 @@ import {
   urnAtto,
 } from '@/lib/testo';
 import { Tabella } from '@/components/tabella';
+import { datiStrutturatiSegnalazione, metadatiPagina } from '@/lib/seo';
 
 export const dynamic = 'force-static';
 
@@ -48,30 +49,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   const anomalia = dataset().anomaly(decodeURIComponent(id));
   if (!anomalia?.published) return { title: 'Segnalazione non trovata' };
-  const url = `${SITE_URL}/anomalia/${encodeURIComponent(anomalia.id)}`;
-  return {
-    title: anomalia.title,
-    description: anomalia.plainLanguage,
-    alternates: { canonical: url },
-    openGraph: {
-      title: anomalia.title,
-      description: anomalia.plainLanguage,
-      url,
-      type: 'article',
-      images: [
-        {
-          url: `/anomalia/${encodeURIComponent(anomalia.id)}/opengraph-image`,
-          width: 1200,
-          height: 630,
-        },
-      ],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: anomalia.title,
-      description: anomalia.plainLanguage,
-    },
-  };
+  /* L'anteprima non si dichiara qui: il file `opengraph-image.tsx` accanto a
+     questa pagina la genera e Next la collega da solo, con l'URL assoluto e le
+     dimensioni giuste. Dichiararla a mano significava tenere allineati a mano
+     percorso e misure, e non accorgersi il giorno in cui divergono. */
+  return metadatiPagina({
+    titolo: anomalia.title,
+    descrizione: anomalia.plainLanguage,
+    percorso: `/anomalia/${encodeURIComponent(anomalia.id)}`,
+    tipo: 'article',
+  });
 }
 
 export default async function SchedaAnomalia({ params }: Props) {
@@ -120,6 +107,18 @@ export default async function SchedaAnomalia({ params }: Props) {
 
   return (
     <article className="contenitore">
+      <script
+        type="application/ld+json"
+        // eslint-disable-next-line react/no-danger -- JSON serializzato da noi, non da input
+        dangerouslySetInnerHTML={{
+          __html: datiStrutturatiSegnalazione({
+            titolo: anomalia.title,
+            descrizione: anomalia.plainLanguage,
+            percorso: `/anomalia/${encodeURIComponent(anomalia.id)}`,
+            pubblicataIl: anomalia.computedAt,
+          }),
+        }}
+      />
       <nav aria-label="Percorso" style={{ fontSize: '0.85rem', marginBottom: '1.2rem' }}>
         <Link href="/">Segnalazioni</Link> <span aria-hidden="true">›</span>{' '}
         <span>{controllo?.label ?? anomalia.checkId}</span>
