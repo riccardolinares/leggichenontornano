@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { THRESHOLD } from '@antinomia/engine';
+import { THRESHOLD } from '@leggichenontornano/engine';
 import { REPO_URL, dataset } from '@/lib/dataset';
 import { metadatiPagina } from '@/lib/seo';
 import { data, numero, percentuale } from '@/lib/testo';

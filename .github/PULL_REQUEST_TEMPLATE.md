@@ -12,7 +12,7 @@
 
 ```bash
 pnpm run build && pnpm run typecheck && pnpm run test
-pnpm --filter @antinomia/web run build && pnpm run e2e
+pnpm --filter @leggichenontornano/web run build && pnpm run e2e
 ```
 
 - [ ] I test passano, audit di accessibilità compreso

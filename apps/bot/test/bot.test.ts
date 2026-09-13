@@ -1,4 +1,8 @@
-import { SnapshotReader, type SnapshotAnomaly, type SnapshotData } from '@antinomia/corpus';
+import {
+  SnapshotReader,
+  type SnapshotAnomaly,
+  type SnapshotData,
+} from '@leggichenontornano/corpus';
 import { describe, expect, it, vi } from 'vitest';
 import { componiContatore, componiMessaggio } from '../src/messaggio.js';
 import { Mastodon } from '../src/piattaforme.js';

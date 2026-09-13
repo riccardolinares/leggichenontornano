@@ -10,7 +10,7 @@
  * Mastodon, 280 su X, nessun limite pratico su Telegram. Il messaggio si
  * accorcia togliendo dalla fine, mai riscrivendo.
  */
-import type { SnapshotAnomaly } from '@antinomia/corpus';
+import type { SnapshotAnomaly } from '@leggichenontornano/corpus';
 
 export type Piattaforma = 'mastodon' | 'telegram' | 'x';
 

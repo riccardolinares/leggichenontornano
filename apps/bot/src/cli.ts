@@ -2,8 +2,8 @@
 /**
  * Il bot quotidiano.
  *
- *   antinomia-bot pubblica [--giorno 2026-09-13] [--prova]
- *   antinomia-bot contatore
+ *   lcnt-bot pubblica [--giorno 2026-09-13] [--prova]
+ *   lcnt-bot contatore
  *
  * Gira su una GitHub Action schedulata. Con `--prova` stampa cosa pubblicherebbe
  * senza pubblicare: è il comportamento predefinito anche quando mancano le
@@ -16,14 +16,14 @@
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
-import { SnapshotReader } from '@antinomia/corpus';
+import { SnapshotReader } from '@leggichenontornano/corpus';
 import { componiContatore, componiMessaggio, type Piattaforma } from './messaggio.js';
 import { pubblicatoriAttivi } from './piattaforme.js';
 import { selezionaDelGiorno } from './selezione.js';
 
-const SNAPSHOT = process.env['ANTINOMIA_SNAPSHOT'] ?? 'data/snapshot';
-const REGISTRO = process.env['ANTINOMIA_BOT_REGISTRO'] ?? 'data/bot/pubblicate.json';
-const SITE = process.env['ANTINOMIA_SITE_URL'] ?? 'https://leggichenontornano.it';
+const SNAPSHOT = process.env['LCNT_SNAPSHOT'] ?? 'data/snapshot';
+const REGISTRO = process.env['LCNT_BOT_REGISTRO'] ?? 'data/bot/pubblicate.json';
+const SITE = process.env['LCNT_SITE_URL'] ?? 'https://leggichenontornano.it';
 
 interface VocePubblicata {
   id: string;

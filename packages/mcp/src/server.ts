@@ -37,7 +37,7 @@ export async function creaServer(): Promise<McpServer> {
   const { reader, provenienza } = await apriSorgente();
 
   const server = new McpServer(
-    { name: 'antinomia', version: '0.1.0' },
+    { name: 'leggichenontornano', version: '0.1.0' },
     {
       instructions: [
         'Questo server dà accesso al corpus normativo e alle segnalazioni di «Le leggi che non',
@@ -61,12 +61,12 @@ export async function creaServer(): Promise<McpServer> {
     // Partire in silenzio su un dataset vuoto è il guasto peggiore: l'assistente
     // riceverebbe «nessun risultato» e lo riferirebbe come un fatto sulla legge.
     process.stderr.write(
-      `[antinomia] ATTENZIONE: dataset vuoto (${provenienza}).\n` +
-        '[antinomia] Ogni risposta dirà «nessun risultato», e non sarebbe un fatto sulla legge.\n' +
-        '[antinomia] Controlla la rete, oppure indica un dataset locale con ANTINOMIA_SNAPSHOT.\n',
+      `[leggichenontornano] ATTENZIONE: dataset vuoto (${provenienza}).\n` +
+        '[leggichenontornano] Ogni risposta dirà «nessun risultato», e non sarebbe un fatto sulla legge.\n' +
+        '[leggichenontornano] Controlla la rete, oppure indica un dataset locale con LCNT_SNAPSHOT.\n',
     );
   } else {
-    process.stderr.write(`[antinomia] ${reader.data.acts.length} atti — ${provenienza}\n`);
+    process.stderr.write(`[leggichenontornano] ${reader.data.acts.length} atti — ${provenienza}\n`);
   }
 
   server.registerTool(
@@ -188,7 +188,7 @@ async function main(): Promise<void> {
 // Solo quando eseguito come programma, non quando importato dai test.
 if (process.argv[1] && import.meta.url.endsWith(process.argv[1].replace(/^.*?(?=\/[^/]+$)/, ''))) {
   main().catch((errore: unknown) => {
-    process.stderr.write(`[antinomia] avvio fallito: ${(errore as Error).message}\n`);
+    process.stderr.write(`[leggichenontornano] avvio fallito: ${(errore as Error).message}\n`);
     process.exit(1);
   });
 }

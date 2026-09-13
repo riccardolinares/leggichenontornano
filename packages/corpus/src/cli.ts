@@ -2,11 +2,11 @@
 /**
  * CLI del corpus.
  *
- *   antinomia-corpus collections                  elenca le collezioni Normattiva
- *   antinomia-corpus fetch <nome> [--format M]    scarica ed estrae una collezione
- *   antinomia-corpus ingest <cartella>            ingerisce una collezione estratta
- *   antinomia-corpus export [--only-anomalie]     esporta il dataset in JSONL
- *   antinomia-corpus stats                        conteggi del corpus
+ *   lcnt-corpus collections                  elenca le collezioni Normattiva
+ *   lcnt-corpus fetch <nome> [--format M]    scarica ed estrae una collezione
+ *   lcnt-corpus ingest <cartella>            ingerisce una collezione estratta
+ *   lcnt-corpus export [--only-anomalie]     esporta il dataset in JSONL
+ *   lcnt-corpus stats                        conteggi del corpus
  *
  * Le opzioni lunghe sono in italiano perché il pubblico di questo strumento è
  * italiano e il costo di tradurre «--only-anomalies» nella testa a ogni uso è
@@ -23,7 +23,7 @@ import { exportSnapshot } from './snapshot/export.js';
 import { ingestConsulta } from './consulta/ingest.js';
 import { verificaDichiarazioni } from './consulta/verifica.js';
 
-const USAGE = `antinomia-corpus — ingestione del corpus normativo
+const USAGE = `lcnt-corpus — ingestione del corpus normativo
 
 Comandi:
   collections                      elenca le collezioni predefinite di Normattiva

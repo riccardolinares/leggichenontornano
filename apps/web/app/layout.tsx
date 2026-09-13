@@ -83,7 +83,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div className="contenitore testata__riga">
             <Link href="/" className="marchio">
               Le leggi che non tornano
-              <span className="marchio__tecnico">progetto antinomia</span>
+              <span className="marchio__tecnico">le incongruenze della legge italiana</span>
             </Link>
             <Navigazione />
           </div>

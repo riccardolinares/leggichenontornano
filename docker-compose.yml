@@ -8,11 +8,11 @@
 services:
   db:
     image: postgres:16
-    container_name: antinomia-db
+    container_name: leggichenontornano-db
     environment:
-      POSTGRES_USER: antinomia
-      POSTGRES_PASSWORD: antinomia
-      POSTGRES_DB: antinomia
+      POSTGRES_USER: leggichenontornano
+      POSTGRES_PASSWORD: leggichenontornano
+      POSTGRES_DB: leggichenontornano
       # Il dizionario italiano di PostgreSQL serve alla ricerca full-text ed è
       # incluso nell'immagine: nessuna estensione da installare.
       POSTGRES_INITDB_ARGS: '--locale=it_IT.UTF-8 --encoding=UTF8'
@@ -20,12 +20,12 @@ services:
     ports:
       - '5432:5432'
     volumes:
-      - antinomia-db:/var/lib/postgresql/data
+      - leggichenontornano-db:/var/lib/postgresql/data
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U antinomia']
+      test: ['CMD-SHELL', 'pg_isready -U leggichenontornano']
       interval: 10s
       timeout: 5s
       retries: 5
 
 volumes:
-  antinomia-db:
+  leggichenontornano-db:

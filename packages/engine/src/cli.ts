@@ -2,14 +2,14 @@
 /**
  * CLI del motore.
  *
- *   antinomia-engine run [--oggi 2026-09-12] [--limite 50] [--senza-scrittura]
- *   antinomia-engine metriche
- *   antinomia-engine coda [--controllo <id>] [--quante 30] [--seme 1]
- *   antinomia-engine revisiona <idAnomalia> <esito> --revisore <nome>
- *   antinomia-engine contatore
- *   antinomia-engine controlli
+ *   lcnt-engine run [--oggi 2026-09-12] [--limite 50] [--senza-scrittura]
+ *   lcnt-engine metriche
+ *   lcnt-engine coda [--controllo <id>] [--quante 30] [--seme 1]
+ *   lcnt-engine revisiona <idAnomalia> <esito> --revisore <nome>
+ *   lcnt-engine contatore
+ *   lcnt-engine controlli
  */
-import { disconnectPrisma, exportSnapshot, getPrisma } from '@antinomia/corpus';
+import { disconnectPrisma, exportSnapshot, getPrisma } from '@leggichenontornano/corpus';
 import { buildNationalCounter, computeMetrics } from './metrics.js';
 import { CHECK_DEFINITIONS } from './registry.js';
 import { recordReview, sampleForReview, type ReviewVerdict } from './review/queue.js';
@@ -17,7 +17,7 @@ import { allMandates, buildViewFromDatabase, runEngine } from './index.js';
 import { estraiVerticale } from './estrazione.js';
 import { importaGold, valutaGold } from './gold.js';
 
-const USAGE = `antinomia-engine — motore delle anomalie
+const USAGE = `lcnt-engine — motore delle anomalie
 
 Comandi:
   run                     esegue tutti i controlli e scrive le segnalazioni

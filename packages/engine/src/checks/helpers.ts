@@ -7,7 +7,7 @@
  * il lettore impara a leggerne una e le sa leggere tutte.
  */
 import { createHash } from 'node:crypto';
-import { humanLabel, tryParseUrn } from '@antinomia/akn-parser';
+import { humanLabel, tryParseUrn } from '@leggichenontornano/akn-parser';
 import type { ActView } from '../corpus-view.js';
 import type { EvidenceItem } from '../types.js';
 

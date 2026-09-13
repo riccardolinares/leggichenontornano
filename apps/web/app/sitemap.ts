@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next';
-import { CHECK_DEFINITIONS } from '@antinomia/engine';
+import { CHECK_DEFINITIONS } from '@leggichenontornano/engine';
 import { SITE_URL, dataset } from '@/lib/dataset';
 
 export const dynamic = 'force-static';

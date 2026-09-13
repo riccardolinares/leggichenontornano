@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { parseAkn } from '@antinomia/akn-parser';
+import { parseAkn } from '@leggichenontornano/akn-parser';
 import { describe, expect, it } from 'vitest';
 import { buildRelations, relationId } from '../src/graph/build-relations.js';
 import { isHigherRank, isPrimarySource, sourceRank, sourceRankLabel } from '../src/source-rank.js';

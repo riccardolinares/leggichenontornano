@@ -72,7 +72,7 @@ in [docs/qualita-fonti.md](docs/qualita-fonti.md).
   volte — nel workflow e in `packageManager` — e l'azione si rifiutava di
   scegliere. Il badge era rosso dal primo commit e nessuno dei passi
   dichiarati veniva eseguito.
-- **La verifica costruiva un sito vuoto.** `ANTINOMIA_SNAPSHOT` era un percorso
+- **La verifica costruiva un sito vuoto.** `LCNT_SNAPSHOT` era un percorso
   relativo che da `apps/web` non puntava a nulla: trentotto test si saltavano
   da soli e il riepilogo sembrava quasi verde. Ora il percorso è assoluto, e
   un test che non si salta mai fallisce se il dataset è vuoto.

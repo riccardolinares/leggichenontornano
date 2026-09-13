@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import type { SnapshotAct, SnapshotRelation } from '@antinomia/corpus';
+import type { SnapshotAct, SnapshotRelation } from '@leggichenontornano/corpus';
 import { data, nomeNorma, percorsoNorma } from '@/lib/testo';
 import { Tabella } from '@/components/tabella';
 

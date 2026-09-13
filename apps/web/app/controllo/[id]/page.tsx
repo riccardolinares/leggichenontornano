@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { CHECK_DEFINITIONS, THRESHOLD, checkById } from '@antinomia/engine';
+import { CHECK_DEFINITIONS, THRESHOLD, checkById } from '@leggichenontornano/engine';
 import { dataset } from '@/lib/dataset';
 import { metadatiPagina } from '@/lib/seo';
 import {

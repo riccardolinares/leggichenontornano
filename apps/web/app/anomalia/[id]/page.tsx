@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { checkById } from '@antinomia/engine';
+import { checkById } from '@leggichenontornano/engine';
 import { Condivisione } from '@/components/condivisione';
 import { BarraVigenze, type Finestra } from '@/components/vigenze';
 import { REPO_URL, SITE_URL, dataset } from '@/lib/dataset';

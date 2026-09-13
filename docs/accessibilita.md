@@ -13,8 +13,8 @@ possa esserne citato.
 ## Come si verifica
 
 ```bash
-pnpm --filter @antinomia/web run build
-pnpm --filter @antinomia/web exec playwright install --with-deps chromium
+pnpm --filter @leggichenontornano/web run build
+pnpm --filter @leggichenontornano/web exec playwright install --with-deps chromium
 pnpm run e2e
 ```
 

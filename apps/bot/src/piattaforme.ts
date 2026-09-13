@@ -5,7 +5,7 @@
  * credenziali ci sono. Senza credenziali il bot **non fallisce**: stampa cosa
  * avrebbe pubblicato e esce con successo. È il comportamento giusto per un
  * progetto che gira su una GitHub Action in un repository forkabile — chi
- * clona deve poter eseguire `pnpm --filter @antinomia/bot run pubblica` e
+ * clona deve poter eseguire `pnpm --filter @leggichenontornano/bot run pubblica` e
  * vedere il messaggio, non un errore di configurazione.
  */
 import type { Messaggio } from './messaggio.js';

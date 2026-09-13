@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { CHECK_DEFINITIONS, THRESHOLD } from '@antinomia/engine';
+import { CHECK_DEFINITIONS, THRESHOLD } from '@leggichenontornano/engine';
 import { REPO_URL } from '@/lib/dataset';
 import { Tabella } from '@/components/tabella';
 import { metadatiPagina } from '@/lib/seo';

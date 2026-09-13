@@ -14,7 +14,7 @@
  * presuppone che qualcuno lavori gratis per noi. La differenza sta tutta in chi
  * risponde.
  */
-import { getPrisma } from '@antinomia/corpus';
+import { getPrisma } from '@leggichenontornano/corpus';
 
 export type ReviewVerdict =
   'CONFERMATA' | 'NON_E_UN_CONFLITTO' | 'ESTRAZIONE_ERRATA' | 'DA_APPROFONDIRE';

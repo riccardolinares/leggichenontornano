@@ -17,7 +17,7 @@
  * Le formule di apertura sono fisse — Visto, Vista, Visti, Viste — e questo
  * rende il preambolo analizzabile con una regola, non con un modello.
  */
-import { parseActCitations, type AknAct } from '@antinomia/akn-parser';
+import { parseActCitations, type AknAct } from '@leggichenontornano/akn-parser';
 import { relationId, type RelationRecord } from './build-relations.js';
 import { normalizeHref } from './href.js';
 

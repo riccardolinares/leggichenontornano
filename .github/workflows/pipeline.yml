@@ -32,9 +32,9 @@ jobs:
       postgres:
         image: postgres:16
         env:
-          POSTGRES_USER: antinomia
-          POSTGRES_PASSWORD: antinomia
-          POSTGRES_DB: antinomia
+          POSTGRES_USER: leggichenontornano
+          POSTGRES_PASSWORD: leggichenontornano
+          POSTGRES_DB: leggichenontornano
         ports: ['5432:5432']
         options: >-
           --health-cmd pg_isready
@@ -42,7 +42,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
     env:
-      DATABASE_URL: postgresql://antinomia:antinomia@localhost:5432/antinomia
+      DATABASE_URL: postgresql://leggichenontornano:leggichenontornano@localhost:5432/leggichenontornano
       COLLEZIONI: ${{ github.event.inputs.collezioni || 'Codici,Leggi costituzionali,Leggi contenenti deleghe,Leggi di delegazione europea,DL proroghe,Regolamenti di delegificazione,DL e leggi di conversione' }}
     steps:
       - uses: actions/checkout@v4
@@ -56,7 +56,7 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm --filter @antinomia/corpus exec prisma db push
+      - run: pnpm --filter @leggichenontornano/corpus exec prisma db push
       - run: pnpm run build
 
       - name: Scarica le collezioni
@@ -122,7 +122,7 @@ jobs:
       - name: Pubblica il dataset completo come artefatto
         uses: actions/upload-artifact@v4
         with:
-          name: dataset-antinomia
+          name: dataset-leggichenontornano
           path: dataset-completo/
           retention-days: 30
 

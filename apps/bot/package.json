@@ -1,11 +1,11 @@
 {
-  "name": "@antinomia/bot",
+  "name": "@leggichenontornano/bot",
   "version": "0.1.0",
   "license": "EUPL-1.2",
   "private": true,
   "type": "module",
   "bin": {
-    "antinomia-bot": "./dist/cli.js"
+    "lcnt-bot": "./dist/cli.js"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
@@ -14,9 +14,9 @@
     "pubblica": "node dist/cli.js pubblica"
   },
   "dependencies": {
-    "@antinomia/akn-parser": "workspace:*",
-    "@antinomia/corpus": "workspace:*",
-    "@antinomia/engine": "workspace:*"
+    "@leggichenontornano/akn-parser": "workspace:*",
+    "@leggichenontornano/corpus": "workspace:*",
+    "@leggichenontornano/engine": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.7.2",

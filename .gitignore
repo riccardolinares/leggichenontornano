@@ -17,7 +17,7 @@ test-results/
 /data/corpus/
 
 # Gli archivi della Corte costituzionale (decine di MB di zip) si riscaricano
-# con `antinomia-corpus consulta`.
+# con `lcnt-corpus consulta`.
 /data/consulta/
 
 # Il dataset derivato, invece, sta nel repository: serve a far girare il sito e

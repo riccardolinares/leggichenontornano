@@ -1,5 +1,5 @@
 /**
- * `@antinomia/corpus`
+ * `@leggichenontornano/corpus`
  *
  * Ingestione dagli open data di Normattiva, store bitemporale su PostgreSQL e
  * grafo tipizzato delle relazioni fra atti.

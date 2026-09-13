@@ -1,4 +1,4 @@
-import type { SnapshotCounter } from '@antinomia/corpus';
+import type { SnapshotCounter } from '@leggichenontornano/corpus';
 import { data, numero } from '@/lib/testo';
 
 /**

@@ -7,7 +7,7 @@
  * nessuno si accorgerebbe più di quando il dataset smette di aggiornarsi.
  */
 import { createHash } from 'node:crypto';
-import type { AknProvision, Timeline } from '@antinomia/akn-parser';
+import type { AknProvision, Timeline } from '@leggichenontornano/akn-parser';
 import { buildRelations, type RelationRecord } from '../graph/build-relations.js';
 import { sourceRank } from '../source-rank.js';
 import { versionKey, type CollectionFile } from './read-collection.js';

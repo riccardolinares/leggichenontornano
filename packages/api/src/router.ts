@@ -11,8 +11,8 @@
  * ufficialità in due intestazioni. Non è decorazione: chi consuma l'API in una
  * pipeline non vede il footer del sito.
  */
-import { ATTRIBUTION, DISCLAIMER } from '@antinomia/corpus';
-import { CHECK_DEFINITIONS } from '@antinomia/engine';
+import { ATTRIBUTION, DISCLAIMER } from '@leggichenontornano/corpus';
+import { CHECK_DEFINITIONS } from '@leggichenontornano/engine';
 import { openApiDocument } from './openapi.js';
 import type { ApiSource } from './source.js';
 

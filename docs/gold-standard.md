@@ -72,13 +72,13 @@ precisione(controllo) = revisioni CONFERMATA / revisioni totali
 
 Le revisioni entrano da due strade:
 
-1. **Campionamento interno.** `antinomia-engine coda --controllo <id> --seme N`
+1. **Campionamento interno.** `lcnt-engine coda --controllo <id> --seme N`
    estrae un campione pseudocasuale con seme. Il seme è nel comando e il campione
    è riproducibile: chi contesta la nostra metrica può rifare lo stesso campione.
    Revisionare «le prime N» misurerebbe l'ordinamento, non il controllo.
 
 2. **Il pulsante «Non è un conflitto»** sul sito. Apre una issue pubblica; la
-   risposta viene registrata con `antinomia-engine revisiona <id> <esito>`.
+   risposta viene registrata con `lcnt-engine revisiona <id> <esito>`.
 
 Gli esiti sono quattro, e la distinzione conta:
 
@@ -121,7 +121,7 @@ Codice: `packages/engine/src/publication-gate.ts`. I test che lo verificano:
 ## Cosa misuriamo oggi
 
 Le pronunce della Corte costituzionale sono importate e misurate. Il comando
-`antinomia-engine gold valuta` produce **due numeri**, non uno:
+`lcnt-engine gold valuta` produce **due numeri**, non uno:
 
 ```
 Annotazioni:            762

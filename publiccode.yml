@@ -2,7 +2,7 @@
 # https://yml.publiccode.tools/ — indicizzato dal crawler di Developers Italia
 publiccodeYmlVersion: '0.4'
 
-name: Antinomia
+name: LeggiCheNonTornano
 applicationSuite: Le leggi che non tornano
 url: 'https://github.com/riccardolinares/leggichenontornano'
 landingURL: 'https://leggichenontornano.it'
@@ -41,7 +41,7 @@ description:
       Motore open source che rende visibili incongruenze, contraddizioni e aree
       grigie della legislazione italiana, con prove tracciabili.
     longDescription: >-
-      Antinomia ingerisce il corpus normativo statale dagli open data di
+      LeggiCheNonTornano ingerisce il corpus normativo statale dagli open data di
       Normattiva in formato Akoma Ntoso, lo normalizza su chiave URN:NIR ed ELI,
       lo conserva in uno store bitemporale (data di vigenza e data di
       conoscenza) e ne ricostruisce il grafo tipizzato delle relazioni
@@ -78,7 +78,7 @@ description:
       Open source engine that surfaces inconsistencies, contradictions and grey
       areas in Italian legislation, with traceable evidence.
     longDescription: >-
-      Antinomia ingests the Italian state legal corpus from Normattiva open data
+      LeggiCheNonTornano ingests the Italian state legal corpus from Normattiva open data
       in Akoma Ntoso format, normalises it on URN:NIR and ELI keys, stores it in
       a bitemporal store (in-force date and knowledge date) and reconstructs the
       typed graph of relations between acts.

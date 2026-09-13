@@ -26,7 +26,7 @@ import {
   getPrisma,
   type SnapshotAnomaly,
   type SnapshotCheckMetric,
-} from '@antinomia/corpus';
+} from '@leggichenontornano/corpus';
 
 export interface AnomalyQuery {
   checkId?: string;
@@ -290,7 +290,7 @@ export class DatabaseSource implements ApiSource {
   }
 
   async articles(urn: string, date?: string): Promise<ArticleRef[]> {
-    const { articlesAt } = await import('@antinomia/corpus');
+    const { articlesAt } = await import('@leggichenontornano/corpus');
     return (await articlesAt(urn, date)).map((a) => ({
       number: a.number,
       heading: a.heading,
@@ -354,7 +354,7 @@ export class DatabaseSource implements ApiSource {
   }
 
   async metrics(): Promise<SnapshotCheckMetric[]> {
-    const { computeMetrics } = await import('@antinomia/engine');
+    const { computeMetrics } = await import('@leggichenontornano/engine');
     return computeMetrics();
   }
 

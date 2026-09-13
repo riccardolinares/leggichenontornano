@@ -5,8 +5,8 @@
  * sotto soglia e il perché non pubblicano. Una metrica che si mostra solo quando
  * è buona non è una metrica: è marketing.
  */
-import { getPrisma } from '@antinomia/corpus';
-import type { SnapshotCheckMetric } from '@antinomia/corpus';
+import { getPrisma } from '@leggichenontornano/corpus';
+import type { SnapshotCheckMetric } from '@leggichenontornano/corpus';
 import { evaluateGate, type ReviewTally } from './publication-gate.js';
 import { CHECK_DEFINITIONS } from './registry.js';
 

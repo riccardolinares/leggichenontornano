@@ -9,11 +9,10 @@
  *  3. sito e dataset non possono divergere, perché sono la stessa cosa letta due
  *     volte.
  */
-import { SnapshotReader } from '@antinomia/corpus';
+import { SnapshotReader } from '@leggichenontornano/corpus';
 import { join } from 'node:path';
 
-const DIR =
-  process.env['ANTINOMIA_SNAPSHOT'] ?? join(process.cwd(), '..', '..', 'data', 'snapshot');
+const DIR = process.env['LCNT_SNAPSHOT'] ?? join(process.cwd(), '..', '..', 'data', 'snapshot');
 
 let cached: SnapshotReader | null = null;
 
@@ -23,10 +22,11 @@ export function dataset(): SnapshotReader {
 }
 
 /** Base pubblica del sito, per gli URL assoluti nei metadati social. */
-export const SITE_URL = (
-  process.env['ANTINOMIA_SITE_URL'] ?? 'https://leggichenontornano.it'
-).replace(/\/+$/, '');
+export const SITE_URL = (process.env['LCNT_SITE_URL'] ?? 'https://leggichenontornano.it').replace(
+  /\/+$/,
+  '',
+);
 
 /** Repository pubblica: il pulsante «Non è un conflitto» apre una issue qui. */
 export const REPO_URL =
-  process.env['ANTINOMIA_REPO_URL'] ?? 'https://github.com/riccardolinares/leggichenontornano';
+  process.env['LCNT_REPO_URL'] ?? 'https://github.com/riccardolinares/leggichenontornano';

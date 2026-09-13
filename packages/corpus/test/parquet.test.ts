@@ -32,7 +32,7 @@ const anomalia = {
 };
 
 function cartella(): string {
-  return mkdtempSync(join(tmpdir(), 'antinomia-parquet-'));
+  return mkdtempSync(join(tmpdir(), 'leggichenontornano-parquet-'));
 }
 
 describe('esportazione in Parquet', () => {
