@@ -84,9 +84,7 @@ export async function exportSnapshot(opts: ExportOptions): Promise<SnapshotManif
   // Gli atti citati da qualunque anomalia, anche da quelle in coda: la pagina
   // «Dati» conta le segnalazioni non pubblicate, e per contarle onestamente
   // servono nel dataset.
-  const anomalyUrns = new Set(
-    anomalies.flatMap((a) => a.urns).map((u) => u.split('~')[0]!),
-  );
+  const anomalyUrns = new Set(anomalies.flatMap((a) => a.urns).map((u) => u.split('~')[0]!));
 
   const actRows = opts.onlyAnomalyActs
     ? [

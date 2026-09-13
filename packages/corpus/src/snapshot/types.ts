@@ -212,7 +212,7 @@ export interface SnapshotCounter {
 }
 
 export const DISCLAIMER =
-  'La banca dati Normattiva non ha carattere di ufficialità. L\'unico testo ufficiale è quello pubblicato sulla Gazzetta Ufficiale della Repubblica Italiana, che prevale in caso di discordanza. Questo dataset è un\'elaborazione automatica e non costituisce consulenza legale.';
+  "La banca dati Normattiva non ha carattere di ufficialità. L'unico testo ufficiale è quello pubblicato sulla Gazzetta Ufficiale della Repubblica Italiana, che prevale in caso di discordanza. Questo dataset è un'elaborazione automatica e non costituisce consulenza legale.";
 
 export const ATTRIBUTION =
   'Elaborazione su dati Normattiva (dati.normattiva.it), licenza CC BY 4.0.';

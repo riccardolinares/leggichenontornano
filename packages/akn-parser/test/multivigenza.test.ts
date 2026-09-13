@@ -89,7 +89,10 @@ describe('buildTimeline sulle quattro versioni della l. cost. 1/1953', () => {
 describe('finestre temporali', () => {
   it('interseca due finestre chiuse', () => {
     expect(
-      intersectWindows({ from: '2010-01-01', to: '2015-12-31' }, { from: '2013-01-01', to: '2020-01-01' }),
+      intersectWindows(
+        { from: '2010-01-01', to: '2015-12-31' },
+        { from: '2013-01-01', to: '2020-01-01' },
+      ),
     ).toEqual({ from: '2013-01-01', to: '2015-12-31' });
   });
 

@@ -4,7 +4,9 @@
   "license": "EUPL-1.2",
   "private": true,
   "type": "module",
-  "bin": { "antinomia-bot": "./dist/cli.js" },
+  "bin": {
+    "antinomia-bot": "./dist/cli.js"
+  },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
@@ -16,5 +18,8 @@
     "@antinomia/corpus": "workspace:*",
     "@antinomia/engine": "workspace:*"
   },
-  "devDependencies": { "typescript": "^5.7.2", "vitest": "^2.1.8" }
+  "devDependencies": {
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
 }

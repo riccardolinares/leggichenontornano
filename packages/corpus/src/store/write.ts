@@ -128,7 +128,11 @@ export async function writeBundle(
     const articles = articlesByVersion.get(version.id) ?? [];
     if (articles.length > 0) {
       await prisma.article.createMany({
-        data: articles.map((a) => ({ ...a, versionId, id: current ? `${a.id}@${knownAt.getTime()}` : a.id })),
+        data: articles.map((a) => ({
+          ...a,
+          versionId,
+          id: current ? `${a.id}@${knownAt.getTime()}` : a.id,
+        })),
         skipDuplicates: true,
       });
       stats.articles += articles.length;

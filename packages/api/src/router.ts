@@ -161,7 +161,10 @@ export function createRouter(opts: RouterOptions): (request: Request) => Promise
         if (segments[2] === 'articoli' && segments.length >= 4) {
           const number = segments[3]!;
           if (segments[4] === 'storia') {
-            return ok({ urn, articolo: number, storia: await source.articleHistory(urn, number) }, cache);
+            return ok(
+              { urn, articolo: number, storia: await source.articleHistory(urn, number) },
+              cache,
+            );
           }
           const date = q.get('v') ?? undefined;
           const found = await source.article(urn, number, date);
@@ -221,7 +224,9 @@ function ok(body: unknown, cacheSeconds: number): Response {
     headers: {
       ...JSON_HEADERS,
       'cache-control':
-        cacheSeconds > 0 ? `public, max-age=${cacheSeconds}, stale-while-revalidate=86400` : 'no-store',
+        cacheSeconds > 0
+          ? `public, max-age=${cacheSeconds}, stale-while-revalidate=86400`
+          : 'no-store',
     },
   });
 }

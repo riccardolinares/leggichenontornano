@@ -74,7 +74,10 @@ describe('actUrn e sameAct', () => {
 
   it('riconosce due partizioni dello stesso atto', () => {
     expect(
-      sameAct('urn:nir:stato:legge:1990-08-07;241~art3', 'urn:nir:stato:legge:1990-08-07;241~art10'),
+      sameAct(
+        'urn:nir:stato:legge:1990-08-07;241~art3',
+        'urn:nir:stato:legge:1990-08-07;241~art10',
+      ),
     ).toBe(true);
   });
 

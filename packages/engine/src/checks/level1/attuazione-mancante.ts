@@ -102,8 +102,12 @@ export function extractMandates(
   for (const sentence of provision.text.split(/(?<=[.;])\s+/)) {
     const instrument = new RegExp(`\\bcon\\s+${INSTRUMENT}`, 'i').exec(sentence);
     if (!instrument) continue;
-    if (!/\b(?:sono|è|e')\s+(?:adottat|stabilit|definit|determinat|approvat|individuat|discipli)/i.test(sentence) &&
-        !/\bsi\s+provvede\b/i.test(sentence)) {
+    if (
+      !/\b(?:sono|è|e')\s+(?:adottat|stabilit|definit|determinat|approvat|individuat|discipli)/i.test(
+        sentence,
+      ) &&
+      !/\bsi\s+provvede\b/i.test(sentence)
+    ) {
       continue;
     }
     const deadline = DEADLINE_RE.exec(sentence);
@@ -137,7 +141,10 @@ function toDays(value: string, unit: string): number | null {
 }
 
 function normalizeInstrument(raw: string): string {
-  return raw.replace(/^con\s+/i, '').replace(/\s+/g, ' ').toLowerCase();
+  return raw
+    .replace(/^con\s+/i, '')
+    .replace(/\s+/g, ' ')
+    .toLowerCase();
 }
 
 function addDays(iso: string, days: number): string {
@@ -179,7 +186,7 @@ export const ATTUAZIONE_MANCANTE: Check<AttuazioneInput> = {
       '        SELECT 1 FROM Attuazione a WHERE a.forActUrn = m.actUrn',
       '      )',
       '',
-      "-- Il mandato si estrae con una regola fissa: nella stessa frase devono",
+      '-- Il mandato si estrae con una regola fissa: nella stessa frase devono',
       '-- comparire lo strumento («con decreto…»), il verbo di adozione e il',
       '-- termine. Nessun modello linguistico è coinvolto.',
     ].join('\n'),

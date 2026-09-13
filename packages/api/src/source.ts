@@ -94,12 +94,21 @@ export interface ApiSource {
   act(urn: string): Promise<ActRef | null>;
   versions(urn: string): Promise<VersionRef[]>;
   articles(urn: string, date?: string): Promise<ArticleRef[]>;
-  article(urn: string, number: string, date?: string): Promise<{ version: VersionRef; article: ArticleRef } | null>;
+  article(
+    urn: string,
+    number: string,
+    date?: string,
+  ): Promise<{ version: VersionRef; article: ArticleRef } | null>;
   articleHistory(
     urn: string,
     number: string,
-  ): Promise<Array<{ from: string; to: string | null; heading: string | null; text: string | null }>>;
-  search(query: string, limit: number): Promise<Array<{ urn: string; title: string; articleNumber: string | null; snippet: string }>>;
+  ): Promise<
+    Array<{ from: string; to: string | null; heading: string | null; text: string | null }>
+  >;
+  search(
+    query: string,
+    limit: number,
+  ): Promise<Array<{ urn: string; title: string; articleNumber: string | null; snippet: string }>>;
   graph(urn: string, depth: 1 | 2): Promise<{ nodes: GraphNode[]; edges: GraphEdgeOut[] }>;
   metrics(): Promise<SnapshotCheckMetric[]>;
   stats(): Promise<Record<string, unknown>>;
@@ -410,7 +419,11 @@ function toSnapshotAnomaly(a: {
 
 /** Estratto centrato sul primo termine trovato. */
 function snippet(text: string, query: string, radius = 160): string {
-  const term = query.toLowerCase().split(/\s+/).find((t) => t.length > 2) ?? '';
+  const term =
+    query
+      .toLowerCase()
+      .split(/\s+/)
+      .find((t) => t.length > 2) ?? '';
   const at = text.toLowerCase().indexOf(term);
   if (at < 0) return text.slice(0, radius * 2);
   const start = Math.max(0, at - radius);

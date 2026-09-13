@@ -127,8 +127,7 @@ nell'attributo `name` del `<doc>`:
 <doc name="Codice civile-art. 1"><mainBody><paragraph>…
 ```
 
-**Cosa produceva.** Il codice civile risultava avere **due** articoli invece di
-2969. Ogni rinvio a un suo articolo sembrava un rinvio nel vuoto: il modo più
+**Cosa produceva.** Il codice civile risultava avere **due** articoli invece di 2969. Ogni rinvio a un suo articolo sembrava un rinvio nel vuoto: il modo più
 rapido per riempire il sito di segnalazioni false su una legge che tutti
 conoscono.
 
@@ -203,9 +202,9 @@ Sembrava recall gratuito.
 
 **Cosa produceva.** La regola pubblicata del controllo di livello 3 dice «stesso
 soggetto»; con il ripiego diventava «le due frasi nominano lo stesso concetto da
-qualche parte». Il risultato più chiaro: l'obbligo del *garante* di comunicare
+qualche parte». Il risultato più chiaro: l'obbligo del _garante_ di comunicare
 entro trenta giorni (d.P.R. 207/2010, art. 133) accoppiato al termine di
-operatività della *garanzia* (d.lgs. 163/2006, art. 113), perché entrambe le
+operatività della _garanzia_ (d.lgs. 163/2006, art. 113), perché entrambe le
 frasi nominano la stazione appaltante.
 
 **Cosa facciamo.** Il concetto del soggetto si risolve solo sul soggetto. Il

@@ -6,7 +6,12 @@
  * non è la velocità: è che quando un test fallisce si vede subito **perché**,
  * senza dover ricostruire mentalmente cosa contenesse il database.
  */
-import { CorpusView, type ActView, type CorpusViewData, type RelationView } from '../src/corpus-view.js';
+import {
+  CorpusView,
+  type ActView,
+  type CorpusViewData,
+  type RelationView,
+} from '../src/corpus-view.js';
 
 export function act(partial: Partial<ActView> & { urn: string }): ActView {
   return {
@@ -22,7 +27,14 @@ export function act(partial: Partial<ActView> & { urn: string }): ActView {
   };
 }
 
-export function relation(partial: Partial<RelationView> & { id: string; type: string; sourceUrn: string; targetUrn: string }): RelationView {
+export function relation(
+  partial: Partial<RelationView> & {
+    id: string;
+    type: string;
+    sourceUrn: string;
+    targetUrn: string;
+  },
+): RelationView {
   return {
     sourceArticle: null,
     targetArticle: null,

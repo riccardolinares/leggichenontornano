@@ -82,7 +82,11 @@ export async function estraiVerticale(opts: OpzioniEstrazione): Promise<ReportEs
   ]);
   const corpus = espandiCorpus(
     vocabulary,
-    relazioni.map((r) => ({ type: r.type as string, sourceUrn: r.sourceUrn, targetUrn: r.targetUrn })),
+    relazioni.map((r) => ({
+      type: r.type as string,
+      sourceUrn: r.sourceUrn,
+      targetUrn: r.targetUrn,
+    })),
     new Set(attiNoti.map((a) => a.urn)),
   );
   log(

@@ -1,5 +1,10 @@
 import { describe, expect, it, vi } from 'vitest';
-import { RuleBasedExtractor, detectMode, splitSentences, toDays } from '../src/deontic/rule-based.js';
+import {
+  RuleBasedExtractor,
+  detectMode,
+  splitSentences,
+  toDays,
+} from '../src/deontic/rule-based.js';
 import { VocabularyIndex } from '../src/deontic/vocabulary.js';
 import { LlmExtractor, LLM_EXTRACTION_TOOL, LLM_SYSTEM_PROMPT } from '../src/deontic/llm.js';
 import { extractMandates, daysLate } from '../src/checks/level1/attuazione-mancante.js';
@@ -100,9 +105,9 @@ describe('RuleBasedExtractor', () => {
   });
 
   it('non estrae nulla da una frase senza modalità deontica', () => {
-    expect(extract('Il presente codice disciplina i contratti di appalto e di concessione.')).toEqual(
-      [],
-    );
+    expect(
+      extract('Il presente codice disciplina i contratti di appalto e di concessione.'),
+    ).toEqual([]);
   });
 
   it('lascia null il concetto quando il vocabolario non copre il soggetto', () => {

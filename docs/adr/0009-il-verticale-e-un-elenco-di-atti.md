@@ -7,7 +7,7 @@ Data: 2026-09-13
 
 Il metodo prevede che il layer semantico si attivi **un verticale alla volta**,
 con un vocabolario controllato di dominio (ADR 0005). L'implementazione iniziale
-prendeva quella frase alla lettera e basta: il verticale *era* il vocabolario, e
+prendeva quella frase alla lettera e basta: il verticale _era_ il vocabolario, e
 una proposizione entrava nel dominio se una forma del vocabolario compariva nel
 testo del comma.
 
@@ -27,12 +27,12 @@ sinonimi di `anac`. Toglierlo ha ridotto il rumore ma non l'ha eliminato,
 perché il problema non era quel sinonimo. Il problema è che **nell'italiano
 giuridico quasi nessuna parola di una forma sola appartiene a un dominio solo**:
 
-| forma | dove compare davvero |
-| --- | --- |
-| concessione | codice dei contratti pubblici, codice della navigazione, concessioni demaniali, concessioni ferroviarie, tasse sulle concessioni governative |
-| collaudo | appalti di lavori e collaudo dei veicoli nel codice della strada |
-| bando | appalti, concorsi pubblici, bandi di gara di ogni materia |
-| lavori pubblici | un secolo di leggi di conversione, dal 1926 in poi |
+| forma           | dove compare davvero                                                                                                                         |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| concessione     | codice dei contratti pubblici, codice della navigazione, concessioni demaniali, concessioni ferroviarie, tasse sulle concessioni governative |
+| collaudo        | appalti di lavori e collaudo dei veicoli nel codice della strada                                                                             |
+| bando           | appalti, concorsi pubblici, bandi di gara di ogni materia                                                                                    |
+| lavori pubblici | un secolo di leggi di conversione, dal 1926 in poi                                                                                           |
 
 Nessuna cura del vocabolario risolve questo. Le forme non sono sbagliate: sono
 le forme giuste, e il dominio non è nelle forme.
@@ -78,11 +78,11 @@ indipendenti:
 
 La chiusura transitiva amplifica l'errore. Misurato su questi dati:
 
-| espansione | atti nel verticale | segnalazioni livello 3 |
-| --- | --- | --- |
-| nessun confine (solo vocabolario) | 8 070 | 210 |
-| MODIFICA+ATTUA+INTRODUCE+ABROGA, transitiva | 131 | 4 |
-| ATTUA, profondità 1 | 5 | 2 |
+| espansione                                  | atti nel verticale | segnalazioni livello 3 |
+| ------------------------------------------- | ------------------ | ---------------------- |
+| nessun confine (solo vocabolario)           | 8 070              | 210                    |
+| MODIFICA+ATTUA+INTRODUCE+ABROGA, transitiva | 131                | 4                      |
+| ATTUA, profondità 1                         | 5                  | 2                      |
 
 ## Conseguenze
 

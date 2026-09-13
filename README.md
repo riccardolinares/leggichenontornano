@@ -1,7 +1,18 @@
 # Le leggi che non tornano
 
+[![Verifica](https://github.com/riccardolinares/leggichenontornano/actions/workflows/verifica.yml/badge.svg)](https://github.com/riccardolinares/leggichenontornano/actions/workflows/verifica.yml)
+[![Pipeline quotidiana](https://github.com/riccardolinares/leggichenontornano/actions/workflows/pipeline.yml/badge.svg)](https://github.com/riccardolinares/leggichenontornano/actions/workflows/pipeline.yml)
+[![Licenza: EUPL 1.2](https://img.shields.io/badge/licenza-EUPL--1.2-blue.svg)](LICENSE)
+[![Dati: CC BY 4.0](https://img.shields.io/badge/dati-CC%20BY%204.0-lightgrey.svg)](https://dati.normattiva.it)
+
 Piattaforma open source che rende visibili incongruenze, contraddizioni e aree
 grigie della legislazione italiana. Nome tecnico del progetto: **antinomia**.
+
+> **Stato: non ancora pubblicato.** Il codice gira e il dataset si rigenera ogni
+> giorno, ma manca il passo che viene prima del lancio — far _demolire_ il primo
+> lotto di segnalazioni da giuristi esterni. Finché non sarà fatto, il sito lo
+> dichiara sulla pagina Dati, e nessun numero di questo repository va citato come
+> definitivo.
 
 > **La credibilità è il prodotto.** Una segnalazione falsa su una legge distrugge
 > più di quanto dieci segnalazioni corrette costruiscano, e il danno è
@@ -72,14 +83,14 @@ contrario.**
 
 ### Pacchetti
 
-| Pacchetto                                      | Cosa fa                                                             |
-| ---------------------------------------------- | ------------------------------------------------------------------- |
-| [`packages/akn-parser`](packages/akn-parser)   | URN:NIR, ELI, Akoma Ntoso, multivigenza, lettura delle modifiche     |
-| [`packages/corpus`](packages/corpus)           | client Normattiva, ingestione, store bitemporale, grafo, dataset     |
-| [`packages/engine`](packages/engine)           | controlli livelli 1-3, cancello di pubblicazione, coda di revisione  |
-| [`packages/api`](packages/api)                 | API pubblica REST, OpenAPI                                           |
-| [`apps/web`](apps/web)                         | il sito, con i test di accessibilità e usabilità                     |
-| [`apps/bot`](apps/bot)                         | la segnalazione del giorno su Mastodon, Telegram e X                 |
+| Pacchetto                                    | Cosa fa                                                             |
+| -------------------------------------------- | ------------------------------------------------------------------- |
+| [`packages/akn-parser`](packages/akn-parser) | URN:NIR, ELI, Akoma Ntoso, multivigenza, lettura delle modifiche    |
+| [`packages/corpus`](packages/corpus)         | client Normattiva, ingestione, store bitemporale, grafo, dataset    |
+| [`packages/engine`](packages/engine)         | controlli livelli 1-3, cancello di pubblicazione, coda di revisione |
+| [`packages/api`](packages/api)               | API pubblica REST, OpenAPI                                          |
+| [`apps/web`](apps/web)                       | il sito, con i test di accessibilità e usabilità                    |
+| [`apps/bot`](apps/bot)                       | la segnalazione del giorno su Mastodon, Telegram e X                |
 
 ---
 
@@ -210,7 +221,7 @@ estremi e non si ospita il testo.
 > licenza [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/deed.it).
 >
 > La banca dati Normattiva **non ha carattere di ufficialità**: l'unico testo
-> ufficiale è quello pubblicato sulla *Gazzetta Ufficiale*, che prevale in caso
+> ufficiale è quello pubblicato sulla _Gazzetta Ufficiale_, che prevale in caso
 > di discordanza.
 >
 > Pronunce: elaborazione su dati **Corte costituzionale**
@@ -257,9 +268,22 @@ Gli [ADR](docs/adr) registrano le decisioni prese e il perché. Le principali:
 - [0008](docs/adr/0008-url-come-prodotto.md) — gli URL sono il prodotto
 - [0009](docs/adr/0009-il-verticale-e-un-elenco-di-atti.md) — il verticale è un elenco di atti, non di parole
 
-Altri documenti: [METODO.md](METODO.md),
-[docs/gold-standard.md](docs/gold-standard.md),
-[docs/accessibilita.md](docs/accessibilita.md).
+---
+
+## Documenti
+
+|                                                |                                                                                   |
+| ---------------------------------------------- | --------------------------------------------------------------------------------- |
+| [METODO.md](METODO.md)                         | Cosa il progetto non fa, la tassonomia delle anomalie, la soglia di pubblicazione |
+| [CONTRIBUTING.md](CONTRIBUTING.md)             | Come contribuire, e cosa non accettiamo                                           |
+| [GOVERNANCE.md](GOVERNANCE.md)                 | Chi decide cosa, e quali decisioni nessuno può prendere                           |
+| [CHANGELOG.md](CHANGELOG.md)                   | Le versioni, e perché il numero di segnalazioni cambia                            |
+| [SECURITY.md](SECURITY.md)                     | Come segnalare un problema di sicurezza                                           |
+| [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)       | Codice di condotta                                                                |
+| [docs/adr](docs/adr)                           | Le decisioni architetturali e il perché                                           |
+| [docs/qualita-fonti.md](docs/qualita-fonti.md) | Dodici irregolarità trovate eseguendo il motore sui dati veri                     |
+| [docs/gold-standard.md](docs/gold-standard.md) | Come misuriamo, e quanto vale la misura                                           |
+| [docs/accessibilita.md](docs/accessibilita.md) | Le scelte di accessibilità e come si verificano                                   |
 
 ---
 
@@ -271,7 +295,7 @@ pulsante «Non è un conflitto» che apre una issue senza registrazione, e le
 risposte cambiano la precisione misurata del controllo che l'ha prodotta.
 
 Build in public dal primo commit. Per un progetto civico il codice aperto è parte
-dell'argomento: *verificate anche noi*.
+dell'argomento: _verificate anche noi_.
 
 ## Licenze
 

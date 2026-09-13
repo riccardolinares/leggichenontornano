@@ -16,9 +16,7 @@ import { createRouter } from './router.js';
 const port = Number(process.env['PORT'] ?? 4000);
 const snapshotDir = process.env['ANTINOMIA_SNAPSHOT'];
 
-const source = snapshotDir
-  ? SnapshotSource.fromDirectory(snapshotDir)
-  : new DatabaseSource();
+const source = snapshotDir ? SnapshotSource.fromDirectory(snapshotDir) : new DatabaseSource();
 
 const handle = createRouter({ source });
 

@@ -70,7 +70,10 @@ const ACTION_WORDS: Array<[RegExp, ModificationKind]> = [
 const ORDINAL_SUFFIX =
   '(?:[-\\s]?(?:bis|ter|quater|quinquies|sexies|septies|octies|novies|decies|undecies|duodecies))*';
 const ARTICLE_RE = new RegExp(`\\bart(?:icolo|\\.)?\\s*(\\d+${ORDINAL_SUFFIX})`, 'gi');
-const PARAGRAPH_RE = new RegExp(`\\bcomm[ai]\\s*((?:\\d+${ORDINAL_SUFFIX})(?:\\s*(?:,|e|ed)\\s*\\d+${ORDINAL_SUFFIX})*)`, 'gi');
+const PARAGRAPH_RE = new RegExp(
+  `\\bcomm[ai]\\s*((?:\\d+${ORDINAL_SUFFIX})(?:\\s*(?:,|e|ed)\\s*\\d+${ORDINAL_SUFFIX})*)`,
+  'gi',
+);
 const LETTER_RE =
   /\blettere?\s+((?:[a-z]{1,3}(?:-(?:bis|ter|quater|quinquies))?\)(?:\s*(?:,|ed|e)\s*)?)+)/gi;
 const ANNEX_RE = /\ballegato\s+([A-Z0-9]+(?:-[A-Z0-9]+)?)/i;
@@ -90,7 +93,9 @@ const BY_MARKER_RE = /\(\s*con\s+l['’]\s*art[^)]*\)\s*\)?/gi;
  * Analizza il testo redazionale di una `<textualMod>` e restituisce zero o più
  * modifiche strutturate. Una singola `<textualMod>` può dichiararne molte.
  */
-export function parseModificationNarrative(narrative: string | null | undefined): ParsedModification[] {
+export function parseModificationNarrative(
+  narrative: string | null | undefined,
+): ParsedModification[] {
   if (!narrative) return [];
   const text = narrative.replace(/\s+/g, ' ').trim();
   if (text.length === 0) return [];

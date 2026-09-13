@@ -9,8 +9,8 @@ Un semplice versioning ("questa è la versione 3 dell'articolo") non basta. La
 legge 241/1990 ha oltre sessanta versioni succedutesi nel tempo, e le domande che
 il progetto deve saper rispondere sono due, diverse:
 
-- *cosa diceva questo articolo il 20 aprile 2013?* — asse della **vigenza**;
-- *cosa sapevamo noi di questo articolo il 20 aprile 2013?* — asse della
+- _cosa diceva questo articolo il 20 aprile 2013?_ — asse della **vigenza**;
+- _cosa sapevamo noi di questo articolo il 20 aprile 2013?_ — asse della
   **conoscenza**.
 
 La seconda non è accademica: è la domanda che si fa chi contesta una nostra

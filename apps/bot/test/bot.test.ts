@@ -130,8 +130,14 @@ describe('pubblicatori', () => {
       ok: true,
       json: async () => ({ url: 'https://mastodon.esempio/1' }),
     });
-    const m = new Mastodon('https://mastodon.esempio', 'token', fetchFinto as unknown as typeof fetch);
-    const esito = await m.pubblica(componiMessaggio(anomalia({ id: 'z' }), 'mastodon', 'https://esempio.it'));
+    const m = new Mastodon(
+      'https://mastodon.esempio',
+      'token',
+      fetchFinto as unknown as typeof fetch,
+    );
+    const esito = await m.pubblica(
+      componiMessaggio(anomalia({ id: 'z' }), 'mastodon', 'https://esempio.it'),
+    );
     expect(esito.pubblicato).toBe(true);
     const [, init] = fetchFinto.mock.calls[0] as [string, RequestInit];
     expect((init.headers as Record<string, string>)['idempotency-key']).toContain('/anomalia/z');
@@ -139,8 +145,14 @@ describe('pubblicatori', () => {
 
   it('un errore della piattaforma non viene nascosto', async () => {
     const fetchFinto = vi.fn().mockResolvedValue({ ok: false, status: 503 });
-    const m = new Mastodon('https://mastodon.esempio', 'token', fetchFinto as unknown as typeof fetch);
-    const esito = await m.pubblica(componiMessaggio(anomalia({ id: 'z' }), 'mastodon', 'https://esempio.it'));
+    const m = new Mastodon(
+      'https://mastodon.esempio',
+      'token',
+      fetchFinto as unknown as typeof fetch,
+    );
+    const esito = await m.pubblica(
+      componiMessaggio(anomalia({ id: 'z' }), 'mastodon', 'https://esempio.it'),
+    );
     expect(esito.pubblicato).toBe(false);
     expect(esito.motivo).toContain('503');
   });

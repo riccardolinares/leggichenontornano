@@ -62,11 +62,15 @@ export function buildTimeline(inputs: readonly (AknAct | VersionInput)[]): Timel
   const normalized = inputs.map(toVersionInput);
   const urns = new Set(normalized.map((v) => v.act.urn));
   if (urns.size > 1) {
-    throw new MultivigenzaError(`le versioni appartengono ad atti diversi: ${[...urns].join(', ')}`);
+    throw new MultivigenzaError(
+      `le versioni appartengono ad atti diversi: ${[...urns].join(', ')}`,
+    );
   }
 
   const dated = normalized.map((input) => ({ input, from: versionDate(input) }));
-  dated.sort((a, b) => cmp(a.from, b.from) || a.input.act.articles.length - b.input.act.articles.length);
+  dated.sort(
+    (a, b) => cmp(a.from, b.from) || a.input.act.articles.length - b.input.act.articles.length,
+  );
 
   // Due file possono dichiarare la stessa data di vigenza: succede quando una
   // versione non viene rinumerata. Si tiene l'ultima, che è quella con il testo

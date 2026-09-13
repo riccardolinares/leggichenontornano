@@ -1,0 +1,53 @@
+# Le etichette del progetto.
+#
+# Non sono decorazione: il pulsante «Non è un conflitto» sul sito costruisce un
+# URL che precompila titolo, corpo ed **etichetta**. Se l'etichetta non esiste
+# nel repository, GitHub la scarta in silenzio e le segnalazioni più preziose
+# che riceviamo finiscono indistinguibili da tutto il resto.
+#
+# Per crearle o riallinearle:
+#
+#   gh label create non-e-un-conflitto -c '#8a5a2b' \
+#     -d 'Una segnalazione non regge. Alimenta il gold standard.' --force
+#
+# oppure, tutte in una volta:
+#
+#   python3 - <<'EOF'
+#   import subprocess, yaml
+#   for l in yaml.safe_load(open('.github/labels.yml'))['labels']:
+#       subprocess.run(['gh','label','create',l['name'],
+#                       '-c',l['color'],'-d',l['description'],'--force'], check=True)
+#   EOF
+
+labels:
+  - name: non-e-un-conflitto
+    color: '8a5a2b'
+    description: Una segnalazione non regge. È il contributo che vale di più.
+
+  - name: qualita-fonti
+    color: 'b08d3f'
+    description: Irregolarità nei dati di origine che produce segnalazioni false.
+
+  - name: difetto
+    color: 'a03e2f'
+    description: Il software non fa quello che dice di fare.
+
+  - name: verticale
+    color: '3f7d6e'
+    description: Un dominio nuovo per i controlli di livello 3.
+
+  - name: accessibilita
+    color: '4a6fa5'
+    description: WCAG, screen reader, tastiera. Blocca la build come ogni altro difetto.
+
+  - name: pipeline
+    color: '6b6b6b'
+    description: La pipeline quotidiana è fallita. Ne resta aperta una alla volta.
+
+  - name: adr
+    color: '5a4a7d'
+    description: Propone o supera una decisione architetturale.
+
+  - name: aiuto-cercasi
+    color: '2f6f4f'
+    description: Non serve saper programmare. Serve conoscere la materia.

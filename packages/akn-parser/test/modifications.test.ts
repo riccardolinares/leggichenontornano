@@ -83,7 +83,9 @@ describe('parseModificationNarrative', () => {
 });
 
 describe('parseModifications sul d.lgs. 198/2006', () => {
-  const act = parseAkn(readFileSync(join(FIXTURES, '2006-05-31_006G0216_ORIGINALE_V0.xml'), 'utf8'));
+  const act = parseAkn(
+    readFileSync(join(FIXTURES, '2006-05-31_006G0216_ORIGINALE_V0.xml'), 'utf8'),
+  );
   const parsed = parseModifications(act.activeModifications);
 
   it('produce almeno una modifica per ogni textualMod con narrativa', () => {
@@ -103,9 +105,10 @@ describe('parseModifications sul d.lgs. 198/2006', () => {
 
 describe('parseActCitation', () => {
   it('riconosce le abbreviazioni con i punti', () => {
-    expect(parseActCitation("l'abrogazione del D.L. 8 marzo 2020, n. 11 (in G.U. 08/03/2020, n. 60).")?.urn).toBe(
-      'urn:nir:stato:decreto.legge:2020-03-08;11',
-    );
+    expect(
+      parseActCitation("l'abrogazione del D.L. 8 marzo 2020, n. 11 (in G.U. 08/03/2020, n. 60).")
+        ?.urn,
+    ).toBe('urn:nir:stato:decreto.legge:2020-03-08;11');
     expect(parseActCitation('del D.Lgs. 5 febbraio 1997, n. 22')?.urn).toBe(
       'urn:nir:stato:decreto.legislativo:1997-02-05;22',
     );
@@ -155,6 +158,8 @@ describe('parseActCitation', () => {
       ),
     ).toBe(true);
     // Nessuna citazione: silenzio, non disaccordo.
-    expect(citationAgreesWith("la modifica dell'art. 4.", 'urn:nir:stato:legge:2010-08-13;136')).toBeNull();
+    expect(
+      citationAgreesWith("la modifica dell'art. 4.", 'urn:nir:stato:legge:2010-08-13;136'),
+    ).toBeNull();
   });
 });

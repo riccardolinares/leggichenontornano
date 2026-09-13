@@ -147,9 +147,11 @@ describe('archi DICHIARA_ILLEGITTIMO', () => {
   const dichiarazioni = parseDispositivo(p.ecli, p.dispositivo);
 
   it('parte dall’ECLI e arriva all’articolo, con la data di deposito', () => {
-    const { relazioni } = relazioniDaPronunce([p], dichiarazioni, new Set([
-      'urn:nir:stato:decreto.legislativo:2010-07-02;104',
-    ]));
+    const { relazioni } = relazioniDaPronunce(
+      [p],
+      dichiarazioni,
+      new Set(['urn:nir:stato:decreto.legislativo:2010-07-02;104']),
+    );
     expect(relazioni).toHaveLength(1);
     expect(relazioni[0]?.sourceUrn).toBe('ECLI:IT:COST:2018:132');
     expect(relazioni[0]?.targetArticle).toBe('44');

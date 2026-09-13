@@ -18,10 +18,7 @@ import { createHash } from 'node:crypto';
 import { getPrisma } from '@antinomia/corpus';
 
 export type FonteGold =
-  | 'consiglio-di-stato'
-  | 'corte-costituzionale'
-  | 'sezioni-unite'
-  | 'circolare';
+  'consiglio-di-stato' | 'corte-costituzionale' | 'sezioni-unite' | 'circolare';
 
 export interface VoceGold {
   /** Tipo di fonte dell'annotazione. */
@@ -193,7 +190,8 @@ export async function valutaGold(): Promise<RapportoGold> {
     trovate,
     recall: esiti.length > 0 ? trovate / esiti.length : 0,
     nelCorpus,
-    recallNelCorpus: nelCorpus > 0 ? esiti.filter((e) => e.nelCorpus && e.trovata).length / nelCorpus : 0,
+    recallNelCorpus:
+      nelCorpus > 0 ? esiti.filter((e) => e.nelCorpus && e.trovata).length / nelCorpus : 0,
     perControllo: [...perControllo.entries()].map(([checkId, v]) => ({
       checkId,
       attese: v.attese,

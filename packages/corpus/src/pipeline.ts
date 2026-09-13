@@ -76,7 +76,9 @@ export async function ingestDirectory(opts: IngestOptions): Promise<IngestReport
     if (done % 25 === 0) log(`${done}/${bundles.length} atti scritti`);
   }
 
-  const knownActs = new Set((await prisma.act.findMany({ select: { urn: true } })).map((a) => a.urn));
+  const knownActs = new Set(
+    (await prisma.act.findMany({ select: { urn: true } })).map((a) => a.urn),
+  );
   for (const bundle of bundles) {
     await writeRelations(bundle.act.urn, bundle.relations, knownAt, knownActs, stats);
   }

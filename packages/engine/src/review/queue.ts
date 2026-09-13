@@ -17,10 +17,7 @@
 import { getPrisma } from '@antinomia/corpus';
 
 export type ReviewVerdict =
-  | 'CONFERMATA'
-  | 'NON_E_UN_CONFLITTO'
-  | 'ESTRAZIONE_ERRATA'
-  | 'DA_APPROFONDIRE';
+  'CONFERMATA' | 'NON_E_UN_CONFLITTO' | 'ESTRAZIONE_ERRATA' | 'DA_APPROFONDIRE';
 
 export interface QueueItem {
   anomalyId: string;

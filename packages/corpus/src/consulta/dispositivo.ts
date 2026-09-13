@@ -145,10 +145,25 @@ const COMMI_ELENCO_RE = new RegExp(
  * nelle norme più vecchie, che sono quelle con più rinvii addosso.
  */
 const ORDINALI: Readonly<Record<string, string>> = {
-  primo: '1', secondo: '2', terzo: '3', quarto: '4', quinto: '5', sesto: '6',
-  settimo: '7', ottavo: '8', nono: '9', decimo: '10', undicesimo: '11',
-  dodicesimo: '12', tredicesimo: '13', quattordicesimo: '14', quindicesimo: '15',
-  sedicesimo: '16', diciassettesimo: '17', diciottesimo: '18', diciannovesimo: '19',
+  primo: '1',
+  secondo: '2',
+  terzo: '3',
+  quarto: '4',
+  quinto: '5',
+  sesto: '6',
+  settimo: '7',
+  ottavo: '8',
+  nono: '9',
+  decimo: '10',
+  undicesimo: '11',
+  dodicesimo: '12',
+  tredicesimo: '13',
+  quattordicesimo: '14',
+  quindicesimo: '15',
+  sedicesimo: '16',
+  diciassettesimo: '17',
+  diciottesimo: '18',
+  diciannovesimo: '19',
   ventesimo: '20',
 };
 
@@ -206,7 +221,9 @@ function leggiStatuizione(ecli: string, statuizione: string): DichiarazioneIlleg
         .map(normalizzaNumero)
         .filter((n) => /^\d/.test(n)),
     ),
-    ...matchAll(testa, COMMA_ORDINALE_RE).map((o) => ORDINALI[o.toLowerCase()] ?? normalizzaNumero(o)),
+    ...matchAll(testa, COMMA_ORDINALE_RE).map(
+      (o) => ORDINALI[o.toLowerCase()] ?? normalizzaNumero(o),
+    ),
   ]);
   const letters = uniq(
     matchAll(testa, LETTERA_RE).flatMap((blocco) =>

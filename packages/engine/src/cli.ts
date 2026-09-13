@@ -63,7 +63,10 @@ Opzioni di run:
   --vocabolario <file>    vocabolario del verticale attivato
 `;
 
-function parseArgs(argv: readonly string[]): { positional: string[]; flags: Map<string, string | true> } {
+function parseArgs(argv: readonly string[]): {
+  positional: string[];
+  flags: Map<string, string | true>;
+} {
   const positional: string[] = [];
   const flags = new Map<string, string | true>();
   for (let i = 0; i < argv.length; i++) {
@@ -126,7 +129,8 @@ async function main(): Promise<number> {
     case 'metriche': {
       const metrics = await computeMetrics();
       for (const m of metrics) {
-        const precision = m.precision === null ? 'non misurata' : `${(m.precision * 100).toFixed(1)}%`;
+        const precision =
+          m.precision === null ? 'non misurata' : `${(m.precision * 100).toFixed(1)}%`;
         process.stdout.write(
           `\n${m.checkId}  [livello ${m.level}]\n` +
             `  segnalazioni: ${m.found}\n` +
@@ -227,9 +231,12 @@ async function main(): Promise<number> {
         const esistenti = readJson<SnapshotVertical[]>(file, []).filter(
           (v) => v.vertical !== report.verticale,
         );
-        writeJson(file, [...esistenti, report.verticale_pubblicato].sort((a, b) =>
-          a.vertical < b.vertical ? -1 : a.vertical > b.vertical ? 1 : 0,
-        ));
+        writeJson(
+          file,
+          [...esistenti, report.verticale_pubblicato].sort((a, b) =>
+            a.vertical < b.vertical ? -1 : a.vertical > b.vertical ? 1 : 0,
+          ),
+        );
         process.stdout.write(`  verticale scritto in ${file}\n`);
       }
       process.stdout.write(
@@ -269,7 +276,7 @@ async function main(): Promise<number> {
         const rapporto = await valutaGold();
         if (rapporto.totali === 0) {
           process.stdout.write(
-            'Il gold standard e\' vuoto. Senza annotazioni non c\'e\' niente da misurare:\n' +
+            "Il gold standard e' vuoto. Senza annotazioni non c'e' niente da misurare:\n" +
               'vedi docs/gold-standard.md per le quattro fonti da cui prenderle.\n',
           );
           return 0;
@@ -286,7 +293,7 @@ async function main(): Promise<number> {
             `Recall sul corpus:      ${(rapporto.recallNelCorpus * 100).toFixed(1)}% (${rapporto.esiti.filter((e) => e.nelCorpus && e.trovata).length}/${rapporto.nelCorpus})`,
             '',
             'Il primo numero comprende annotazioni su atti che non abbiamo scaricato:',
-            'si alza scaricando piu\' corpus. Il secondo misura i controlli.',
+            "si alza scaricando piu' corpus. Il secondo misura i controlli.",
             '',
             'Per fonte:',
             ...rapporto.perFonte.map(
@@ -308,9 +315,7 @@ async function main(): Promise<number> {
         // quelle che invece un controllo avrebbe dovuto vedere.
         const perse = rapporto.esiti.filter((e) => !e.trovata && e.nelCorpus);
         if (perse.length > 0) {
-          process.stdout.write(
-            `\nNon intercettate, con l'atto nel corpus (${perse.length}):\n`,
-          );
+          process.stdout.write(`\nNon intercettate, con l'atto nel corpus (${perse.length}):\n`);
           for (const e of perse.slice(0, 15)) {
             process.stdout.write(`  [${e.sourceKind}] ${e.sourceRef}\n    ${e.urns.join(' ')}\n`);
           }

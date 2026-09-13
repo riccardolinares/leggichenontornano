@@ -1,0 +1,14 @@
+# Chi viene chiamato in revisione, per area.
+# Le regole con cui si decide stanno in GOVERNANCE.md.
+
+*                           @riccardolinares
+
+# I vincoli non negoziabili vivono in questi file. Una modifica qui va guardata
+# due volte, anche quando sembra innocua: il cancello di pubblicazione e
+# l'assenza di verdetti generati sono l'armatura del progetto, non dettagli.
+/packages/engine/src/publication-gate.ts   @riccardolinares
+/packages/engine/src/deontic/llm.ts        @riccardolinares
+/packages/engine/src/types.ts              @riccardolinares
+/docs/adr/                                 @riccardolinares
+/METODO.md                                 @riccardolinares
+/GOVERNANCE.md                             @riccardolinares

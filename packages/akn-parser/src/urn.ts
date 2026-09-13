@@ -217,7 +217,8 @@ const MESI = [
  */
 export function formatPartition(partition: string): string {
   const parts: string[] = [];
-  const re = /(art|com|let|num|sez|cap|tit|lib|par)[-.]?([0-9a-z]+(?:-(?:bis|ter|quater|quinquies|sexies|septies|octies))?)/gi;
+  const re =
+    /(art|com|let|num|sez|cap|tit|lib|par)[-.]?([0-9a-z]+(?:-(?:bis|ter|quater|quinquies|sexies|septies|octies))?)/gi;
   let m: RegExpExecArray | null;
   while ((m = re.exec(partition)) !== null) {
     const kind = m[1]!.toLowerCase();
@@ -258,17 +259,19 @@ export function formatPartition(partition: string): string {
 /** Estrae il numero di articolo da una partizione, se presente. */
 export function articleOf(partition: string | undefined): string | null {
   if (!partition) return null;
-  const m = /art[-.]?([0-9]+(?:-(?:bis|ter|quater|quinquies|sexies|septies|octies|novies|decies))?)/i.exec(
-    partition,
-  );
+  const m =
+    /art[-.]?([0-9]+(?:-(?:bis|ter|quater|quinquies|sexies|septies|octies|novies|decies))?)/i.exec(
+      partition,
+    );
   return m ? m[1]!.toLowerCase() : null;
 }
 
 /** Estrae il numero di comma da una partizione, se presente. */
 export function paragraphOf(partition: string | undefined): string | null {
   if (!partition) return null;
-  const m = /com[-.]?([0-9]+(?:-(?:bis|ter|quater|quinquies|sexies|septies|octies|novies|decies))?)/i.exec(
-    partition,
-  );
+  const m =
+    /com[-.]?([0-9]+(?:-(?:bis|ter|quater|quinquies|sexies|septies|octies|novies|decies))?)/i.exec(
+      partition,
+    );
   return m ? m[1]!.toLowerCase() : null;
 }

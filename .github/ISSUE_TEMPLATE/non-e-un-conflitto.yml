@@ -1,0 +1,68 @@
+name: Non è un conflitto
+description: Una segnalazione del sito non regge. È il contributo che vale di più.
+title: 'Non è un conflitto: '
+labels: ['non-e-un-conflitto']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Grazie. Questa è la issue più utile che riceviamo.
+
+        Le risposte alimentano il gold standard e **cambiano la precisione
+        misurata** del controllo che ha prodotto la segnalazione: possono farlo
+        scendere sotto l'85% e toglierlo dal sito. È il meccanismo, non un modo
+        di dire.
+
+        Non serve registrarsi a niente né conoscere il codice. Anche una riga
+        basta.
+
+  - type: input
+    id: segnalazione
+    attributes:
+      label: Indirizzo della segnalazione
+      description: L'URL della scheda. Se avete usato il pulsante sul sito è già qui.
+      placeholder: https://leleggichenontornano.it/anomalia/...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: tipo
+    attributes:
+      label: Quale delle due cose non torna?
+      description: >
+        Sono due lavori diversi: il primo chiede di raffinare una regola, il
+        secondo di correggere il parser. Sapere quale ci fa risparmiare giorni.
+      options:
+        - I fatti sono giusti, la qualificazione no (rinvio recettizio, norma speciale, delegificazione autorizzata, disciplina transitoria…)
+        - I fatti sono sbagliati (abbiamo letto male il testo, o l'abbiamo preso dal punto sbagliato della fonte)
+        - Non saprei dire
+    validations:
+      required: true
+
+  - type: textarea
+    id: motivo
+    attributes:
+      label: Perché non è un conflitto
+      description: >
+        Con parole vostre. Se c'è un riferimento — un articolo, una sentenza,
+        una circolare — vale più di qualunque spiegazione.
+    validations:
+      required: true
+
+  - type: textarea
+    id: riferimenti
+    attributes:
+      label: Riferimenti
+      description: URN, estremi degli atti, pronunce. Uno per riga.
+      placeholder: |
+        - urn:nir:stato:decreto.legislativo:2006-04-12;163~art5
+        - Cons. Stato, sez. consultiva, parere n. …
+
+  - type: input
+    id: competenza
+    attributes:
+      label: In che veste scrivete (facoltativo)
+      description: >
+        Non è un requisito e non filtriamo nessuno. Serve a noi per capire
+        quanto peso dare a una valutazione quando due si contraddicono.
+      placeholder: avvocato amministrativista / funzionario / studente / cittadino

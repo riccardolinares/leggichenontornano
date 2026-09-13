@@ -163,7 +163,9 @@ export async function articleAt(
 export async function articleHistory(
   urn: string,
   articleNumber: string,
-): Promise<Array<{ from: string; to: string | null; text: string | null; heading: string | null }>> {
+): Promise<
+  Array<{ from: string; to: string | null; text: string | null; heading: string | null }>
+> {
   const prisma = getPrisma();
   const versions = await listVersions(urn);
   if (versions.length === 0) return [];
@@ -176,8 +178,12 @@ export async function articleHistory(
   });
   const byVersion = new Map(articles.map((a) => [a.versionId, a]));
 
-  const out: Array<{ from: string; to: string | null; text: string | null; heading: string | null }> =
-    [];
+  const out: Array<{
+    from: string;
+    to: string | null;
+    text: string | null;
+    heading: string | null;
+  }> = [];
   for (const version of versions) {
     const found = byVersion.get(version.id) ?? null;
     const previous = out[out.length - 1];

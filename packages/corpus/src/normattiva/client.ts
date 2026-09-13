@@ -171,11 +171,7 @@ export class NormattivaClient {
             throw new NormattivaError(`risposta ${res.status}`, res.status, url);
           }
           if (!res.ok) {
-            throw new NormattivaError(
-              `richiesta fallita con stato ${res.status}`,
-              res.status,
-              url,
-            );
+            throw new NormattivaError(`richiesta fallita con stato ${res.status}`, res.status, url);
           }
           return res;
         } catch (err) {

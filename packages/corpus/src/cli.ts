@@ -125,9 +125,9 @@ async function main(): Promise<number> {
             '',
             'Accordo con le note di aggiornamento di Normattiva.',
             'Due fonti indipendenti: il dispositivo della Corte e la nota che Normattiva',
-            'scrive in coda all\'articolo colpito. L\'accordo misura la nostra lettura del',
-            'dispositivo; il disaccordo non prova che la lettura sia sbagliata, perche\' la',
-            'nota puo\' stare su un altro articolo o mancare dalla versione ingerita.',
+            "scrive in coda all'articolo colpito. L'accordo misura la nostra lettura del",
+            "dispositivo; il disaccordo non prova che la lettura sia sbagliata, perche' la",
+            "nota puo' stare su un altro articolo o mancare dalla versione ingerita.",
             '',
             ...r.perConfidenza.map(
               (c) =>
