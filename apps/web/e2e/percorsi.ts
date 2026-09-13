@@ -130,6 +130,22 @@ export function registroConsumiVuoto(): boolean {
     .every((f) => readFileSync(join(cartella, f), 'utf8').trim().length === 0);
 }
 
+/**
+ * I percorsi delle pagine legali, indice compreso.
+ *
+ * Scritti qui e non importati da `lib/legale.ts` di proposito: un test che
+ * legge l'elenco dal codice che verifica non si accorge del giorno in cui una
+ * pagina sparisce dall'elenco. Questa è la lista che il progetto si è
+ * impegnato a servire, e vive dalla parte di chi controlla.
+ */
+export const PERCORSI_LEGALI = [
+  '/legal',
+  '/legal/privacy',
+  '/legal/termini',
+  '/legal/cookie',
+  '/legal/disclaimer',
+] as const;
+
 export function percorsiDaVerificare(): Percorso[] {
   const percorsi: Percorso[] = [
     { nome: 'home', url: '/' },
@@ -147,6 +163,15 @@ export function percorsiDaVerificare(): Percorso[] {
     { nome: 'dicono di noi', url: '/dicono' },
     { nome: 'segnala un problema', url: '/segnala' },
     { nome: 'mappa del sito', url: '/mappa' },
+    /* Le pagine legali passano di qui come tutte le altre: l'audit axe, la
+       gerarchia dei titoli, la larghezza da telefono e l'avvertenza nel piede
+       valgono per un'informativa quanto per una scheda — di più, visto che è
+       la pagina che qualcuno apre proprio perché ha un dubbio. */
+    { nome: 'indice delle pagine legali', url: '/legal' },
+    { nome: 'informativa privacy', url: '/legal/privacy' },
+    { nome: 'termini di servizio', url: '/legal/termini' },
+    { nome: 'cookie', url: '/legal/cookie' },
+    { nome: 'limitazione di responsabilità', url: '/legal/disclaimer' },
     { nome: 'pagina non trovata', url: '/percorso-che-non-esiste' },
   ];
 

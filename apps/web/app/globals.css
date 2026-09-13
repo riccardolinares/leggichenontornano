@@ -2082,3 +2082,46 @@ a.griglia-cifre__voce:focus-visible .griglia-cifre__etichetta {
   font-size: 0.94rem;
   line-height: 1.6;
 }
+
+/* ---------- Pagine legali ---------- */
+
+/*
+ * La data di revisione sta sotto il titolo, nel corpo del testo e non in
+ * grigio chiaro: un'informativa vale a una data, e chi legge deve trovarla
+ * prima di decidere se fidarsi, non in fondo dopo aver già deciso.
+ */
+.legale-data {
+  margin-top: -0.4rem;
+  padding-bottom: 1.2rem;
+  border-bottom: 1px solid var(--bordo);
+  max-width: 46rem;
+}
+
+.legale-indice {
+  list-style: none;
+  margin: 2rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 1.4rem;
+  max-width: 46rem;
+}
+
+.legale-indice li {
+  padding-left: 1rem;
+  border-left: 3px solid var(--verderame-velo);
+}
+
+.legale-indice a {
+  font-weight: 600;
+}
+
+.legale-indice p {
+  margin: 0.3rem 0 0;
+  color: var(--inchiostro-tenue);
+}
+
+.legale-indice small {
+  display: block;
+  margin-top: 0.3rem;
+  color: var(--inchiostro-debole);
+}

@@ -34,6 +34,13 @@ const nextConfig = {
         permanent: true,
       },
       { source: '/assistente', destination: '/mcp', permanent: true },
+      /* Il sito è in italiano e le rotte pure, ma `/legal/terms`,
+         `/legal/privacy-policy` e `/legal/cookie-policy` sono i nomi che
+         chiunque scrive a memoria quando incolla un collegamento di servizio.
+         Un 308 costa una riga e fa arrivare lo stesso chi legge. */
+      { source: '/legal/terms', destination: '/legal/termini', permanent: true },
+      { source: '/legal/privacy-policy', destination: '/legal/privacy', permanent: true },
+      { source: '/legal/cookie-policy', destination: '/legal/cookie', permanent: true },
     ];
   },
 
