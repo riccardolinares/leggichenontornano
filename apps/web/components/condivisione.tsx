@@ -59,7 +59,7 @@ export function Condivisione({ url, titolo }: { url: string; titolo: string }) {
   const testo = testoCondivisione(titolo, url);
 
   return (
-    <div className="azioni">
+    <div className="azioni condivisione">
       {condivisioneNativa ? (
         <button type="button" className="bottone bottone--primario" onClick={condividi}>
           Condividi

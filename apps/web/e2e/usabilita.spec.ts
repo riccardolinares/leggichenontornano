@@ -493,7 +493,9 @@ test.describe('approfondimenti', () => {
 test.describe('condivisione e contatti', () => {
   test('i canali di condivisione sono quelli che si usano in Italia', async ({ page }) => {
     await page.goto('/numeri');
-    const azioni = page.locator('.azioni').last();
+    // Il blocco ha un nome proprio: `.azioni` da solo prenderebbe anche
+    // quello del piede, che è un'altra cosa.
+    const azioni = page.locator('.condivisione');
 
     // WhatsApp prima di tutto: è lì che un link su una legge viene girato
     // davvero, nel gruppo dell'ufficio o della categoria professionale.
@@ -591,6 +593,99 @@ test.describe('dati strutturati', () => {
     // `author` non è decorativo: dice chi risponde di quelle frasi. Un articolo
     // generato non può dichiarare come autore il progetto.
     expect(articolo!['author']).toBeTruthy();
+  });
+});
+
+test.describe('segnalare un problema', () => {
+  test('il modulo c’è, e dice che la segnalazione diventa pubblica', async ({ page }) => {
+    await page.goto('/segnala');
+    await expect(page.getByRole('heading', { name: /qualcosa non torna/i })).toBeVisible();
+    await expect(page.getByLabel(/che cosa avete visto/i)).toBeVisible();
+    // Chi scrive deve sapere *prima* che finirà in pubblico.
+    await expect(page.getByText(/issue pubblica/i)).toBeVisible();
+  });
+
+  test('un messaggio troppo corto non parte, e lo dice', async ({ page }) => {
+    await page.goto('/segnala');
+    await page.getByLabel(/che cosa avete visto/i).fill('non va');
+    await page.getByRole('button', { name: /manda la segnalazione/i }).click();
+    await expect(page.getByText(/almeno trenta caratteri/i)).toBeVisible();
+  });
+
+  test('il campo esca non è raggiungibile né da tastiera né da uno screen reader', async ({
+    page,
+  }) => {
+    await page.goto('/segnala');
+    const esca = page.locator('#segnala-sito');
+    await expect(esca).toHaveCount(1);
+    await expect(esca).toHaveAttribute('tabindex', '-1');
+    // `aria-hidden` sul contenitore: per chi ascolta la pagina, non esiste.
+    await expect(page.locator('.segnala__esca')).toHaveAttribute('aria-hidden', 'true');
+  });
+
+  test('senza apertura automatica il modulo offre la strada su GitHub invece di tacere', async ({
+    page,
+  }) => {
+    await page.goto('/segnala');
+    await page
+      .getByLabel(/che cosa avete visto/i)
+      .fill(
+        'Sulla pagina dei numeri il totale dei giorni non coincide con quello della pagina dati.',
+      );
+    await page.getByRole('button', { name: /manda la segnalazione/i }).click();
+    // In prova il token non è configurato: deve comparire il ripiego, non un
+    // messaggio d'errore generico.
+    await expect(page.getByRole('link', { name: /aprite la segnalazione su github/i })).toBeVisible(
+      {
+        timeout: 15000,
+      },
+    );
+  });
+});
+
+test.describe('trovabilità', () => {
+  test('llms.txt dice come citare il sito, non solo cosa contiene', async ({
+    request,
+    baseURL,
+  }) => {
+    const risposta = await request.get(`${baseURL}/llms.txt`);
+    expect(risposta.status()).toBe(200);
+    const testo = await risposta.text();
+    expect(testo).toContain('# Le leggi che non tornano');
+    // La regola che conta più di tutte per chi riassume questo sito.
+    expect(testo).toMatch(/data di vigenza/i);
+    expect(testo).toMatch(/llms-full\.txt/);
+  });
+
+  test('llms-full.txt elenca gli errori da non fare quando si riassume', async ({
+    request,
+    baseURL,
+  }) => {
+    const risposta = await request.get(`${baseURL}/llms-full.txt`);
+    expect(risposta.status()).toBe(200);
+    const testo = await risposta.text();
+    expect(testo).toMatch(/errori da non fare/i);
+    expect(testo).toMatch(/termini scaduti/i);
+  });
+
+  test('robots non chiude la porta ai crawler, e dichiara la sitemap', async ({
+    request,
+    baseURL,
+  }) => {
+    const risposta = await request.get(`${baseURL}/robots.txt`);
+    const testo = await risposta.text();
+    expect(testo).toMatch(/Allow: \//);
+    expect(testo).toMatch(/Sitemap: https?:\/\/[^\s]+\/sitemap\.xml/);
+    // Nessun blocco per nome ai crawler delle AI: la scelta è dichiarata in
+    // `robots.ts` ed è l'opposta di quella corrente.
+    expect(testo).not.toMatch(/GPTBot|ClaudeBot|CCBot/);
+  });
+
+  test('la mappa del sito porta a tutte le famiglie di pagine', async ({ page }) => {
+    await page.goto('/mappa');
+    for (const nome of [/le segnalazioni/i, /approfondimenti/i, /norme del corpus/i, /pronunce/i]) {
+      await expect(page.locator('.mappa').getByRole('link', { name: nome }).first()).toBeVisible();
+    }
   });
 });
 
