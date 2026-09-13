@@ -192,6 +192,37 @@ DATABASE_URL=... node packages/api/dist/server.js                   # dal databa
 
 ---
 
+## Dove gira il sito
+
+Il deploy è su Vercel, con la regione **`fra1`, Francoforte**, dichiarata in
+[`apps/web/vercel.json`](apps/web/vercel.json). Una regione italiana non esiste:
+le europee sono Francoforte (`fra1`), Parigi (`cdg1`), Dublino (`dub1`),
+Stoccolma (`arn1`) e Londra (`lhr1`), e Francoforte è quella che da qui si
+raggiunge in meno tempo. Il file è JSON e non accetta commenti: la spiegazione
+sta qui.
+
+La distinzione che conta, perché è quella che di solito si fraintende:
+
+- **Le pagine non passano dalla regione.** Sono generate durante la build e
+  servite dalla CDN, dal nodo più vicino a chi legge: chi apre una scheda da
+  Palermo non aspetta Francoforte. Vale per quasi tutto il sito — le pagine sono
+  `force-static` e anche le anteprime Open Graph sono prodotte in build, perché
+  gli elenchi di URN, ECLI e id anomalia vengono dal dataset versionato.
+- **La regione decide dove gira il codice calcolato a richiesta**, cioè le
+  funzioni serverless. Oggi ce n'è una: `POST /api/segnalazione`, la rotta che
+  apre la issue su GitHub quando qualcuno usa il modulo «Qualcosa non torna?».
+  Con `fra1` quella richiesta parte da Francoforte e non da Washington. Ci
+  finiranno anche le prossime: altre rotte sotto `app/api/`, le server action, o
+  un'immagine Open Graph generata al volo per un contenuto che in build non
+  esiste ancora.
+
+Senza questa riga la regione predefinita sarebbe negli Stati Uniti, e già oggi
+ogni segnalazione inviata dall'Italia attraverserebbe l'Atlantico due volte per
+aprire una issue. Dichiararla serve anche a non doverci ripensare ogni volta che
+si aggiunge una funzione.
+
+---
+
 ## Le fonti
 
 **Normattiva open data** ([dati.normattiva.it](https://dati.normattiva.it)) —
