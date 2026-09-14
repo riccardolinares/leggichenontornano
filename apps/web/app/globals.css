@@ -2146,32 +2146,9 @@ a.griglia-cifre__voce:focus-visible .griglia-cifre__etichetta {
   flex-shrink: 0;
 }
 
-.tema__bottone,
-.testata__codice {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
-  /* 2,5rem è il lato minimo perché un bersaglio tattile resti comodo: sotto
-     i 40 px si sbaglia, e si sbaglia soprattutto su un telefono. */
-  min-width: 2.5rem;
-  height: 2.5rem;
-  padding-inline: 0.55rem;
-  border: 1px solid var(--bordo);
-  border-radius: 3px;
-  background: var(--carta-alta);
-  color: var(--inchiostro-tenue);
-  font: inherit;
-  font-size: 0.85rem;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.tema__bottone:hover,
-.testata__codice:hover {
-  border-color: var(--verderame);
-  color: var(--verderame-scuro);
-}
+/* Il selettore del tema e il collegamento al codice hanno la stessa forma, e
+   adesso la stessa primitiva: `Bottone variante="testata"`. Le misure e il
+   motivo per cui sono quelle stanno lì, accanto alla variante. */
 
 .tema__menu {
   min-width: 12rem;

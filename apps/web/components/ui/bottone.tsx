@@ -26,6 +26,13 @@ const varianti = cva(
       variante: {
         default: 'bg-primary text-primary-foreground hover:bg-verderame-scuro',
         outline: 'border border-bordo-forte bg-card text-foreground hover:bg-accent',
+        /* La variante della testata è più leggera dell'outline: il bordo è
+           quello sottile e il testo parte in tono minore, perché questi due
+           comandi non devono competere con il titolo del sito. Al passaggio
+           prendono il verderame, che è l'unico colore interattivo. */
+        testata:
+          'border border-bordo bg-carta-alta text-inchiostro-tenue ' +
+          'hover:border-verderame hover:text-verderame-scuro',
         ghost: 'text-foreground hover:bg-accent',
         distruttiva: 'bg-destructive text-destructive-foreground hover:opacity-90',
       },
@@ -34,6 +41,12 @@ const varianti = cva(
         piccola: 'h-8 px-3 text-xs',
         grande: 'h-12 px-6 text-base',
         icona: 'h-10 w-10',
+        /* I due comandi della testata — il tema e il collegamento al codice —
+           hanno la stessa forma, ed è voluto: stanno accanto e fanno cose
+           dello stesso ordine. 2,5rem è il lato minimo perché un bersaglio
+           tattile resti comodo: sotto i 40 px si sbaglia, e si sbaglia
+           soprattutto su un telefono. */
+        testata: 'h-10 min-w-10 px-2.5 gap-1.5 text-sm',
       },
     },
     defaultVariants: { variante: 'default', misura: 'default' },

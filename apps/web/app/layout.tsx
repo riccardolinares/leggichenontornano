@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Bottone } from '@/components/ui/bottone';
 import { Archivo, Newsreader } from 'next/font/google';
 import Link from 'next/link';
 import './globals.css';
@@ -120,10 +121,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     scartarle ogni volta. */}
                 <div className="testata__strumenti">
                   <SelettoreTema />
-                  <a className="testata__codice" href={REPO_URL} rel="noopener">
-                    <MarchioGithub />
-                    <span className="solo-lettori-schermo">Il codice del progetto su GitHub</span>
-                  </a>
+                  {/* Stessa forma del selettore del tema, e non per caso: i
+                      due comandi stanno accanto e fanno cose dello stesso
+                      ordine. `asChild` lo tiene un `<a>` — un link che sembra
+                      un bottone deve restare un link, altrimenti sparisce
+                      dall'elenco dei collegamenti che il controllo attraversa. */}
+                  <Bottone asChild variante="testata" misura="testata">
+                    <a href={REPO_URL} rel="noopener">
+                      <MarchioGithub />
+                      <span className="solo-lettori-schermo">Il codice del progetto su GitHub</span>
+                    </a>
+                  </Bottone>
                 </div>
               </div>
 
