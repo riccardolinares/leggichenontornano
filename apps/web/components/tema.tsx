@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { Bottone } from '@/components/ui/bottone';
 import { ThemeProvider, useTheme } from 'next-themes';
 import * as Menu from '@radix-ui/react-dropdown-menu';
 import { Check, Monitor, Moon, Sun } from 'lucide-react';
@@ -75,8 +76,13 @@ export function SelettoreTema() {
 
   return (
     <Menu.Root>
-      <Menu.Trigger className="tema__bottone" aria-label={descrizione}>
-        <IconaAttuale aria-hidden="true" focusable="false" size={18} strokeWidth={1.75} />
+      {/* `asChild` fa sì che Radix metta i suoi attributi sul bottone del
+          progetto invece di aggiungere un elemento suo: resta un solo
+          `<button>` in pagina, che è quello che i test cercano per ruolo. */}
+      <Menu.Trigger asChild>
+        <Bottone variante="testata" misura="testata" aria-label={descrizione}>
+          <IconaAttuale aria-hidden="true" focusable="false" size={18} strokeWidth={1.75} />
+        </Bottone>
       </Menu.Trigger>
 
       <Menu.Portal>

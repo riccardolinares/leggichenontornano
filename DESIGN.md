@@ -116,6 +116,31 @@ telefono dove c'è.
 Un colore che significa due cose non significa niente. In particolare: il
 verderame non si usa per decorare, e l'ossido non si usa per «dare enfasi».
 
+## 6-bis. Tailwind e shadcn: cosa è stile e cosa è contratto
+
+Il sistema di componenti è [shadcn](https://ui.shadcn.com) su Tailwind, e le
+sue variabili — `--background`, `--primary`, `--destructive` — sono `var()`
+sui token della tabella qui sopra, non copie dei loro valori. Riscrivere gli
+esadecimali dentro i nomi di shadcn produrrebbe una seconda tavolozza capace
+di divergere dalla prima: `apps/web/test/tema.test.ts` esiste per impedire
+esattamente questo, e vale la pena non aggirarlo per comodità.
+
+**Alcuni nomi di classe non sono stile: sono contratto.** Quarantadue classi
+CSS sono selettori dei test end-to-end — `.norma` e `.prova__testo` delimitano
+le citazioni alla lettera per il controllo sulla forma di cortesia, `.grafo
+svg` isola il disegno da quello della testata, `.elenco .scheda` conta le
+segnalazioni in pagina. Convertire un componente in utility Tailwind **toglie
+quel nome**, e il test smette di trovare quello che cercava.
+
+Non è un motivo per non convertire: è il motivo per convertire **un pezzo alla
+volta**, aggiornando i selettori nello stesso commit. Il controllo fallisce
+rumorosamente, e va bene così — ma solo se chi converte sa perché quella classe
+c'era. L'elenco si ricava in un comando:
+
+```bash
+grep -rhoE "'\.[a-z_][a-z0-9_-]*" apps/web/e2e/*.ts | sort -u
+```
+
 ## 7. Gli URL sono il prodotto
 
 Chi usa questo sito incolla link in una memoria, in una determina, in un

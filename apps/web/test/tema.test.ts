@@ -17,12 +17,37 @@ import { describe, expect, it } from 'vitest';
 
 const CSS = readFileSync(join(import.meta.dirname, '..', 'app', 'globals.css'), 'utf8');
 
+/**
+ * La fine del blocco che si apre in `apertura`, contando le graffe.
+ *
+ * La prima versione la cercava per forma — «una graffa rientrata di due
+ * spazi» — e funzionava solo finché nel file non ce n'erano altre più avanti.
+ * Il giorno in cui il foglio di stile ne ha guadagnate (i blocchi di Tailwind,
+ * in coda), quel criterio ha inghiottito tutto quello che veniva dopo e il
+ * test ha letto settantaquattro variabili al posto di sedici.
+ *
+ * Il guasto era del controllo, non di quello che controllava: un blocco CSS
+ * finisce dove le graffe si chiudono, non dove qualcuno ha scelto di
+ * rientrare. Contarle è l'unico criterio che non dipende da come è formattato
+ * il resto del file.
+ */
+function fineBlocco(apertura: number): number {
+  let profondita = 0;
+  for (let i = apertura; i < CSS.length; i++) {
+    if (CSS[i] === '{') profondita++;
+    else if (CSS[i] === '}') {
+      profondita--;
+      if (profondita === 0) return i;
+    }
+  }
+  throw new Error('blocco CSS non chiuso in globals.css');
+}
+
 function tavolozza(selettore: string): Map<string, string> {
   const inizio = CSS.indexOf(selettore);
   expect(inizio, `selettore «${selettore}» non trovato in globals.css`).toBeGreaterThan(-1);
   const apertura = CSS.indexOf('{', inizio);
-  const chiusura = CSS.indexOf('\n  }\n', apertura) + 1 || CSS.indexOf('\n}\n', apertura) + 1;
-  const corpo = CSS.slice(apertura + 1, chiusura);
+  const corpo = CSS.slice(apertura + 1, fineBlocco(apertura));
   const valori = new Map<string, string>();
   for (const riga of corpo.split('\n')) {
     const m = /^\s*(--[a-z-]+):\s*([^;]+);/.exec(riga);

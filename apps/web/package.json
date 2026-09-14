@@ -21,18 +21,24 @@
     "@leggichenontornano/engine": "workspace:*",
     "@leggichenontornano/redazione": "workspace:*",
     "@radix-ui/react-dropdown-menu": "^2.1.24",
+    "@radix-ui/react-slot": "^1.3.3",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "force-graph": "1.51.4",
     "lucide-react": "^1.45.0",
     "next": "^15.5.4",
     "next-themes": "^0.4.6",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "tailwind-merge": "^3.7.0"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.10.1",
     "@playwright/test": "^1.49.1",
+    "@tailwindcss/postcss": "^4.3.3",
     "@types/react": "^19.0.2",
     "@types/react-dom": "^19.0.2",
+    "tailwindcss": "^4.3.3",
     "typescript": "^5.7.2",
     "vitest": "^2.1.8"
   }
