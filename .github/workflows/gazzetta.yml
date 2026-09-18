@@ -19,10 +19,14 @@ name: Verifica in Gazzetta Ufficiale
 # cosa che non deve fare.
 
 on:
-  schedule:
-    # 02:00 UTC: prima della pipeline delle 04:30, così le verifiche di stanotte
-    # entrano nel dataset che la pipeline rigenera stamattina.
-    - cron: '0 2 * * *'
+  # Esecuzione automatica disattivata. Lo `schedule` resta qui, commentato:
+  # la cadenza è una decisione presa una volta e motivata, e va ritrovata
+  # com'era il giorno in cui si riaccende. Per ora il workflow parte solo a
+  # mano, da `workflow_dispatch`.
+  #schedule:
+  #  # 02:00 UTC: prima della pipeline delle 04:30, così le verifiche di stanotte
+  #  # entrano nel dataset che la pipeline rigenera stamattina.
+  #  - cron: '0 2 * * *'
   workflow_dispatch:
     inputs:
       quanti:

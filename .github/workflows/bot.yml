@@ -8,9 +8,13 @@ name: Bot quotidiano
 # pubblicato. Un fork deve poterla eseguire.
 
 on:
-  schedule:
-    # 09:00 UTC, cioè le 10 o le 11 in Italia: l'ora in cui qualcuno legge.
-    - cron: '0 9 * * *'
+  # Esecuzione automatica disattivata. Lo `schedule` resta qui, commentato:
+  # la cadenza è una decisione presa una volta e motivata, e va ritrovata
+  # com'era il giorno in cui si riaccende. Per ora il workflow parte solo a
+  # mano, da `workflow_dispatch`.
+  #schedule:
+  #  # 09:00 UTC, cioè le 10 o le 11 in Italia: l'ora in cui qualcuno legge.
+  #  - cron: '0 9 * * *'
   workflow_dispatch:
     inputs:
       prova:

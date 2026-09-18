@@ -13,11 +13,15 @@ name: Approfondimento del giorno
 # che non deve fare.
 
 on:
-  schedule:
-    # 05:30 UTC: l'articolo è pronto prima che qualcuno si svegli, e la
-    # pubblicazione sui canali (che è un altro workflow, alle 09:00) lo trova
-    # già online.
-    - cron: '30 5 * * *'
+  # Esecuzione automatica disattivata. Lo `schedule` resta qui, commentato:
+  # la cadenza è una decisione presa una volta e motivata, e va ritrovata
+  # com'era il giorno in cui si riaccende. Per ora il workflow parte solo a
+  # mano, da `workflow_dispatch`.
+  #schedule:
+  #  # 05:30 UTC: l'articolo è pronto prima che qualcuno si svegli, e la
+  #  # pubblicazione sui canali (che è un altro workflow, alle 09:00) lo trova
+  #  # già online.
+  #  - cron: '30 5 * * *'
   workflow_dispatch:
     inputs:
       prova:

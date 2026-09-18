@@ -9,9 +9,13 @@ name: Pipeline quotidiana
 # qualcuno lo guarda prima che vada in pagina.
 
 on:
-  schedule:
-    # Ogni giorno alle 04:30 UTC, quando le collezioni della notte sono pronte.
-    - cron: '30 4 * * *'
+  # Esecuzione automatica disattivata. Lo `schedule` resta qui, commentato:
+  # la cadenza è una decisione presa una volta e motivata, e va ritrovata
+  # com'era il giorno in cui si riaccende. Per ora il workflow parte solo a
+  # mano, da `workflow_dispatch`.
+  #schedule:
+  #  # Ogni giorno alle 04:30 UTC, quando le collezioni della notte sono pronte.
+  #  - cron: '30 4 * * *'
   workflow_dispatch:
     inputs:
       collezioni:

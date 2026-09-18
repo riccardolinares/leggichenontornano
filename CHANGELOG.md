@@ -85,6 +85,17 @@ in [docs/qualita-fonti.md](docs/qualita-fonti.md).
 - Zero è la risposta onesta con l'estrattore a regole su cinque atti. Resta
   comunque nella coda interna, perché la precisione non è misurata.
 
+### Modificato
+
+- **Le quattro Action a cadenza fissa non partono più da sole.** Pipeline,
+  verifica in Gazzetta, approfondimento e bot restano intatte e si lanciano a
+  mano da `workflow_dispatch`: è lo `schedule` a essere commentato, orario e
+  motivazione compresi, perché la cadenza è una decisione presa una volta e
+  va ritrovata com'era il giorno in cui si riaccende. Finché dura, il dataset
+  non si aggiorna da sé e nessuno se ne accorge: è esattamente il modo di
+  morire descritto in testa a `pipeline.yml`, quindi questo stato è
+  temporaneo per costruzione.
+
 ### Corretto
 
 - **Le pagine delle pronunce rispondevano 404 in produzione, tutte e
