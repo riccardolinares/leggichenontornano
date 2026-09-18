@@ -72,17 +72,32 @@ export const PERCORSI_LEGALI: readonly string[] = [
 ];
 
 /*
- * I segnaposto.
+ * Quello che l'informativa non dice ancora.
  *
- * Stanno qui in chiaro, con le parentesi quadre, perché un segnaposto che
- * somiglia a un dato vero è peggio di un campo vuoto: un'informativa che
- * dichiara un titolare inventato non informa nessuno e dice il falso. Finché
- * sono così si vedono in pagina, e chi le legge capisce che quella riga non è
- * ancora stata compilata.
+ * La versione precedente teneva qui tre segnaposto fra parentesi quadre, con
+ * un ragionamento giusto: un segnaposto che somiglia a un dato vero è peggio
+ * di un campo vuoto, perché un'informativa che dichiara un titolare inventato
+ * dice il falso a chi si fida. Accanto c'era la condizione: «da riempire prima
+ * di pubblicare il sito».
  *
- * Da riempire prima di pubblicare il sito.
+ * Il sito è stato pubblicato lo stesso, e per giorni l'informativa ha mostrato
+ * le parentesi quadre del modello. Chi arrivava lì non leggeva «questo dato
+ * manca»: leggeva una pagina che sembrava un modello mai finito, e da lì non
+ * sapeva più cosa credere del resto.
+ *
+ * Adesso la lacuna è scritta a parole, come il progetto fa dappertutto con le
+ * cose che non sa: il contatore dice di misurare termini scaduti e non
+ * attuazioni mancate, la pagina dei dati elenca i controlli che restano sotto
+ * soglia con il motivo. Una lacuna dichiarata è un'informazione; un segnaposto
+ * è un lavoro non finito lasciato in vetrina.
+ *
+ * Resta una lacuna, e va colmata: finché queste righe sono così, l'informativa
+ * non identifica il titolare come il Regolamento richiede. Il canale di
+ * contatto però funziona davvero, ed è quello che serve a chi scrive.
+ * `test/legale.test.ts` impedisce che le parentesi quadre tornino.
  */
-export const TITOLARE = '[Nome e cognome o ragione sociale del titolare del trattamento]';
-export const INDIRIZZO_TITOLARE = '[Indirizzo del titolare]';
+export const TITOLARE = 'non ancora dichiarato su questa pagina';
+export const INDIRIZZO_TITOLARE =
+  'e per questo l’unico recapito che questa informativa può indicare è quello qui sotto';
 export const BASE_TRASFERIMENTO =
-  '[Base del trasferimento fuori dall’Unione europea dichiarata nei contratti con Vercel e GitHub]';
+  'la base specifica dichiarata nei contratti con Vercel e GitHub non è ancora riportata su questa pagina';

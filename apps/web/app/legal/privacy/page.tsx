@@ -74,11 +74,21 @@ export default function Privacy() {
         <h2 id="titolare" className="sezione__titolo">
           Chi risponde di questi dati
         </h2>
+        {/* La lacuna sta in cima alla sezione e non in una nota: chi apre
+            questa pagina per sapere a chi rivolgersi deve trovarla mentre
+            decide, non dopo aver già scritto. */}
+        <div className="niente-segnale">
+          <p style={{ marginBottom: 0 }}>
+            <strong>Gli estremi del titolare del trattamento {TITOLARE}</strong>,{' '}
+            {INDIRIZZO_TITOLARE}: <a href={`mailto:${EMAIL}`}>{EMAIL}</a>. È una lacuna di questa
+            informativa, scritta qui invece che nascosta, e resta finché non viene colmata.
+          </p>
+        </div>
         <p>
-          Titolare del trattamento: <strong>{TITOLARE}</strong>, {INDIRIZZO_TITOLARE}. Per qualunque
-          cosa riguardi i tuoi dati — una domanda, una correzione, una richiesta di cancellazione —
-          l’indirizzo è <a href={`mailto:${EMAIL}`}>{EMAIL}</a>, ed è lo stesso da cui passano la
-          stampa e le segnalazioni riservate.
+          Quel recapito è letto davvero, ed è lo stesso da cui passano la stampa e le segnalazioni
+          riservate. Per qualunque cosa riguardi i tuoi dati — una domanda, una correzione, una
+          richiesta di cancellazione — è la strada giusta, e la risposta arriva entro il mese
+          previsto dall’articolo 12.
         </p>
       </section>
 
